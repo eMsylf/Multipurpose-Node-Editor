@@ -11,8 +11,8 @@ namespace NodeEditor
 
     public class NodeBasedEditor : EditorWindow
     {
-        private List<Node> nodes;
-        private List<Connection> connections;
+        private List<Node> nodes = new List<Node>();
+        private List<Connection> connections = new List<Connection>();
         private Direction direction = Direction.TopBottom;
         public NodeStructure reference;
         string fileName = "New Node Structure";
@@ -24,6 +24,7 @@ namespace NodeEditor
 
         private ConnectionPoint selectedInPoint;
         private ConnectionPoint selectedOutPoint;
+        private bool allowLoops;
 
         private Vector2 offset;
         private Vector2 drag;
@@ -140,8 +141,11 @@ namespace NodeEditor
         // TODO: Make loading work
         public void Load()
         {
-            if (reference == null) return;
-            
+            if (reference == null)
+            {
+                return;
+            }
+
             nodes?.Clear();
             connections?.Clear();
             ClearConnectionSelection();
@@ -191,25 +195,49 @@ namespace NodeEditor
             Handles.EndGUI();
         }
 
+        private bool enableToolbar = true;
+        private Rect toolbarToggle = new Rect(0, 0, 20, 20);
+        private Rect toolbarToggleActive = new Rect(0, 20, 20, 20);
 
         public void DrawToolbar()
         {
+            if (enableToolbar)
+            {
+                if (GUI.Button(toolbarToggleActive, "^")) enableToolbar = false;
+            }
+            else
+            {
+
+                if (GUI.Button(toolbarToggle, "v")) enableToolbar = true;
+                return;
+            }
+
             Rect background = new Rect(0, 0, position.width, 20f);
             GUI.Box(background, "");
             GUILayout.BeginHorizontal();
-            
+
             if (reference == null) fileName = EditorGUILayout.TextField(fileName);
-            else reference = (NodeStructure)EditorGUILayout.ObjectField(reference, typeof(NodeStructure));
+            reference = (NodeStructure)EditorGUILayout.ObjectField(reference, typeof(NodeStructure), false);
             if (GUILayout.Button("Save"))
             {
                 Debug.Log("Save");
                 SaveChanges();
             }
-            if (GUILayout.Button("Load"))
+
+            if (GUILayout.Button("New"))
             {
-                Debug.Log("Load");
-                Load();
+                fileName = "New Node Structure";
+                reference = null;
+                nodes = new List<Node>();
+                connections = new List<Connection>();
             }
+            //if (GUILayout.Button("Load"))
+            //{
+            //    Debug.Log("Load");
+            //    Load();
+            //}
+
+            zoomFactor = EditorGUILayout.Slider("Zoom step", zoomFactor, .1f, .3f);
 
             // Unsaved changes message
             //saveChangesMessage = EditorGUILayout.TextField(saveChangesMessage);
@@ -232,6 +260,7 @@ namespace NodeEditor
             //{
             //    Debug.Log("Save");
             //}
+            GUILayout.EndHorizontal();
         }
 
         private void DrawNodes()
@@ -280,16 +309,31 @@ namespace NodeEditor
                     }
                     break;
                 // TODO: make zoom affect nodes
-                //case EventType.ScrollWheel:
-                //    zoom = Mathf.Clamp(zoom - e.delta.y * zoomFactor, zoomMin, zoomMax);
-                //    //Debug.Log("Adjust zoom: " + zoom);
-                //    GUI.changed = true;
-                //    break;
+                case EventType.ScrollWheel:
+                    zoom = Mathf.Clamp(zoom - e.delta.y * zoomFactor, zoomMin, zoomMax);
+                    //Debug.Log("Adjust zoom: " + zoom);
+                    GUI.changed = true;
+                    break;
                 // TODO: Allow dragging with spacebar
                 case EventType.KeyDown:
                     if (e.keyCode == KeyCode.Space)
                     {
                         Debug.Log("Space");
+                        Tools.current = Tool.View;
+                    }
+                    if (e.keyCode == KeyCode.Delete || e.keyCode == KeyCode.Backspace)
+                    {
+                        Debug.Log("Delete");
+                        for (int i = 0; i < nodes.Count; i++)
+                        {
+                            Node node = nodes[i];
+                            if (node.isSelected)
+                            {
+                                nodes.RemoveAt(i);
+                                i--;
+                                GUI.changed = true;
+                            }
+                        }
                     }
                     break;
             }
@@ -383,7 +427,10 @@ namespace NodeEditor
         {
             selectedInPoint = inPoint;
             if (selectedOutPoint == null) return;
-
+            if (!allowLoops)
+            {
+                // TODO Check if the node would be connected downward with itself
+            }
             if (selectedOutPoint.node != selectedInPoint.node)
             {
                 CreateConnection();
@@ -395,7 +442,10 @@ namespace NodeEditor
         {
             selectedOutPoint = outPoint;
             if (selectedInPoint == null) return;
-
+            if (!allowLoops)
+            {
+                // TODO Check if the node would be connected upward with itself
+            }
             if (selectedOutPoint.node != selectedInPoint.node)
             {
                 CreateConnection();

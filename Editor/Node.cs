@@ -13,6 +13,7 @@ namespace NodeEditor
         public string title;
         public bool isDragged;
         public bool isSelected;
+        public bool multiSelecting;
 
         public ConnectionPoint inPoint;
         public ConnectionPoint outPoint;
@@ -74,8 +75,11 @@ namespace NodeEditor
                         else
                         {
                             GUI.changed = true;
-                            isSelected = false;
-                            style = defaultNodeStyle;
+                            if (!multiSelecting)
+                            {
+                                isSelected = false;
+                                style = defaultNodeStyle;
+                            }
                         }
                     }
 
@@ -95,6 +99,14 @@ namespace NodeEditor
                         e.Use();
                         return true;
                     }
+                    break;
+                case EventType.KeyDown:
+                    if (e.keyCode == KeyCode.LeftControl)
+                        multiSelecting = true;
+                    break;
+                case EventType.KeyUp:
+                    if (e.keyCode == KeyCode.LeftControl)
+                        multiSelecting = false;
                     break;
                 default:
                     break;

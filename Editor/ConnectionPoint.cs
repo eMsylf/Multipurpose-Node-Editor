@@ -13,7 +13,7 @@ namespace NodeEditor
         public ConnectionPointType type;
         [HideInInspector]
         // TODO: Fix looping reference
-        public Node node;
+        internal Node node;
         public GUIStyle style;
         public Action<ConnectionPoint> OnClickConnectionPoint;
 
