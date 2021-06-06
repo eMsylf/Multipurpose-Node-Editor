@@ -11,26 +11,22 @@ namespace NodeEditor
     {
         public Rect rect;
         public ConnectionPointType type;
-        [HideInInspector]
-        // TODO: Fix looping reference
-        internal Node node;
         public GUIStyle style;
-        public Action<ConnectionPoint> OnClickConnectionPoint;
+        public Action<Node, ConnectionPointType> OnClickConnectionPoint;
 
-        public ConnectionPoint(Node node, ConnectionPointType type, Vector2 size, GUIStyle style, Action<ConnectionPoint> onClickConnectionPoint)
+        public ConnectionPoint(ConnectionPointType type, Vector2 size, GUIStyle style, Action<Node, ConnectionPointType> onClickConnectionPoint)
         {
             this.type = type;
-            this.node = node;
             this.style = style;
-            OnClickConnectionPoint = onClickConnectionPoint;
             rect = new Rect(0, 0, size.x, size.y);
+            OnClickConnectionPoint = onClickConnectionPoint;
         }
 
         // TODO: Add
         // [DONE] top-to-bottom variant
         // (and bottom-to-top)
         // (and right-to-left?)
-        public void Draw(Direction direction)
+        public void Draw(Direction direction, Node node)
         {
             switch (direction)
             {
@@ -67,10 +63,9 @@ namespace NodeEditor
                 default:
                     break;
             }
-
             if (GUI.Button(rect, "", style))
             {
-                OnClickConnectionPoint?.Invoke(this);
+                OnClickConnectionPoint?.Invoke(node, type);
             }
         }
     }

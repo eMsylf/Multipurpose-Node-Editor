@@ -17,8 +17,7 @@ namespace NodeEditor
             if (asset.GetType() == typeof(NodeStructure))
             {
                 NodeBasedEditor editor = NodeBasedEditor.OpenWindow();
-                editor.reference = asset as NodeStructure;
-                editor.Load();
+                editor.Load(asset as NodeStructure);
                 string name = EditorUtility.InstanceIDToObject(instanceID).name;
                 Debug.Log("Open " + name);
             }

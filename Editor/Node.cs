@@ -14,7 +14,6 @@ namespace NodeEditor
         public bool isDragged;
         public bool isSelected;
         public bool multiSelecting;
-
         public ConnectionPoint inPoint;
         public ConnectionPoint outPoint;
 
@@ -24,7 +23,7 @@ namespace NodeEditor
 
         public Action<Node> OnRemoveNode;
 
-        public Node(Vector2 position, Vector2 size, Direction direction, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<ConnectionPoint> OnClickInPoint, Action<ConnectionPoint> OnClickOutPoint, Action<Node> OnClickRemoveNode)
+        public Node(Vector2 position, Vector2 size, Direction direction, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node, ConnectionPointType> OnClickNode, Action<Node> OnClickRemoveNode)
         {
             rect = new Rect(position, size);
             style = nodeStyle;
@@ -39,8 +38,8 @@ namespace NodeEditor
                     connectionPointDimensions = new Vector2(20, 10);
                     break;
             }
-            inPoint = new ConnectionPoint(this, ConnectionPointType.In, connectionPointDimensions, inPointStyle, OnClickInPoint);
-            outPoint = new ConnectionPoint(this, ConnectionPointType.Out, connectionPointDimensions, outPointStyle, OnClickOutPoint);
+            inPoint = new ConnectionPoint(ConnectionPointType.In, connectionPointDimensions, inPointStyle, OnClickNode);
+            outPoint = new ConnectionPoint(ConnectionPointType.Out, connectionPointDimensions, outPointStyle, OnClickNode);
             defaultNodeStyle = nodeStyle;
             selectedNodeStyle = selectedStyle;
             OnRemoveNode = OnClickRemoveNode;
@@ -53,8 +52,8 @@ namespace NodeEditor
 
         public void Draw(Direction direction)
         {
-            inPoint.Draw(direction);
-            outPoint.Draw(direction);
+            inPoint.Draw(direction, this);
+            outPoint.Draw(direction, this);
             GUI.Box(rect, title, style);
         }
 

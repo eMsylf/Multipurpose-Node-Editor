@@ -22,8 +22,8 @@ namespace NodeEditor
         private GUIStyle inPointStyle;
         private GUIStyle outPointStyle;
 
-        private ConnectionPoint selectedInPoint;
-        private ConnectionPoint selectedOutPoint;
+        private Node selectedNodeIn;
+        private Node selectedNodeOut;
         private bool allowLoops;
 
         private Vector2 offset;
@@ -139,20 +139,16 @@ namespace NodeEditor
         }
 
         // TODO: Make loading work
-        public void Load()
+        public void Load(NodeStructure structure)
         {
-            if (reference == null)
-            {
-                return;
-            }
-
             nodes?.Clear();
             connections?.Clear();
             ClearConnectionSelection();
-            Debug.Log("Found " + reference.nodes.Count + " nodes");
-            Debug.Log("Found " + reference.connections.Count + " connections");
-            nodes = reference.nodes.ToList();
-            connections = reference.connections.ToList();
+            Debug.Log("Found " + structure.nodes.Count + " nodes");
+            Debug.Log("Found " + structure.connections.Count + " connections");
+            nodes = structure.nodes.ToList();
+            connections = structure.connections.ToList();
+            reference = structure;
         }
 
         private void DrawGrid(float spacing, Color color)
@@ -217,7 +213,13 @@ namespace NodeEditor
             GUILayout.BeginHorizontal();
 
             if (reference == null) fileName = EditorGUILayout.TextField(fileName);
+            EditorGUI.BeginChangeCheck();
             reference = (NodeStructure)EditorGUILayout.ObjectField(reference, typeof(NodeStructure), false);
+            if (EditorGUI.EndChangeCheck())
+            {
+                Debug.Log("New file selected");
+                Load(reference);
+            }
             if (GUILayout.Button("Save"))
             {
                 Debug.Log("Save");
@@ -293,7 +295,7 @@ namespace NodeEditor
                     if (e.button == 0)
                     {
                         // TODO: Add node when dragging a connection endpoint, and clicking on nothing.
-                        if (selectedInPoint != null)
+                        if (selectedNodeIn != null)
                             OnClickAddNode(e.mousePosition);
                         ClearConnectionSelection();
                     }
@@ -372,12 +374,12 @@ namespace NodeEditor
                     break;
             }
 
-            if (selectedInPoint != null && selectedOutPoint == null)
+            if (selectedNodeIn != null && selectedNodeOut == null)
             {
                 Handles.DrawBezier(
-                    selectedInPoint.rect.center,
+                    selectedNodeIn.inPoint.rect.center,
                     e.mousePosition,
-                    selectedInPoint.rect.center + dir * 50f,
+                    selectedNodeIn.inPoint.rect.center + dir * 50f,
                     e.mousePosition - dir * 50f,
                     Color.white,
                     null,
@@ -387,12 +389,12 @@ namespace NodeEditor
                 GUI.changed = true;
             }
 
-            if (selectedOutPoint != null && selectedInPoint == null)
+            if (selectedNodeOut != null && selectedNodeIn == null)
             {
                 Handles.DrawBezier(
-                    selectedOutPoint.rect.center,
+                    selectedNodeOut.outPoint.rect.center,
                     e.mousePosition,
-                    selectedOutPoint.rect.center - dir * 50f,
+                    selectedNodeOut.outPoint.rect.center - dir * 50f,
                     e.mousePosition + dir * 50f,
                     Color.white,
                     null,
@@ -420,33 +422,33 @@ namespace NodeEditor
         private void OnClickAddNode(Vector2 mousePosition)
         {
             if (nodes == null) nodes = new List<Node>();
-            nodes.Add(new Node(mousePosition, new Vector2(200, 50), direction, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnClickInPoint, OnClickOutPoint, OnClickRemoveNode));
+            nodes.Add(new Node(mousePosition, new Vector2(200, 50), direction, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnClickConnectionPoint, OnClickRemoveNode));
         }
 
-        private void OnClickInPoint(ConnectionPoint inPoint)
+        private void OnClickConnectionPoint(Node node, ConnectionPointType type)
         {
-            selectedInPoint = inPoint;
-            if (selectedOutPoint == null) return;
-            if (!allowLoops)
+            switch (type)
             {
-                // TODO Check if the node would be connected downward with itself
+                case ConnectionPointType.In:
+                    selectedNodeIn = node;
+                    if (selectedNodeOut == null) return;
+                    if (!allowLoops)
+                    {
+                        // TODO Check if the node would be connected downward with itself
+                    }
+                    break;
+                case ConnectionPointType.Out:
+                    selectedNodeOut = node;
+                    if (selectedNodeIn == null) return;
+                    if (!allowLoops)
+                    {
+                        // TODO Check if the node would be connected upward with itself
+                    }
+                    break;
+                default:
+                    break;
             }
-            if (selectedOutPoint.node != selectedInPoint.node)
-            {
-                CreateConnection();
-            }
-            ClearConnectionSelection();
-        }
-
-        private void OnClickOutPoint(ConnectionPoint outPoint)
-        {
-            selectedOutPoint = outPoint;
-            if (selectedInPoint == null) return;
-            if (!allowLoops)
-            {
-                // TODO Check if the node would be connected upward with itself
-            }
-            if (selectedOutPoint.node != selectedInPoint.node)
+            if (selectedNodeOut != selectedNodeIn)
             {
                 CreateConnection();
             }
@@ -462,13 +464,13 @@ namespace NodeEditor
         {
             if (connections == null) 
                 connections = new List<Connection>();
-            connections.Add(new Connection(selectedInPoint, selectedOutPoint, OnClickRemoveConnection));
+            connections.Add(new Connection(selectedNodeIn.inPoint, selectedNodeOut.outPoint, OnClickRemoveConnection));
         }
 
         private void ClearConnectionSelection()
         {
-            selectedInPoint = null;
-            selectedOutPoint = null;
+            selectedNodeIn = null;
+            selectedNodeOut = null;
         }
 
         private void OnClickRemoveNode(Node node)
@@ -489,11 +491,12 @@ namespace NodeEditor
                 {
                     connections.Remove(connectionsToRemove[i]);
                 }
-                // Is this necessary? Doesn't the list get disposed of once the if-statement is exited?
+                // TODO: Is this necessary? Doesn't the list get disposed of once the if-statement is exited?
                 connectionsToRemove = null;
             }
 
             nodes.Remove(node);
+            // TODO: Nodes are not disposed, it seems. Possible memory leak?
         }
     }
 }
