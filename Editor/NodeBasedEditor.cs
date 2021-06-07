@@ -11,6 +11,9 @@ namespace NodeEditor
 
     public class NodeBasedEditor : EditorWindow
     {
+        public bool menuBarType = false;
+        private float menuBarHeight = 20f;
+
         private List<Node> nodes = new List<Node>();
         private List<Connection> connections = new List<Connection>();
         private Direction direction = Direction.TopBottom;
@@ -30,7 +33,6 @@ namespace NodeEditor
         private Vector2 drag;
 
         private float zoom = 1f;
-        private float zoomFactor = .1f;
         private float zoomMin = .3f;
         private float zoomMax = 2f;
 
@@ -45,6 +47,8 @@ namespace NodeEditor
 
         private void OnEnable()
         {
+            toolbarSettingsStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/dockarea back.png") as Texture2D;
+
             nodeStyle = new GUIStyle();
             nodeStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/node1.png") as Texture2D;
             nodeStyle.border = new RectOffset(12, 12, 12, 12);
@@ -92,7 +96,7 @@ namespace NodeEditor
             DrawConnections();
 
             DrawConnectionLine(Event.current);
-
+            
             DrawToolbar();
 
             ProcessNodeEvents(Event.current);
@@ -194,52 +198,71 @@ namespace NodeEditor
         private bool enableToolbar = true;
         private Rect toolbarToggle = new Rect(0, 0, 20, 20);
         private Rect toolbarToggleActive = new Rect(0, 20, 20, 20);
+        private bool showSettings;
+        private float toolbarSettingsWidth = 200;
+        private GUIStyle toolbarSettingsStyle = new GUIStyle();
 
         public void DrawToolbar()
         {
             if (enableToolbar)
             {
-                if (GUI.Button(toolbarToggleActive, "^")) enableToolbar = false;
+                if (GUI.Button(toolbarToggleActive, "^", EditorStyles.miniButton)) enableToolbar = false;
             }
             else
             {
 
-                if (GUI.Button(toolbarToggle, "v")) enableToolbar = true;
+                if (GUI.Button(toolbarToggle, "v", EditorStyles.miniButton)) enableToolbar = true;
                 return;
             }
 
-            Rect background = new Rect(0, 0, position.width, 20f);
-            GUI.Box(background, "");
+            Rect menuBarRect = new Rect(0, 0, position.width, menuBarHeight);
+            GUILayout.BeginArea(menuBarRect, EditorStyles.toolbar);
             GUILayout.BeginHorizontal();
 
-            if (reference == null) fileName = EditorGUILayout.TextField(fileName);
+            if (reference == null) 
+                fileName = EditorGUILayout.TextField(fileName, GUILayout.MinWidth(50), GUILayout.MaxWidth(150));
             EditorGUI.BeginChangeCheck();
-            reference = (NodeStructure)EditorGUILayout.ObjectField(reference, typeof(NodeStructure), false);
+            reference = (NodeStructure)EditorGUILayout.ObjectField(reference, typeof(NodeStructure), false, GUILayout.MinWidth(50), GUILayout.MaxWidth(150));
             if (EditorGUI.EndChangeCheck())
             {
                 Debug.Log("New file selected");
                 Load(reference);
             }
-            if (GUILayout.Button("Save"))
+
+            if (GUILayout.Button("Save", EditorStyles.toolbarButton, GUILayout.Width(40)))
             {
                 Debug.Log("Save");
                 SaveChanges();
             }
 
-            if (GUILayout.Button("New"))
+            if (GUILayout.Button("New", EditorStyles.toolbarButton, GUILayout.Width(40)))
             {
                 fileName = "New Node Structure";
                 reference = null;
                 nodes = new List<Node>();
                 connections = new List<Connection>();
             }
-            //if (GUILayout.Button("Load"))
-            //{
-            //    Debug.Log("Load");
-            //    Load();
-            //}
 
-            zoomFactor = EditorGUILayout.Slider("Zoom step", zoomFactor, .1f, .3f);
+            GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button("Settings", EditorStyles.toolbarDropDown, GUILayout.Width(70)))
+            {
+                showSettings = !showSettings;
+                Debug.Log("Show settings: " + showSettings);
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.EndArea();
+
+            if (showSettings)
+            {
+                Rect toolbarSettingsRect = new Rect(position.width - toolbarSettingsWidth - 5, EditorGUIUtility.singleLineHeight + 5, toolbarSettingsWidth, EditorGUIUtility.singleLineHeight * 1 + 5);
+                GUILayout.BeginArea(toolbarSettingsRect, toolbarSettingsStyle);
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Zoom");
+                zoom = GUILayout.HorizontalSlider(zoom, zoomMin, zoomMax);
+                GUILayout.EndHorizontal();
+                GUILayout.EndArea();
+            }
 
             // Unsaved changes message
             //saveChangesMessage = EditorGUILayout.TextField(saveChangesMessage);
@@ -262,7 +285,6 @@ namespace NodeEditor
             //{
             //    Debug.Log("Save");
             //}
-            GUILayout.EndHorizontal();
         }
 
         private void DrawNodes()
@@ -294,9 +316,16 @@ namespace NodeEditor
                 case EventType.MouseDown:
                     if (e.button == 0)
                     {
-                        // TODO: Add node when dragging a connection endpoint, and clicking on nothing.
-                        if (selectedNodeIn != null)
-                            OnClickAddNode(e.mousePosition);
+                        if (selectedNodeIn == null && selectedNodeOut != null)
+                        {
+                            Node newNode = OnClickAddNode(e.mousePosition, true);
+                            OnClickConnectionPoint(newNode, ConnectionPointType.In);
+                        }
+                        if (selectedNodeIn != null && selectedNodeOut == null)
+                        {
+                            Node newNode = OnClickAddNode(e.mousePosition, true);
+                            OnClickConnectionPoint(newNode, ConnectionPointType.Out);
+                        }
                         ClearConnectionSelection();
                     }
 
@@ -305,22 +334,21 @@ namespace NodeEditor
                     break;
 
                 case EventType.MouseDrag:
-                    if (e.button == 2)
+                    if (e.button == 2 || Tools.current == Tool.View)
                     {
                         OnDrag(e.delta);
                     }
                     break;
                 // TODO: make zoom affect nodes
                 case EventType.ScrollWheel:
-                    zoom = Mathf.Clamp(zoom - e.delta.y * zoomFactor, zoomMin, zoomMax);
+                    zoom = Mathf.Clamp(zoom - e.delta.y * .1f, zoomMin, zoomMax);
                     //Debug.Log("Adjust zoom: " + zoom);
                     GUI.changed = true;
                     break;
-                // TODO: Allow dragging with spacebar
                 case EventType.KeyDown:
-                    if (e.keyCode == KeyCode.Space)
+                    if (e.keyCode == KeyCode.LeftAlt || e.keyCode == KeyCode.RightAlt)
                     {
-                        Debug.Log("Space");
+                        Debug.Log("Tab");
                         Tools.current = Tool.View;
                     }
                     if (e.keyCode == KeyCode.Delete || e.keyCode == KeyCode.Backspace)
@@ -355,8 +383,9 @@ namespace NodeEditor
 
         private void ProcessContextMenu(Vector2 mousePosition)
         {
+            Debug.Log("Add node through context menu");
             GenericMenu genericMenu = new GenericMenu();
-            genericMenu.AddItem(new GUIContent("Add node"), false, () => OnClickAddNode(mousePosition));
+            genericMenu.AddItem(new GUIContent("Add node"), false, () => OnClickAddNode(mousePosition, true));
             genericMenu.ShowAsContext();
         }
 
@@ -419,10 +448,17 @@ namespace NodeEditor
             GUI.changed = true;
         }
 
-        private void OnClickAddNode(Vector2 mousePosition)
+        private Node OnClickAddNode(Vector2 mousePosition, bool centered)
         {
             if (nodes == null) nodes = new List<Node>();
-            nodes.Add(new Node(mousePosition, new Vector2(200, 50), direction, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnClickConnectionPoint, OnClickRemoveNode));
+            Node node = new Node(mousePosition, new Vector2(200, 50), direction, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnClickConnectionPoint, OnClickRemoveNode);
+            if (centered)
+            {
+                node.rect.x -= node.rect.width * .5f;
+                node.rect.y -= node.rect.height * .5f;
+            }
+            nodes.Add(node);
+            return node;
         }
 
         private void OnClickConnectionPoint(Node node, ConnectionPointType type)
