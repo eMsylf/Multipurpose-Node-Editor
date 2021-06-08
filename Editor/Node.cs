@@ -10,6 +10,7 @@ namespace NodeEditor
     public class Node
     {
         public Rect rect;
+        public Vector2 originalSize;
         public string title;
         public bool isDragged;
         public bool isSelected;
@@ -26,6 +27,7 @@ namespace NodeEditor
         public Node(Vector2 position, Vector2 size, Direction direction, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node, ConnectionPointType> OnClickNode, Action<Node> OnClickRemoveNode)
         {
             rect = new Rect(position, size);
+            originalSize = rect.size;
             style = nodeStyle;
             Vector2 connectionPointDimensions;
             switch (direction)
@@ -50,10 +52,11 @@ namespace NodeEditor
             rect.position += delta;
         }
 
-        public void Draw(Direction direction)
+        public void Draw(Direction direction, float zoom)
         {
-            inPoint.Draw(direction, this);
-            outPoint.Draw(direction, this);
+            inPoint.Draw(direction, this, zoom);
+            outPoint.Draw(direction, this, zoom);
+            rect.size = originalSize * zoom;
             GUI.Box(rect, title, style);
         }
 

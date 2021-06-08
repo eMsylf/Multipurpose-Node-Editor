@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.ShortcutManagement;
 
 namespace NodeEditor
 {
@@ -11,12 +12,19 @@ namespace NodeEditor
 
     public class NodeBasedEditor : EditorWindow
     {
-        public bool menuBarType = false;
-        private float menuBarHeight = 20f;
+        public Direction direction = Direction.TopBottom;
+
+        private float toolbarHeight = 20f;
+        private bool enableToolbar = true;
+        private Rect toolbarToggle = new Rect(0, 0, 20, 20);
+        private Rect toolbarToggleActive = new Rect(0, 20, 20, 20);
+        private bool showSettings;
+        private float toolbarSettingsHeight = EditorGUIUtility.singleLineHeight;
+        private float toolbarSettingsWidth = 200;
+        private GUIStyle toolbarSettingsStyle = new GUIStyle();
 
         private List<Node> nodes = new List<Node>();
         private List<Connection> connections = new List<Connection>();
-        private Direction direction = Direction.TopBottom;
         public NodeStructure reference;
         string fileName = "New Node Structure";
 
@@ -33,13 +41,19 @@ namespace NodeEditor
         private Vector2 drag;
 
         private float zoom = 1f;
-        private float zoomMin = .3f;
+        private float zoomMin = .5f;
         private float zoomMax = 2f;
+
+        private bool drawingSelectionRect = false;
+        private Rect selectionRect;
+        private GUIStyle selectionRectStyle;
+
+        static NodeBasedEditor window;
 
         [MenuItem("Window/Node Based Editor")]
         public static NodeBasedEditor OpenWindow()
         {
-            NodeBasedEditor window = GetWindow<NodeBasedEditor>();
+            window = GetWindow<NodeBasedEditor>();
             window.titleContent = new GUIContent("Node Based Editor");
             window.saveChangesMessage = "This node structure has not been saved. Would you like to save?";
             return window;
@@ -85,6 +99,11 @@ namespace NodeEditor
             outPointStyle.active.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn " + outSide + " on.png") as Texture2D;
             outPointStyle.border = border;
 
+            selectionRectStyle = new GUIStyle();
+            selectionRectStyle.normal.background = new Texture2D(1, 1);
+            selectionRectStyle.normal.background.SetPixel(1, 1, new Color(.5f, .5f, .5f, .3f));
+            //selectionRectStyle.border = new RectOffset();
+
         }
 
         private void OnGUI()
@@ -92,7 +111,7 @@ namespace NodeEditor
             DrawGrid(20 * zoom, new Color(.5f, .5f, .5f, .2f));
             DrawGrid(100 * zoom, new Color(.5f, .5f, .5f, .4f));
 
-            DrawNodes();
+            DrawNodes(zoom);
             DrawConnections();
 
             DrawConnectionLine(Event.current);
@@ -104,13 +123,27 @@ namespace NodeEditor
 
             if (GUI.changed) Repaint();
         }
+
+        [Shortcut("Node Based Editor/New node structure", KeyCode.N, ShortcutModifiers.Alt)]
+        public static void New()
+        {
+            if (focusedWindow.GetType() == typeof(NodeBasedEditor))
+                (focusedWindow as NodeBasedEditor).NewFile();
+        }
+
+        [Shortcut("Node Based Editor/Save node structure", defaultKeyCode: KeyCode.S, defaultShortcutModifiers: ShortcutModifiers.Alt)]
+        public static void Save()
+        {
+            // Is dit netjes? Mag dit? Kan dit fout gaan?
+            if (focusedWindow.GetType() == typeof(NodeBasedEditor))
+                (focusedWindow as NodeBasedEditor).SaveChanges();
+        }
+
         public override void SaveChanges()
         {
             if (reference == null)
             {
-                reference = ScriptableObject.CreateInstance<NodeStructure>();
-                
-                //reference = new NodeStructure();
+                reference = CreateInstance<NodeStructure>();
             }
 
             reference.nodes = nodes.ToList();
@@ -138,11 +171,10 @@ namespace NodeEditor
             // TODO: testen of dit nodig is & testen of dit een grote performance impact heeft met veel assets
             //AssetDatabase.Refresh();
 
-            Debug.Log($"{this} saved successfully to file {reference.name}!", reference);
+            Debug.Log($"{this} saved successfully to file {reference.name}", reference);
             base.SaveChanges();
         }
 
-        // TODO: Make loading work
         public void Load(NodeStructure structure)
         {
             nodes?.Clear();
@@ -195,13 +227,6 @@ namespace NodeEditor
             Handles.EndGUI();
         }
 
-        private bool enableToolbar = true;
-        private Rect toolbarToggle = new Rect(0, 0, 20, 20);
-        private Rect toolbarToggleActive = new Rect(0, 20, 20, 20);
-        private bool showSettings;
-        private float toolbarSettingsWidth = 200;
-        private GUIStyle toolbarSettingsStyle = new GUIStyle();
-
         public void DrawToolbar()
         {
             if (enableToolbar)
@@ -215,7 +240,7 @@ namespace NodeEditor
                 return;
             }
 
-            Rect menuBarRect = new Rect(0, 0, position.width, menuBarHeight);
+            Rect menuBarRect = new Rect(0, 0, position.width, toolbarHeight);
             GUILayout.BeginArea(menuBarRect, EditorStyles.toolbar);
             GUILayout.BeginHorizontal();
 
@@ -237,10 +262,7 @@ namespace NodeEditor
 
             if (GUILayout.Button("New", EditorStyles.toolbarButton, GUILayout.Width(40)))
             {
-                fileName = "New Node Structure";
-                reference = null;
-                nodes = new List<Node>();
-                connections = new List<Connection>();
+                NewFile();
             }
 
             GUILayout.FlexibleSpace();
@@ -253,16 +275,17 @@ namespace NodeEditor
             GUILayout.EndHorizontal();
             GUILayout.EndArea();
 
-            if (showSettings)
-            {
-                Rect toolbarSettingsRect = new Rect(position.width - toolbarSettingsWidth - 5, EditorGUIUtility.singleLineHeight + 5, toolbarSettingsWidth, EditorGUIUtility.singleLineHeight * 1 + 5);
-                GUILayout.BeginArea(toolbarSettingsRect, toolbarSettingsStyle);
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("Zoom");
-                zoom = GUILayout.HorizontalSlider(zoom, zoomMin, zoomMax);
-                GUILayout.EndHorizontal();
-                GUILayout.EndArea();
-            }
+            //if (showSettings)
+            //{
+            //    Rect toolbarSettingsRect = new Rect(position.width - toolbarSettingsWidth - 5, EditorGUIUtility.singleLineHeight + 5, toolbarSettingsWidth, toolbarSettingsHeight * 1 + 5);
+            //    GUILayout.BeginArea(toolbarSettingsRect, toolbarSettingsStyle);
+            //    GUILayout.BeginHorizontal();
+            //    GUILayout.Label("Zoom");
+            //    zoom = GUILayout.HorizontalSlider(zoom, zoomMin, zoomMax);
+            //    GUILayout.EndHorizontal();
+
+            //    GUILayout.EndArea();
+            //}
 
             // Unsaved changes message
             //saveChangesMessage = EditorGUILayout.TextField(saveChangesMessage);
@@ -287,14 +310,22 @@ namespace NodeEditor
             //}
         }
 
-        private void DrawNodes()
+        private void NewFile()
+        {
+            fileName = "New Node Structure";
+            reference = null;
+            nodes = new List<Node>();
+            connections = new List<Connection>();
+        }
+
+        private void DrawNodes(float zoom)
         {
             if (nodes == null)
                 return;
 
             for (int i = 0; i < nodes.Count; i++)
             {
-                nodes[i].Draw(direction);
+                nodes[i].Draw(direction, zoom);
             }
         }
 
@@ -334,23 +365,42 @@ namespace NodeEditor
                     break;
 
                 case EventType.MouseDrag:
-                    if (e.button == 2 || Tools.current == Tool.View)
+                    // TODO: Selection rect
+                    //if (Tools.current == Tool.Rect)
+                    //{
+                    //    if (!drawingSelectionRect)
+                    //    {
+                    //        selectionRect = new Rect(e.mousePosition, new Vector2());
+                            
+                    //        Debug.Log("Start new rect");
+                    //        drawingSelectionRect = true;
+                    //    }
+                    //    else
+                    //    {
+                    //        selectionRect.size += e.delta;
+                    //        // Draw selection rect
+                    //        Debug.Log("Draw selection rect");
+                    //        GUI.Box(selectionRect, "Aaaaaa", selectionRectStyle);
+                    //    }
+                    //    GUI.changed = true;
+                    //}
+                    if (e.button == 2 || Tools.viewToolActive)
                     {
                         OnDrag(e.delta);
                     }
                     break;
-                // TODO: make zoom affect nodes
-                case EventType.ScrollWheel:
-                    zoom = Mathf.Clamp(zoom - e.delta.y * .1f, zoomMin, zoomMax);
-                    //Debug.Log("Adjust zoom: " + zoom);
-                    GUI.changed = true;
+                case EventType.MouseUp:
+                    drawingSelectionRect = false;
                     break;
+                // TODO: make zoom affect nodes
+                //case EventType.ScrollWheel:
+                //    zoom = Mathf.Clamp(zoom - e.delta.y * .1f, zoomMin, zoomMax);
+                //    //Debug.Log("Adjust zoom: " + zoom);
+                //    GUI.changed = true;
+                //    break;
                 case EventType.KeyDown:
-                    if (e.keyCode == KeyCode.LeftAlt || e.keyCode == KeyCode.RightAlt)
-                    {
-                        Debug.Log("Tab");
-                        Tools.current = Tool.View;
-                    }
+                    if (e.keyCode == KeyCode.S)
+                        Tools.current = Tool.Rect;
                     if (e.keyCode == KeyCode.Delete || e.keyCode == KeyCode.Backspace)
                     {
                         Debug.Log("Delete");
@@ -383,7 +433,7 @@ namespace NodeEditor
 
         private void ProcessContextMenu(Vector2 mousePosition)
         {
-            Debug.Log("Add node through context menu");
+            Debug.Log("Show context menu");
             GenericMenu genericMenu = new GenericMenu();
             genericMenu.AddItem(new GUIContent("Add node"), false, () => OnClickAddNode(mousePosition, true));
             genericMenu.ShowAsContext();
@@ -448,8 +498,22 @@ namespace NodeEditor
             GUI.changed = true;
         }
 
+        [Shortcut("Node Based Editor/New Node", KeyCode.Space)]
+        public static void AddNode()
+        {
+            if (focusedWindow.GetType() == typeof(NodeBasedEditor))
+            {
+                if (mouseOverWindow.GetType() == typeof(NodeBasedEditor))
+                {
+                    NodeBasedEditor editor = (focusedWindow as NodeBasedEditor);
+                    editor.ProcessContextMenu(editor.position.center);
+                }
+            }
+        }
+
         private Node OnClickAddNode(Vector2 mousePosition, bool centered)
         {
+            Debug.Log("Add node at " + mousePosition);
             if (nodes == null) nodes = new List<Node>();
             Node node = new Node(mousePosition, new Vector2(200, 50), direction, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnClickConnectionPoint, OnClickRemoveNode);
             if (centered)
