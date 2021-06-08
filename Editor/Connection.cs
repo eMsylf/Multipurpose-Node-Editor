@@ -9,14 +9,14 @@ namespace NodeEditor
     [Serializable]
     public class Connection
     {
-        public ConnectionPoint inPoint;
-        public ConnectionPoint outPoint;
+        public Node inNode;
+        public Node outNode;
         public Action<Connection> OnClickRemoveConnection;
 
-        public Connection (ConnectionPoint inPoint, ConnectionPoint outPoint, Action<Connection> OnClickRemoveConnection)
+        public Connection (Node inNode, Node outNode, Action<Connection> OnClickRemoveConnection)
         {
-            this.inPoint = inPoint;
-            this.outPoint = outPoint;
+            this.inNode = inNode;
+            this.outNode = outNode;
             this.OnClickRemoveConnection = OnClickRemoveConnection;
         }
 
@@ -35,20 +35,18 @@ namespace NodeEditor
             }
 
             Handles.DrawBezier(
-                inPoint.rect.center,
-                outPoint.rect.center,
-                inPoint.rect.center + dir * 50f,
-                outPoint.rect.center - dir * 50f,
+                inNode.inPoint.rect.center,
+                outNode.outPoint.rect.center,
+                inNode.inPoint.rect.center + dir * 50f,
+                outNode.outPoint.rect.center - dir * 50f,
                 Color.white,
                 null,
                 2f);
 
-            if (Handles.Button((inPoint.rect.center + outPoint.rect.center) * .5f, Quaternion.identity, 4, 8, Handles.RectangleHandleCap))
+            if (Handles.Button((inNode.rect.center + outNode.rect.center) * .5f, Quaternion.identity, 4, 8, Handles.RectangleHandleCap))
             {
                 OnClickRemoveConnection?.Invoke(this);
             }
         }
-
-
     }
 }

@@ -88,7 +88,7 @@ namespace NodeEditor
                     border = new RectOffset(4, 4, 12, 12);
                     break;
             }
-
+            
             inPointStyle = new GUIStyle();
             inPointStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn " + inSide + ".png") as Texture2D;
             inPointStyle.active.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn " + inSide + " on.png") as Texture2D;
@@ -217,7 +217,18 @@ namespace NodeEditor
             Debug.Log("Found " + structure.connections.Count + " connections");
             nodes = structure.nodes.ToList();
             connections = structure.connections.ToList();
+            foreach (var node in nodes)
+            {
+                node.OnRemoveNode = OnClickRemoveNode;
+                node.inPoint.OnClickConnectionPoint = OnClickConnectionPoint;
+                node.outPoint.OnClickConnectionPoint = OnClickConnectionPoint;
+            }
+            foreach (var connection in connections)
+            {
+                connection.OnClickRemoveConnection = OnClickRemoveConnection;
+            }
             reference = structure;
+            hasUnsavedChanges = false;
             return true;
         }
 
@@ -422,7 +433,7 @@ namespace NodeEditor
                             Node node = nodes[i];
                             if (node.isSelected)
                             {
-                                nodes.RemoveAt(i);
+                                OnClickRemoveNode(node);
                                 i--;
                                 GUI.changed = true;
                             }
@@ -584,7 +595,7 @@ namespace NodeEditor
         {
             if (connections == null) 
                 connections = new List<Connection>();
-            connections.Add(new Connection(selectedNodeIn.inPoint, selectedNodeOut.outPoint, OnClickRemoveConnection));
+            connections.Add(new Connection(selectedNodeIn, selectedNodeOut, OnClickRemoveConnection));
             hasUnsavedChanges = true;
         }
 
@@ -602,7 +613,7 @@ namespace NodeEditor
 
                 for (int i = 0; i < connections.Count; i++)
                 {
-                    if (connections[i].inPoint == node.inPoint || connections[i].outPoint == node.outPoint)
+                    if (connections[i].inNode == node || connections[i].outNode == node)
                     {
                         connectionsToRemove.Add(connections[i]);
                     }

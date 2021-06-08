@@ -73,6 +73,7 @@ namespace NodeEditor
                             GUI.changed = true;
                             isSelected = true;
                             style = selectedNodeStyle;
+                            e.Use();
                         }
                         else
                         {
