@@ -15,7 +15,7 @@ namespace NodeEditor
         public Direction direction = Direction.TopBottom;
 
         private float toolbarHeight = 20f;
-        private bool enableToolbar = true;
+        private bool toolbarEnabled = true;
         private Rect toolbarToggle = new Rect(0, 0, 20, 20);
         private Rect toolbarToggleActive = new Rect(0, 20, 20, 20);
         private bool showSettings;
@@ -131,6 +131,38 @@ namespace NodeEditor
                 (focusedWindow as NodeBasedEditor).NewFile();
         }
 
+        private bool UnsavedChangesCheck()
+        {
+            if (hasUnsavedChanges)
+            {
+                int result = EditorUtility.DisplayDialogComplex("Unsaved Changes Detected", saveChangesMessage, "Yes", "Cancel", "Discard");
+                switch (result)
+                {
+                    case 0:
+                        SaveChanges();
+                        break;
+                    case 1:
+                        // Cancel
+                        return false;
+                    case 2:
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return true;
+        }
+
+        private void NewFile()
+        {
+            if (!UnsavedChangesCheck()) return;
+            fileName = "New Node Structure";
+            reference = null;
+            nodes = new List<Node>();
+            connections = new List<Connection>();
+            hasUnsavedChanges = false;
+        }
+
         [Shortcut("Node Based Editor/Save node structure", defaultKeyCode: KeyCode.S, defaultShortcutModifiers: ShortcutModifiers.Alt)]
         public static void Save()
         {
@@ -175,8 +207,9 @@ namespace NodeEditor
             base.SaveChanges();
         }
 
-        public void Load(NodeStructure structure)
+        public bool Load(NodeStructure structure)
         {
+            if (!UnsavedChangesCheck()) return false;
             nodes?.Clear();
             connections?.Clear();
             ClearConnectionSelection();
@@ -185,6 +218,7 @@ namespace NodeEditor
             nodes = structure.nodes.ToList();
             connections = structure.connections.ToList();
             reference = structure;
+            return true;
         }
 
         private void DrawGrid(float spacing, Color color)
@@ -229,14 +263,13 @@ namespace NodeEditor
 
         public void DrawToolbar()
         {
-            if (enableToolbar)
+            if (toolbarEnabled)
             {
-                if (GUI.Button(toolbarToggleActive, "^", EditorStyles.miniButton)) enableToolbar = false;
+                if (GUI.Button(toolbarToggleActive, "^", EditorStyles.miniButton)) toolbarEnabled = false;
             }
             else
             {
-
-                if (GUI.Button(toolbarToggle, "v", EditorStyles.miniButton)) enableToolbar = true;
+                if (GUI.Button(toolbarToggle, "v", EditorStyles.miniButton)) toolbarEnabled = true;
                 return;
             }
 
@@ -246,12 +279,20 @@ namespace NodeEditor
 
             if (reference == null) 
                 fileName = EditorGUILayout.TextField(fileName, GUILayout.MinWidth(50), GUILayout.MaxWidth(150));
+            NodeStructure oldReference = reference;
             EditorGUI.BeginChangeCheck();
-            reference = (NodeStructure)EditorGUILayout.ObjectField(reference, typeof(NodeStructure), false, GUILayout.MinWidth(50), GUILayout.MaxWidth(150));
+            NodeStructure newReference = (NodeStructure)EditorGUILayout.ObjectField(reference, typeof(NodeStructure), false, GUILayout.MinWidth(50), GUILayout.MaxWidth(150));
             if (EditorGUI.EndChangeCheck())
             {
                 Debug.Log("New file selected");
-                Load(reference);
+                if (Load(newReference))
+                {
+                    reference = newReference;
+                }
+                else
+                {
+                    reference = oldReference;
+                }
             }
 
             if (GUILayout.Button("Save", EditorStyles.toolbarButton, GUILayout.Width(40)))
@@ -265,57 +306,29 @@ namespace NodeEditor
                 NewFile();
             }
 
-            GUILayout.FlexibleSpace();
+            //GUILayout.FlexibleSpace();
 
-            if (GUILayout.Button("Settings", EditorStyles.toolbarDropDown, GUILayout.Width(70)))
-            {
-                showSettings = !showSettings;
-                Debug.Log("Show settings: " + showSettings);
-            }
+            //if (GUILayout.Button("Settings", EditorStyles.toolbarDropDown, GUILayout.Width(70)))
+            //{
+            //    showSettings = !showSettings;
+            //    Debug.Log("Show settings: " + showSettings);
+            //}
             GUILayout.EndHorizontal();
             GUILayout.EndArea();
-
+            // TODO: Re-enable settings dropdown
             //if (showSettings)
             //{
-            //    Rect toolbarSettingsRect = new Rect(position.width - toolbarSettingsWidth - 5, EditorGUIUtility.singleLineHeight + 5, toolbarSettingsWidth, toolbarSettingsHeight * 1 + 5);
-            //    GUILayout.BeginArea(toolbarSettingsRect, toolbarSettingsStyle);
-            //    GUILayout.BeginHorizontal();
-            //    GUILayout.Label("Zoom");
-            //    zoom = GUILayout.HorizontalSlider(zoom, zoomMin, zoomMax);
-            //    GUILayout.EndHorizontal();
+                //Rect toolbarSettingsRect = new Rect(position.width - toolbarSettingsWidth - 5, EditorGUIUtility.singleLineHeight + 5, toolbarSettingsWidth, toolbarSettingsHeight * 1 + 5);
+                //GUILayout.BeginArea(toolbarSettingsRect, toolbarSettingsStyle);
+                //GUILayout.BeginHorizontal();
+                //GUILayout.Label("Zoom");
+                //zoom = GUILayout.HorizontalSlider(zoom, zoomMin, zoomMax);
+                //GUILayout.EndHorizontal();
 
-            //    GUILayout.EndArea();
+                //GUILayout.EndArea();
             //}
 
             // Unsaved changes message
-            //saveChangesMessage = EditorGUILayout.TextField(saveChangesMessage);
-
-            //EditorGUILayout.LabelField(hasUnsavedChanges ? "I have changes!" : "No changes.", EditorStyles.wordWrappedLabel);
-            //EditorGUILayout.LabelField("Try to close the window.");
-
-            //if (GUILayout.Button("Create unsaved changes"))
-            //    hasUnsavedChanges = true;
-
-            //if (GUILayout.Button("Save"))
-            //    SaveChanges();
-            //GUILayout.EndHorizontal();
-
-            // Old toolbar
-            //Rect fileField = new Rect(2, 1, 50f, 18f);
-            //GUI.Label(fileField, "File name");
-            //Rect buttonRect = new Rect(52, 1, 50f, 18f);
-            //if (GUI.Button(buttonRect, "Save"))
-            //{
-            //    Debug.Log("Save");
-            //}
-        }
-
-        private void NewFile()
-        {
-            fileName = "New Node Structure";
-            reference = null;
-            nodes = new List<Node>();
-            connections = new List<Connection>();
         }
 
         private void DrawNodes(float zoom)
@@ -415,6 +428,10 @@ namespace NodeEditor
                             }
                         }
                     }
+                    if (e.keyCode == KeyCode.Space)
+                    {
+                        ProcessContextMenu(e.mousePosition);
+                    }
                     break;
             }
         }
@@ -498,18 +515,19 @@ namespace NodeEditor
             GUI.changed = true;
         }
 
-        [Shortcut("Node Based Editor/New Node", KeyCode.Space)]
-        public static void AddNode()
-        {
-            if (focusedWindow.GetType() == typeof(NodeBasedEditor))
-            {
-                if (mouseOverWindow.GetType() == typeof(NodeBasedEditor))
-                {
-                    NodeBasedEditor editor = (focusedWindow as NodeBasedEditor);
-                    editor.ProcessContextMenu(editor.position.center);
-                }
-            }
-        }
+        // TODO: Move this to the 
+        //[Shortcut("Node Based Editor/New Node", KeyCode.Space)]
+        //public static void AddNode()
+        //{
+        //    if (focusedWindow.GetType() == typeof(NodeBasedEditor))
+        //    {
+        //        if (mouseOverWindow.GetType() == typeof(NodeBasedEditor))
+        //        {
+        //            NodeBasedEditor editor = (focusedWindow as NodeBasedEditor);
+        //            editor.ProcessContextMenu(new Vector2(editor.position.width * .5f, editor.position.height * .5f));
+        //        }
+        //    }
+        //}
 
         private Node OnClickAddNode(Vector2 mousePosition, bool centered)
         {
@@ -522,6 +540,7 @@ namespace NodeEditor
                 node.rect.y -= node.rect.height * .5f;
             }
             nodes.Add(node);
+            hasUnsavedChanges = true;
             return node;
         }
 
@@ -558,6 +577,7 @@ namespace NodeEditor
         private void OnClickRemoveConnection(Connection connection)
         {
             connections.Remove(connection);
+            hasUnsavedChanges = true;
         }
 
         private void CreateConnection()
@@ -565,6 +585,7 @@ namespace NodeEditor
             if (connections == null) 
                 connections = new List<Connection>();
             connections.Add(new Connection(selectedNodeIn.inPoint, selectedNodeOut.outPoint, OnClickRemoveConnection));
+            hasUnsavedChanges = true;
         }
 
         private void ClearConnectionSelection()
@@ -596,6 +617,7 @@ namespace NodeEditor
             }
 
             nodes.Remove(node);
+            hasUnsavedChanges = true;
             // TODO: Nodes are not disposed, it seems. Possible memory leak?
         }
     }
