@@ -23,8 +23,9 @@ namespace NodeEditor
         private GUIStyle selectedNodeStyle;
 
         public Action<Node> OnRemoveNode;
+        public Action<Node> OnDragNode;
 
-        public Node(Vector2 position, Vector2 size, Direction direction, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node, ConnectionPointType> OnClickNode, Action<Node> OnClickRemoveNode)
+        public Node(Vector2 position, Vector2 size, Direction direction, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node, ConnectionPointType> OnClickNode, Action<Node> OnClickRemoveNode, Action<Node> onDragNode)
         {
             rect = new Rect(position, size);
             originalSize = rect.size;
@@ -45,11 +46,13 @@ namespace NodeEditor
             defaultNodeStyle = nodeStyle;
             selectedNodeStyle = selectedStyle;
             OnRemoveNode = OnClickRemoveNode;
+            OnDragNode = onDragNode;
         }
 
         public void Drag(Vector2 delta)
         {
             rect.position += delta;
+            OnDragNode.Invoke(this);
         }
 
         public void Draw(Direction direction, float zoom)
@@ -127,6 +130,11 @@ namespace NodeEditor
         private void OnClickRemoveNode()
         {
             OnRemoveNode?.Invoke(this);
+        }
+
+        private void OnNodeDragged()
+        {
+
         }
     }
 }

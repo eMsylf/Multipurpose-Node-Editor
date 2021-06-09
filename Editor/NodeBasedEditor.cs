@@ -48,6 +48,9 @@ namespace NodeEditor
         private Rect selectionRect;
         private GUIStyle selectionRectStyle;
 
+        private Color gridSmallColor = new Color(.5f, .5f, .5f, .2f);
+        private Color gridLargeColor = new Color(.5f, .5f, .5f, .4f);
+
         static NodeBasedEditor window;
 
         [MenuItem("Window/Node Based Editor")]
@@ -103,13 +106,13 @@ namespace NodeEditor
             selectionRectStyle.normal.background = new Texture2D(1, 1);
             selectionRectStyle.normal.background.SetPixel(1, 1, new Color(.5f, .5f, .5f, .3f));
             //selectionRectStyle.border = new RectOffset();
-
+            Init();
         }
 
         private void OnGUI()
         {
-            DrawGrid(20 * zoom, new Color(.5f, .5f, .5f, .2f));
-            DrawGrid(100 * zoom, new Color(.5f, .5f, .5f, .4f));
+            DrawGrid(20 * zoom, gridSmallColor);
+            DrawGrid(100 * zoom, gridLargeColor);
 
             DrawNodes(zoom);
             DrawConnections();
@@ -163,6 +166,22 @@ namespace NodeEditor
             hasUnsavedChanges = false;
         }
 
+        private void Init()
+        {
+            foreach (var node in nodes)
+            {
+                node.OnDragNode = OnDragNode;
+                node.OnRemoveNode = OnClickRemoveNode;
+                node.inPoint.OnClickConnectionPoint = OnClickConnectionPoint;
+                node.outPoint.OnClickConnectionPoint = OnClickConnectionPoint;
+            }
+            foreach (var connection in connections)
+            {
+                connection.OnClickRemoveConnection = OnClickRemoveConnection;//
+            }
+            hasUnsavedChanges = false;
+        }
+
         [Shortcut("Node Based Editor/Save node structure", defaultKeyCode: KeyCode.S, defaultShortcutModifiers: ShortcutModifiers.Alt)]
         public static void Save()
         {
@@ -213,22 +232,13 @@ namespace NodeEditor
             nodes?.Clear();
             connections?.Clear();
             ClearConnectionSelection();
+            if (structure == null) return true;
             Debug.Log("Found " + structure.nodes.Count + " nodes");
             Debug.Log("Found " + structure.connections.Count + " connections");
             nodes = structure.nodes.ToList();
             connections = structure.connections.ToList();
-            foreach (var node in nodes)
-            {
-                node.OnRemoveNode = OnClickRemoveNode;
-                node.inPoint.OnClickConnectionPoint = OnClickConnectionPoint;
-                node.outPoint.OnClickConnectionPoint = OnClickConnectionPoint;
-            }
-            foreach (var connection in connections)
-            {
-                connection.OnClickRemoveConnection = OnClickRemoveConnection;
-            }
             reference = structure;
-            hasUnsavedChanges = false;
+            Init();
             return true;
         }
 
@@ -410,7 +420,7 @@ namespace NodeEditor
                     //}
                     if (e.button == 2 || Tools.viewToolActive)
                     {
-                        OnDrag(e.delta);
+                        OnDragView(e.delta);
                     }
                     break;
                 case EventType.MouseUp:
@@ -512,7 +522,7 @@ namespace NodeEditor
             }
         }
 
-        private void OnDrag(Vector2 delta)
+        private void OnDragView(Vector2 delta)
         {
             drag = delta;
             if (nodes != null)
@@ -544,7 +554,7 @@ namespace NodeEditor
         {
             Debug.Log("Add node at " + mousePosition);
             if (nodes == null) nodes = new List<Node>();
-            Node node = new Node(mousePosition, new Vector2(200, 50), direction, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnClickConnectionPoint, OnClickRemoveNode);
+            Node node = new Node(mousePosition, new Vector2(200, 50), direction, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnClickConnectionPoint, OnClickRemoveNode, OnDragNode);
             if (centered)
             {
                 node.rect.x -= node.rect.width * .5f;
@@ -629,7 +639,11 @@ namespace NodeEditor
 
             nodes.Remove(node);
             hasUnsavedChanges = true;
-            // TODO: Nodes are not disposed, it seems. Possible memory leak?
+        }
+
+        private void OnDragNode(Node node)
+        {
+            hasUnsavedChanges = true;
         }
     }
 }
