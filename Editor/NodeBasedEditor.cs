@@ -566,7 +566,7 @@ namespace NodeEditor
         {
             Debug.Log("Add node at " + mousePosition);
             if (nodes == null) nodes = new List<Node>();
-            Node node = new Node(mousePosition, new Vector2(200, 50), direction, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnClickConnectionPoint, OnClickRemoveNode, OnDragNode);
+            Node node = new Node(mousePosition, new Vector2(200, 50), direction, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnSelectNode, OnClickNode: OnClickConnectionPoint, OnClickRemoveNode: OnClickRemoveNode, onDragNode: OnDragNode);
             if (centered)
             {
                 node.rect.x -= node.rect.width * .5f;
@@ -575,6 +575,11 @@ namespace NodeEditor
             nodes.Add(node);
             hasUnsavedChanges = true;
             return node;
+        }
+
+        private void OnSelectNode(Node node, bool selected)
+        {
+
         }
 
         private void OnClickConnectionPoint(Node node, ConnectionPointType type)

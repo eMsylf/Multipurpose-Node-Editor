@@ -23,10 +23,11 @@ namespace NodeEditor
         public GUIStyle regularStyle;
         public GUIStyle selectedStyle;
 
+        public Action<Node, bool> OnSelectNode;
         public Action<Node> OnRemoveNode;
         public Action<Node> OnDragNode;
 
-        public Node(Vector2 position, Vector2 size, Direction direction, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node, ConnectionPointType> OnClickNode, Action<Node> OnClickRemoveNode, Action<Node> onDragNode)
+        public Node(Vector2 position, Vector2 size, Direction direction, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node, bool> onSelect, Action<Node, ConnectionPointType> OnClickNode, Action<Node> OnClickRemoveNode, Action<Node> onDragNode)
         {
             rect = new Rect(position, size);
             Vector2 connectionPointDimensions;
@@ -47,6 +48,7 @@ namespace NodeEditor
             style = regularStyle;
             OnRemoveNode = OnClickRemoveNode;
             OnDragNode = onDragNode;
+            OnSelectNode = onSelect;
         }
 
         public void Drag(Vector2 delta)
@@ -73,7 +75,7 @@ namespace NodeEditor
                         {
                             isDragged = true;
                             GUI.changed = true;
-                            isSelected = true;
+                            OnSelect(true);
                             style = selectedStyle;
                             e.Use();
                         }
@@ -82,7 +84,7 @@ namespace NodeEditor
                             GUI.changed = true;
                             if (!multiSelecting)
                             {
-                                //isSelected = false;
+                                OnSelect(false);
                                 style = regularStyle;
                             }
                         }
@@ -133,10 +135,11 @@ namespace NodeEditor
 
         private void OnSelect(bool selected)
         {
-
+            isSelected = selected;
+            OnSelectNode.Invoke(this, selected);
         }
 
-        private void OnNodeDragged()
+        private void OnDrag()
         {
 
         }
