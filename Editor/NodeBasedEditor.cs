@@ -53,7 +53,7 @@ namespace NodeEditor
 
         static NodeBasedEditor window;
 
-        [MenuItem("Window/Node Based Editor")]
+        [MenuItem("Window/Bob Jeltes/Node Based Editor")]
         public static NodeBasedEditor OpenWindow()
         {
             window = GetWindow<NodeBasedEditor>();
@@ -106,7 +106,7 @@ namespace NodeEditor
             selectionRectStyle.normal.background = new Texture2D(1, 1);
             selectionRectStyle.normal.background.SetPixel(1, 1, new Color(.5f, .5f, .5f, .3f));
             //selectionRectStyle.border = new RectOffset();
-            Init();
+            InitNodes();
         }
 
         private void OnGUI()
@@ -166,18 +166,28 @@ namespace NodeEditor
             hasUnsavedChanges = false;
         }
 
-        private void Init()
+        private void InitNodes()
         {
             foreach (var node in nodes)
             {
+                node.regularStyle = nodeStyle;
+                node.style = node.regularStyle;
+                node.selectedStyle = selectedNodeStyle;
                 node.OnDragNode = OnDragNode;
                 node.OnRemoveNode = OnClickRemoveNode;
                 node.inPoint.OnClickConnectionPoint = OnClickConnectionPoint;
                 node.outPoint.OnClickConnectionPoint = OnClickConnectionPoint;
+
+                node.isDragged = false;
+                node.isSelected = false;//
+                node.multiSelecting = false;//
             }
             foreach (var connection in connections)
             {
-                connection.OnClickRemoveConnection = OnClickRemoveConnection;//
+                connection.OnClickRemoveConnection = OnClickRemoveConnection;
+                //reference.nodes.FindIndex(x => x.);
+                //connection.inNode = nodes[];
+                //connection.outNode = nodes[];
             }
             hasUnsavedChanges = false;
         }
@@ -186,6 +196,8 @@ namespace NodeEditor
         public static void Save()
         {
             // Is dit netjes? Mag dit? Kan dit fout gaan?
+            // Kan zijn dat als de editor derivet en niet de directe type is, dat de if-statement false returnt.
+            Debug.Log("");
             if (focusedWindow.GetType() == typeof(NodeBasedEditor))
                 (focusedWindow as NodeBasedEditor).SaveChanges();
         }
@@ -238,7 +250,7 @@ namespace NodeEditor
             nodes = structure.nodes.ToList();
             connections = structure.connections.ToList();
             reference = structure;
-            Init();
+            InitNodes();
             return true;
         }
 

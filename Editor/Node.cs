@@ -10,7 +10,6 @@ namespace NodeEditor
     public class Node
     {
         public Rect rect;
-        public Vector2 originalSize;
         public string title;
         public bool isDragged;
         public bool isSelected;
@@ -18,9 +17,11 @@ namespace NodeEditor
         public ConnectionPoint inPoint;
         public ConnectionPoint outPoint;
 
-        private GUIStyle style;
-        private GUIStyle defaultNodeStyle;
-        private GUIStyle selectedNodeStyle;
+        // OPTION: Remove these styles and pass them as parameters in Draw()
+        // Would that be less efficient?
+        public GUIStyle style;
+        public GUIStyle regularStyle;
+        public GUIStyle selectedStyle;
 
         public Action<Node> OnRemoveNode;
         public Action<Node> OnDragNode;
@@ -28,8 +29,6 @@ namespace NodeEditor
         public Node(Vector2 position, Vector2 size, Direction direction, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node, ConnectionPointType> OnClickNode, Action<Node> OnClickRemoveNode, Action<Node> onDragNode)
         {
             rect = new Rect(position, size);
-            originalSize = rect.size;
-            style = nodeStyle;
             Vector2 connectionPointDimensions;
             switch (direction)
             {
@@ -43,8 +42,9 @@ namespace NodeEditor
             }
             inPoint = new ConnectionPoint(ConnectionPointType.In, connectionPointDimensions, inPointStyle, OnClickNode);
             outPoint = new ConnectionPoint(ConnectionPointType.Out, connectionPointDimensions, outPointStyle, OnClickNode);
-            defaultNodeStyle = nodeStyle;
-            selectedNodeStyle = selectedStyle;
+            regularStyle = nodeStyle;
+            this.selectedStyle = selectedStyle;
+            style = regularStyle;
             OnRemoveNode = OnClickRemoveNode;
             OnDragNode = onDragNode;
         }
@@ -54,12 +54,11 @@ namespace NodeEditor
             rect.position += delta;
             OnDragNode.Invoke(this);
         }
-
+        // OPTION: node has only rect,  
         public void Draw(Direction direction, float zoom)
         {
             inPoint.Draw(direction, this, zoom);
             outPoint.Draw(direction, this, zoom);
-            rect.size = originalSize * zoom;
             GUI.Box(rect, title, style);
         }
 
@@ -75,7 +74,7 @@ namespace NodeEditor
                             isDragged = true;
                             GUI.changed = true;
                             isSelected = true;
-                            style = selectedNodeStyle;
+                            style = selectedStyle;
                             e.Use();
                         }
                         else
@@ -83,8 +82,8 @@ namespace NodeEditor
                             GUI.changed = true;
                             if (!multiSelecting)
                             {
-                                isSelected = false;
-                                style = defaultNodeStyle;
+                                //isSelected = false;
+                                style = regularStyle;
                             }
                         }
                     }
@@ -99,7 +98,7 @@ namespace NodeEditor
                     isDragged = false;
                     break;
                 case EventType.MouseDrag:
-                    if (e.button == 0 && isDragged)
+                    if (e.button == 0 && isSelected)
                     {
                         Drag(e.delta);
                         e.Use();
@@ -130,6 +129,11 @@ namespace NodeEditor
         private void OnClickRemoveNode()
         {
             OnRemoveNode?.Invoke(this);
+        }
+
+        private void OnSelect(bool selected)
+        {
+
         }
 
         private void OnNodeDragged()
