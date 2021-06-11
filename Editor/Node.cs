@@ -13,7 +13,6 @@ namespace NodeEditor
         public string title;
         public bool isDragged;
         public bool isSelected;
-        public bool multiSelecting;
         public ConnectionPoint inPoint;
         public ConnectionPoint outPoint;
 
@@ -22,6 +21,7 @@ namespace NodeEditor
         public GUIStyle style;
         public GUIStyle regularStyle;
         public GUIStyle selectedStyle;
+        public GUIStyle currentStyle { get => isSelected ? selectedStyle : regularStyle; }
 
         public Action<Node, bool> OnSelectNode;
         public Action<Node> OnRemoveNode;
@@ -51,11 +51,6 @@ namespace NodeEditor
             OnSelectNode = onSelect;
         }
 
-        public void Drag(Vector2 delta)
-        {
-            rect.position += delta;
-            OnDragNode.Invoke(this);
-        }
         // OPTION: node has only rect,  
         public void Draw(Direction direction, float zoom)
         {
@@ -74,46 +69,34 @@ namespace NodeEditor
                         if (rect.Contains(e.mousePosition))
                         {
                             isDragged = true;
-                            Select(true);
-                            style = selectedStyle;
+                            Select(true, true);
                             e.Use();
-                            GUI.changed = true;
+                            return true;
                         }
                         else
                         {
-                            if (!multiSelecting)
-                            {
-                                Select(false);
-                                style = regularStyle;
-                            }
-                            GUI.changed = true;
+                            Select(false, true);
+                            return true;
                         }
                     }
 
-                    if (e.button == 1 && isSelected && rect.Contains(e.mousePosition))
+                    if (e.button == 1 && rect.Contains(e.mousePosition))
                     {
+                        Select(true, true);
                         ProcessContextMenu();
                         e.Use();
+                        return true;
                     }
                     break;
                 case EventType.MouseUp:
                     isDragged = false;
                     break;
                 case EventType.MouseDrag:
-                    //if (e.button == 0)
-                    //{
-                    //    //Drag(e.delta);
-                    //    e.Use();
-                    //    return true;
-                    //}
-                    break;
-                case EventType.KeyDown:
-                    if (e.keyCode == KeyCode.LeftControl)
-                        multiSelecting = true;
-                    break;
-                case EventType.KeyUp:
-                    if (e.keyCode == KeyCode.LeftControl)
-                        multiSelecting = false;
+                    if (e.button == 0 && isDragged)
+                    {
+                        Drag(e.delta, true);
+                        return true;
+                    }
                     break;
                 default:
                     break;
@@ -130,18 +113,20 @@ namespace NodeEditor
 
         private void OnClickRemoveNode()
         {
-            OnRemoveNode?.Invoke(this);
+            OnRemoveNode.Invoke(this);
         }
 
-        private void Select(bool selected)
+        public void Select(bool selected, bool invokeCallback)
         {
             isSelected = selected;
-            OnSelectNode.Invoke(this, selected);
+            style = currentStyle;
+            if (invokeCallback) OnSelectNode.Invoke(this, selected);
         }
 
-        private void OnDrag()
+        public void Drag(Vector2 delta, bool invokeCallback)
         {
-
+            rect.position += delta;
+            if (invokeCallback) OnDragNode.Invoke(this);
         }
     }
 }

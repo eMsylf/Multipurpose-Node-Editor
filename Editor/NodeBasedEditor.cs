@@ -29,6 +29,7 @@ namespace NodeEditor
         string fileName = "New Node Structure";
 
         private List<Node> selectedNodes = new List<Node>();
+        private bool multiSelecting;
 
         private GUIStyle nodeStyle;
         private GUIStyle selectedNodeStyle;
@@ -170,6 +171,8 @@ namespace NodeEditor
 
         private void InitNodes()
         {
+            ClearConnectionSelection();
+            Debug.Log("Init nodes");
             foreach (var node in nodes)
             {
                 node.regularStyle = nodeStyle;
@@ -179,10 +182,10 @@ namespace NodeEditor
                 node.OnRemoveNode = OnClickRemoveNode;
                 node.inPoint.OnClickConnectionPoint = OnClickConnectionPoint;
                 node.outPoint.OnClickConnectionPoint = OnClickConnectionPoint;
+                node.OnSelectNode = OnClickNode;
 
                 node.isDragged = false;
-                node.isSelected = false;//
-                node.multiSelecting = false;//
+                node.isSelected = false;
             }
             foreach (var connection in connections)
             {
@@ -412,18 +415,6 @@ namespace NodeEditor
                     break;
 
                 case EventType.MouseDrag:
-                    foreach (var selectedNode in selectedNodes)
-                    {
-                        if (selectedNode.rect.Contains(e.mousePosition))
-                        {
-                            foreach (var node in selectedNodes)
-                            {
-                                node.Drag(e.delta);
-                            }
-                            GUI.changed = true;
-                            break;
-                        }
-                    }
                     // TODO: Selection rect
                     //if (Tools.current == Tool.Rect)
                     //{
@@ -443,7 +434,7 @@ namespace NodeEditor
                     //    }
                     //    GUI.changed = true;
                     //}
-                    if (e.button == 2 || Tools.viewToolActive)
+                    if (e.button == 2 || Tools.viewToolActive && e.button == 0)
                     {
                         OnDragView(e.delta);
                     }
@@ -458,6 +449,10 @@ namespace NodeEditor
                 //    GUI.changed = true;
                 //    break;
                 case EventType.KeyDown:
+                    if (e.keyCode == KeyCode.LeftControl)
+                    {
+                        multiSelecting = true;
+                    }
                     if (e.keyCode == KeyCode.S)
                         Tools.current = Tool.Rect;
                     if (e.keyCode == KeyCode.Delete || e.keyCode == KeyCode.Backspace)
@@ -477,6 +472,12 @@ namespace NodeEditor
                     if (e.keyCode == KeyCode.Space)
                     {
                         ProcessContextMenu(e.mousePosition);
+                    }
+                    break;
+                case EventType.KeyUp:
+                    if (e.keyCode == KeyCode.LeftControl)
+                    {
+                        multiSelecting = false;
                     }
                     break;
             }
@@ -554,14 +555,14 @@ namespace NodeEditor
             {
                 for (int i = 0; i < nodes.Count; i++)
                 {
-                    nodes[i].Drag(delta);
+                    nodes[i].Drag(delta, true);
                 }
             }
 
             GUI.changed = true;
         }
 
-        // TODO: Move this to the 
+        // TODO: Move this to the other shortcut functions
         //[Shortcut("Node Based Editor/New Node", KeyCode.Space)]
         //public static void AddNode()
         //{
@@ -592,8 +593,34 @@ namespace NodeEditor
 
         private void OnClickNode(Node node, bool selected)
         {
-            if (selected) selectedNodes.Add(node);
-            else selectedNodes.Remove(node);
+            if (multiSelecting)
+            {
+                if (selected) selectedNodes.Add(node);
+                else selectedNodes.Remove(node);
+            }
+            else
+            {
+                // If multiple selected and node is dragged, drag all
+
+                if (node.isDragged && selectedNodes.Count < 1)
+                {
+                    foreach (var selectedNode in selectedNodes)
+                    {
+                        selectedNode.isDragged = true;
+                    }
+                    return;
+                }
+                foreach (var selectedNode in selectedNodes)
+                {
+                    selectedNode.Select(false, false); 
+                }
+                selectedNodes.Clear();
+                if (selected)
+                {
+                    node.Select(selected, false);
+                    selectedNodes.Add(node);
+                }
+            }
         }
 
         private void OnClickConnectionPoint(Node node, ConnectionPointType type)
@@ -674,6 +701,11 @@ namespace NodeEditor
 
         private void OnDragNode(Node node)
         {
+            foreach (Node selectedNode in selectedNodes)
+            {
+                if (selectedNode != node)
+                    selectedNode.Drag(Event.current.delta, false);
+            }
             hasUnsavedChanges = true;
         }
     }
