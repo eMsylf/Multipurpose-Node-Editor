@@ -28,6 +28,8 @@ namespace NodeEditor
         public NodeStructure reference;
         string fileName = "New Node Structure";
 
+        private List<Node> selectedNodes = new List<Node>();
+
         private GUIStyle nodeStyle;
         private GUIStyle selectedNodeStyle;
         private GUIStyle inPointStyle;
@@ -403,7 +405,6 @@ namespace NodeEditor
                             Node newNode = OnClickAddNode(e.mousePosition, true);
                             OnClickConnectionPoint(newNode, ConnectionPointType.Out);
                         }
-                        ClearConnectionSelection();
                     }
 
                     if (e.button == 1) 
@@ -411,6 +412,18 @@ namespace NodeEditor
                     break;
 
                 case EventType.MouseDrag:
+                    foreach (var selectedNode in selectedNodes)
+                    {
+                        if (selectedNode.rect.Contains(e.mousePosition))
+                        {
+                            foreach (var node in selectedNodes)
+                            {
+                                node.Drag(e.delta);
+                            }
+                            GUI.changed = true;
+                            break;
+                        }
+                    }
                     // TODO: Selection rect
                     //if (Tools.current == Tool.Rect)
                     //{
@@ -566,7 +579,7 @@ namespace NodeEditor
         {
             Debug.Log("Add node at " + mousePosition);
             if (nodes == null) nodes = new List<Node>();
-            Node node = new Node(mousePosition, new Vector2(200, 50), direction, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnSelectNode, OnClickNode: OnClickConnectionPoint, OnClickRemoveNode: OnClickRemoveNode, onDragNode: OnDragNode);
+            Node node = new Node(mousePosition, new Vector2(200, 50), direction, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnClickNode, OnClickConnectionPoint: OnClickConnectionPoint, OnClickRemoveNode: OnClickRemoveNode, onDragNode: OnDragNode);
             if (centered)
             {
                 node.rect.x -= node.rect.width * .5f;
@@ -577,9 +590,10 @@ namespace NodeEditor
             return node;
         }
 
-        private void OnSelectNode(Node node, bool selected)
+        private void OnClickNode(Node node, bool selected)
         {
-
+            if (selected) selectedNodes.Add(node);
+            else selectedNodes.Remove(node);
         }
 
         private void OnClickConnectionPoint(Node node, ConnectionPointType type)

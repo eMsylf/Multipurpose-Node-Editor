@@ -27,7 +27,7 @@ namespace NodeEditor
         public Action<Node> OnRemoveNode;
         public Action<Node> OnDragNode;
 
-        public Node(Vector2 position, Vector2 size, Direction direction, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node, bool> onSelect, Action<Node, ConnectionPointType> OnClickNode, Action<Node> OnClickRemoveNode, Action<Node> onDragNode)
+        public Node(Vector2 position, Vector2 size, Direction direction, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node, bool> onSelect, Action<Node, ConnectionPointType> OnClickConnectionPoint, Action<Node> OnClickRemoveNode, Action<Node> onDragNode)
         {
             rect = new Rect(position, size);
             Vector2 connectionPointDimensions;
@@ -41,8 +41,8 @@ namespace NodeEditor
                     connectionPointDimensions = new Vector2(20, 10);
                     break;
             }
-            inPoint = new ConnectionPoint(ConnectionPointType.In, connectionPointDimensions, inPointStyle, OnClickNode);
-            outPoint = new ConnectionPoint(ConnectionPointType.Out, connectionPointDimensions, outPointStyle, OnClickNode);
+            inPoint = new ConnectionPoint(ConnectionPointType.In, connectionPointDimensions, inPointStyle, OnClickConnectionPoint);
+            outPoint = new ConnectionPoint(ConnectionPointType.Out, connectionPointDimensions, outPointStyle, OnClickConnectionPoint);
             regularStyle = nodeStyle;
             this.selectedStyle = selectedStyle;
             style = regularStyle;
@@ -74,19 +74,19 @@ namespace NodeEditor
                         if (rect.Contains(e.mousePosition))
                         {
                             isDragged = true;
-                            GUI.changed = true;
-                            OnSelect(true);
+                            Select(true);
                             style = selectedStyle;
                             e.Use();
+                            GUI.changed = true;
                         }
                         else
                         {
-                            GUI.changed = true;
                             if (!multiSelecting)
                             {
-                                OnSelect(false);
+                                Select(false);
                                 style = regularStyle;
                             }
+                            GUI.changed = true;
                         }
                     }
 
@@ -100,12 +100,12 @@ namespace NodeEditor
                     isDragged = false;
                     break;
                 case EventType.MouseDrag:
-                    if (e.button == 0 && isSelected)
-                    {
-                        Drag(e.delta);
-                        e.Use();
-                        return true;
-                    }
+                    //if (e.button == 0)
+                    //{
+                    //    //Drag(e.delta);
+                    //    e.Use();
+                    //    return true;
+                    //}
                     break;
                 case EventType.KeyDown:
                     if (e.keyCode == KeyCode.LeftControl)
@@ -133,7 +133,7 @@ namespace NodeEditor
             OnRemoveNode?.Invoke(this);
         }
 
-        private void OnSelect(bool selected)
+        private void Select(bool selected)
         {
             isSelected = selected;
             OnSelectNode.Invoke(this, selected);
