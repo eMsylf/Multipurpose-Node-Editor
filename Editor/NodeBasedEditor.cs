@@ -128,13 +128,6 @@ namespace NodeEditor
         }
 
         #region File Management
-        [Shortcut("Node Based Editor/New node structure", KeyCode.N, ShortcutModifiers.Alt)]
-        public static void New()
-        {
-            if (focusedWindow.GetType() == typeof(NodeBasedEditor))
-                (focusedWindow as NodeBasedEditor).NewFile();
-        }
-
         private bool UnsavedChangesCheck()
         {
             if (hasUnsavedChanges)
@@ -157,6 +150,13 @@ namespace NodeEditor
             return true;
         }
 
+        [Shortcut("Node Based Editor/New node structure", KeyCode.N, ShortcutModifiers.Alt)]
+        public static void NewFile_Shortcut()
+        {
+            if (focusedWindow.GetType() == typeof(NodeBasedEditor))
+                (focusedWindow as NodeBasedEditor).NewFile();
+        }
+
         private void NewFile()
         {
             if (!UnsavedChangesCheck()) return;
@@ -167,34 +167,8 @@ namespace NodeEditor
             hasUnsavedChanges = false;
         }
 
-        private void InitNodes()
-        {
-            foreach (var node in nodes)
-            {
-                node.regularStyle = nodeStyle;
-                node.style = node.regularStyle;
-                node.selectedStyle = selectedNodeStyle;
-                node.OnDragNode = OnDragNode;
-                node.OnRemoveNode = OnClickRemoveNode;
-                node.inPoint.OnClickConnectionPoint = OnClickConnectionPoint;
-                node.outPoint.OnClickConnectionPoint = OnClickConnectionPoint;
-
-                node.isDragged = false;
-                node.isSelected = false;//
-                node.multiSelecting = false;//
-            }
-            foreach (var connection in connections)
-            {
-                connection.OnClickRemoveConnection = OnClickRemoveConnection;
-                //reference.nodes.FindIndex(x => x.);
-                //connection.inNode = nodes[];
-                //connection.outNode = nodes[];
-            }
-            hasUnsavedChanges = false;
-        }
-
         [Shortcut("Node Based Editor/Save node structure", defaultKeyCode: KeyCode.S, defaultShortcutModifiers: ShortcutModifiers.Alt)]
-        public static void Save()
+        public static void SaveChanges_Shortcut()
         {
             // Is dit netjes? Mag dit? Kan dit fout gaan?
             // Kan zijn dat als de editor derivet en niet de directe type is, dat de if-statement false returnt.
@@ -210,7 +184,6 @@ namespace NodeEditor
             {
                 reference = CreateInstance<NodeStructure>();
             }
-
 
             reference.nodes = nodes.ToList();
             reference.connections = connections.ToList();
@@ -255,6 +228,32 @@ namespace NodeEditor
             reference = structure;
             InitNodes();
             return true;
+        }
+
+        private void InitNodes()
+        {
+            foreach (var node in nodes)
+            {
+                node.regularStyle = nodeStyle;
+                node.style = node.regularStyle;
+                node.selectedStyle = selectedNodeStyle;
+                node.OnDragNode = OnDragNode;
+                node.OnRemoveNode = OnClickRemoveNode;
+                node.inPoint.OnClickConnectionPoint = OnClickConnectionPoint;
+                node.outPoint.OnClickConnectionPoint = OnClickConnectionPoint;
+
+                node.isDragged = false;
+                node.isSelected = false;//
+                node.multiSelecting = false;//
+            }
+            foreach (var connection in connections)
+            {
+                connection.OnClickRemoveConnection = OnClickRemoveConnection;
+                //reference.nodes.FindIndex(x => x.);
+                //connection.inNode = nodes[];
+                //connection.outNode = nodes[];
+            }
+            hasUnsavedChanges = false;
         }
         #endregion
 
