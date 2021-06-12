@@ -127,6 +127,7 @@ namespace NodeEditor
             if (GUI.changed) Repaint();
         }
 
+        #region File Management
         [Shortcut("Node Based Editor/New node structure", KeyCode.N, ShortcutModifiers.Alt)]
         public static void New()
         {
@@ -204,10 +205,12 @@ namespace NodeEditor
 
         public override void SaveChanges()
         {
+            if (!hasUnsavedChanges) return;
             if (reference == null)
             {
                 reference = CreateInstance<NodeStructure>();
             }
+
 
             reference.nodes = nodes.ToList();
             reference.connections = connections.ToList();
@@ -253,7 +256,9 @@ namespace NodeEditor
             InitNodes();
             return true;
         }
+        #endregion
 
+        #region Draw functions
         private void DrawGrid(float spacing, Color color)
         {
             int widthDivs = Mathf.CeilToInt(position.width / spacing);
@@ -384,6 +389,53 @@ namespace NodeEditor
             }
         }
 
+        private void DrawConnectionLine(Event e)
+        {
+            Vector2 dir;
+            switch (direction)
+            {
+                default:
+                case Direction.LeftRight:
+                    dir = Vector2.left;
+                    break;
+                case Direction.TopBottom:
+                    dir = -Vector2.up;
+                    break;
+            }
+
+            if (selectedNodeIn != null && selectedNodeOut == null)
+            {
+                Handles.DrawBezier(
+                    selectedNodeIn.inPoint.rect.center,
+                    e.mousePosition,
+                    selectedNodeIn.inPoint.rect.center + dir * 50f,
+                    e.mousePosition - dir * 50f,
+                    Color.white,
+                    null,
+                    2f
+                );
+
+                GUI.changed = true;
+            }
+
+            if (selectedNodeOut != null && selectedNodeIn == null)
+            {
+                Handles.DrawBezier(
+                    selectedNodeOut.outPoint.rect.center,
+                    e.mousePosition,
+                    selectedNodeOut.outPoint.rect.center - dir * 50f,
+                    e.mousePosition + dir * 50f,
+                    Color.white,
+                    null,
+                    2f
+                );
+
+                GUI.changed = true;
+            }
+        }
+        #endregion
+
+        #region Editor events
         private void ProcessEvents(Event e)
         {
             drag = Vector2.zero;
@@ -469,6 +521,22 @@ namespace NodeEditor
             }
         }
 
+        private void OnDragView(Vector2 delta)
+        {
+            drag = delta;
+            if (nodes != null)
+            {
+                for (int i = 0; i < nodes.Count; i++)
+                {
+                    nodes[i].Drag(delta);
+                }
+            }
+
+            GUI.changed = true;
+        }
+        #endregion
+
+        #region Node Events
         private void ProcessNodeEvents(Event e)
         {
             if (nodes == null) return;
@@ -489,66 +557,7 @@ namespace NodeEditor
             genericMenu.ShowAsContext();
         }
 
-        private void DrawConnectionLine(Event e)
-        {
-            Vector2 dir;
-            switch (direction)
-            {
-                default:
-                case Direction.LeftRight:
-                    dir = Vector2.left;
-                    break;
-                case Direction.TopBottom:
-                    dir = -Vector2.up;
-                    break;
-            }
-
-            if (selectedNodeIn != null && selectedNodeOut == null)
-            {
-                Handles.DrawBezier(
-                    selectedNodeIn.inPoint.rect.center,
-                    e.mousePosition,
-                    selectedNodeIn.inPoint.rect.center + dir * 50f,
-                    e.mousePosition - dir * 50f,
-                    Color.white,
-                    null,
-                    2f
-                );
-
-                GUI.changed = true;
-            }
-
-            if (selectedNodeOut != null && selectedNodeIn == null)
-            {
-                Handles.DrawBezier(
-                    selectedNodeOut.outPoint.rect.center,
-                    e.mousePosition,
-                    selectedNodeOut.outPoint.rect.center - dir * 50f,
-                    e.mousePosition + dir * 50f,
-                    Color.white,
-                    null,
-                    2f
-                );
-
-                GUI.changed = true;
-            }
-        }
-
-        private void OnDragView(Vector2 delta)
-        {
-            drag = delta;
-            if (nodes != null)
-            {
-                for (int i = 0; i < nodes.Count; i++)
-                {
-                    nodes[i].Drag(delta);
-                }
-            }
-
-            GUI.changed = true;
-        }
-
-        // TODO: Move this to the 
+        // TODO: Implement
         //[Shortcut("Node Based Editor/New Node", KeyCode.Space)]
         //public static void AddNode()
         //{
@@ -577,11 +586,44 @@ namespace NodeEditor
             return node;
         }
 
+        private void OnClickRemoveNode(Node node)
+        {
+            if (connections != null)
+            {
+                List<Connection> connectionsToRemove = new List<Connection>();
+
+                for (int i = 0; i < connections.Count; i++)
+                {
+                    if (connections[i].inNode == node || connections[i].outNode == node)
+                    {
+                        connectionsToRemove.Add(connections[i]);
+                    }
+                }
+
+                for (int i = 0; i < connectionsToRemove.Count; i++)
+                {
+                    connections.Remove(connectionsToRemove[i]);
+                }
+                // TODO: Is this necessary? Doesn't the list get disposed of once the if-statement is exited?
+                connectionsToRemove = null;
+            }
+
+            nodes.Remove(node);
+            hasUnsavedChanges = true;
+        }
+
+        private void OnDragNode(Node node)
+        {
+            hasUnsavedChanges = true;
+        }
+
         private void OnSelectNode(Node node, bool selected)
         {
 
         }
+        #endregion
 
+        #region Connection Events
         private void OnClickConnectionPoint(Node node, ConnectionPointType type)
         {
             switch (type)
@@ -626,41 +668,18 @@ namespace NodeEditor
             hasUnsavedChanges = true;
         }
 
+        // TODO: new method of handling connections where the parent node keeps track of what children are connected to it
+        //private void CreateConnection(Node parent, Node child)
+        //{
+        //    parent.childNodes.Add(child);
+        //    hasUnsavedChanges = true;
+        //}
+
         private void ClearConnectionSelection()
         {
             selectedNodeIn = null;
             selectedNodeOut = null;
         }
-
-        private void OnClickRemoveNode(Node node)
-        {
-            if (connections != null)
-            {
-                List<Connection> connectionsToRemove = new List<Connection>();
-
-                for (int i = 0; i < connections.Count; i++)
-                {
-                    if (connections[i].inNode == node || connections[i].outNode == node)
-                    {
-                        connectionsToRemove.Add(connections[i]);
-                    }
-                }
-
-                for (int i = 0; i < connectionsToRemove.Count; i++)
-                {
-                    connections.Remove(connectionsToRemove[i]);
-                }
-                // TODO: Is this necessary? Doesn't the list get disposed of once the if-statement is exited?
-                connectionsToRemove = null;
-            }
-
-            nodes.Remove(node);
-            hasUnsavedChanges = true;
-        }
-
-        private void OnDragNode(Node node)
-        {
-            hasUnsavedChanges = true;
-        }
+        #endregion
     }
 }
