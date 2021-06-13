@@ -1,0 +1,9 @@
+1. Open the node editor
+2. Add a start node 
+3. Connect 3 new nodes to it
+4. Create two more nodes and connect them both to one of the 3 lowest nodes
+5. Save the node structure with a name of your choosing
+6. Close the node editor
+7. Open the node structure you have just created
+8. Delete a node
+9. Save the node structure
