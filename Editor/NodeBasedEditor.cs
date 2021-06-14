@@ -243,6 +243,8 @@ namespace NodeEditor
                 node.selectedStyle = selectedNodeStyle;
                 node.OnDragNode = OnDragNode;
                 node.OnRemoveNode = OnClickRemoveNode;
+                node.OnClickNode = OnClickNode;
+                node.OnClickUp = OnClickUpNode;
                 node.inPoint.OnClickConnectionPoint = OnClickConnectionPoint;
                 node.outPoint.OnClickConnectionPoint = OnClickConnectionPoint;
 
