@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.ShortcutManagement;
+using System;
 
 namespace NodeEditor
 {
@@ -53,6 +54,10 @@ namespace NodeEditor
 
         static NodeBasedEditor window;
 
+        private List<Node> selectedNodes = new List<Node>();
+        private bool multiSelecting;
+        private bool multiDragging;
+
         [MenuItem("Window/Bob Jeltes/Node Based Editor")]
         public static NodeBasedEditor OpenWindow()
         {
@@ -67,11 +72,11 @@ namespace NodeEditor
             toolbarSettingsStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/dockarea back.png") as Texture2D;
 
             nodeStyle = new GUIStyle();
-            nodeStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/node1.png") as Texture2D;
+            nodeStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/node6.png") as Texture2D;
             nodeStyle.border = new RectOffset(12, 12, 12, 12);
 
             selectedNodeStyle = new GUIStyle();
-            selectedNodeStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/node1 on.png") as Texture2D;
+            selectedNodeStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/node6 on.png") as Texture2D;
             selectedNodeStyle.border = new RectOffset(12, 12, 12, 12);
 
             string inSide;
@@ -235,7 +240,6 @@ namespace NodeEditor
             foreach (var node in nodes)
             {
                 node.regularStyle = nodeStyle;
-                node.style = node.regularStyle;
                 node.selectedStyle = selectedNodeStyle;
                 node.OnDragNode = OnDragNode;
                 node.OnRemoveNode = OnClickRemoveNode;
@@ -454,7 +458,7 @@ namespace NodeEditor
                             Node newNode = OnClickAddNode(e.mousePosition, true);
                             OnClickConnectionPoint(newNode, ConnectionPointType.Out);
                         }
-                        ClearConnectionSelection();
+                        OnClickBackground();
                     }
 
                     if (e.button == 1) 
@@ -516,6 +520,16 @@ namespace NodeEditor
                     {
                         ProcessContextMenu(e.mousePosition);
                     }
+                    if (e.keyCode == KeyCode.LeftControl)
+                    {
+                        multiSelecting = true;
+                    }
+                    break;
+                case EventType.KeyUp:
+                    if (e.keyCode == KeyCode.LeftControl)
+                    {
+                        multiSelecting = false;
+                    }
                     break;
             }
         }
@@ -527,7 +541,7 @@ namespace NodeEditor
             {
                 for (int i = 0; i < nodes.Count; i++)
                 {
-                    nodes[i].Drag(delta);
+                    nodes[i].Drag(delta, false);
                 }
             }
 
@@ -553,6 +567,8 @@ namespace NodeEditor
             Debug.Log("Show context menu");
             GenericMenu genericMenu = new GenericMenu();
             genericMenu.AddItem(new GUIContent("Add node"), false, () => OnClickAddNode(mousePosition, true));
+            //genericMenu.AddItem(new GUIContent("Action"), true, () => Debug.Log("Actions"));
+            //genericMenu.AddItem(new GUIContent("Action/Wait"), false, () => Debug.Log("Ayy"));
             genericMenu.ShowAsContext();
         }
 
@@ -574,7 +590,7 @@ namespace NodeEditor
         {
             Debug.Log("Add node at " + mousePosition);
             if (nodes == null) nodes = new List<Node>();
-            Node node = new Node(mousePosition, new Vector2(200, 50), direction, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnSelectNode, OnClickNode: OnClickConnectionPoint, OnClickRemoveNode: OnClickRemoveNode, onDragNode: OnDragNode);
+            Node node = new Node(mousePosition, new Vector2(200, 50), direction, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnClickNode, OnClickConnectionPoint, OnClickRemoveNode: OnClickRemoveNode, onDragNode: OnDragNode, OnClickUpNode);
             if (centered)
             {
                 node.rect.x -= node.rect.width * .5f;
@@ -611,14 +627,86 @@ namespace NodeEditor
             hasUnsavedChanges = true;
         }
 
+        private bool isDragging;
+
         private void OnDragNode(Node node)
         {
+            isDragging = true;
+            if (nodes.Count > 1)
+                selectedNodes.ForEach(x => {
+                    if (x != node)
+                        x.Drag(Event.current.delta, false);
+                    });
             hasUnsavedChanges = true;
         }
 
-        private void OnSelectNode(Node node, bool selected)
+        private void OnClickNode(Node node)
         {
+            if (multiSelecting)
+            {
+                if (!selectedNodes.Contains(node)) SelectNode(node);
+                return;
+            }
+            if (node.isSelected)
+            {
+                isDragging = true;
+                return;
+            }
+            ClearNodeSelection();
+            SelectNode(node);
+        }
 
+        private void OnClickUpNode(Node node)
+        {
+            if (!multiSelecting && !isDragging && selectedNodes.Count > 1)
+            {
+                Debug.Log("Select single node");
+                ClearNodeSelection();
+                SelectNode(node);
+            }
+
+            isDragging = false;
+        }
+
+        private void SelectNode(Node node)
+        {
+            selectedNodes.Add(node);
+            node.isSelected = true;
+            GUI.changed = true;
+        }
+
+        private void DeselectNode(Node node)
+        {
+            selectedNodes.Remove(node);
+            node.isSelected = false;
+            GUI.changed = true;
+        }
+
+        private void ClearNodeSelection()
+        {
+            Debug.Log($"Deselect {selectedNodes.Count} nodes");
+            selectedNodes.ForEach(node => node.isSelected = false);
+            selectedNodes.Clear();
+            GUI.changed = true;
+        }
+
+        [Shortcut("Node Based Editor/Select All", KeyCode.A, ShortcutModifiers.Alt)]
+        public static void SelectAllNodes_Shortcut()
+        {
+            if (focusedWindow.GetType() == typeof(NodeBasedEditor))
+                (focusedWindow as NodeBasedEditor).SelectAllNodes();
+        }
+
+        private void SelectAllNodes()
+        {
+            nodes.ForEach(node => SelectNode(node));
+            GUI.changed = true;
+        }
+
+        private void OnClickBackground()
+        {
+            ClearConnectionSelection();
+            ClearNodeSelection();
         }
         #endregion
 

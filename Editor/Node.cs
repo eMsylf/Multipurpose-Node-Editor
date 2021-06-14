@@ -19,15 +19,16 @@ namespace NodeEditor
 
         // OPTION: Remove these styles and pass them as parameters in Draw()
         // Would that be less efficient?
-        public GUIStyle style;
+        public GUIStyle style { get => isSelected ? selectedStyle : regularStyle; }
         public GUIStyle regularStyle;
         public GUIStyle selectedStyle;
 
-        public Action<Node, bool> OnSelectNode;
+        public Action<Node> OnClickNode;
+        public Action<Node> OnClickUp;
         public Action<Node> OnRemoveNode;
         public Action<Node> OnDragNode;
 
-        public Node(Vector2 position, Vector2 size, Direction direction, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node, bool> onSelect, Action<Node, ConnectionPointType> OnClickNode, Action<Node> OnClickRemoveNode, Action<Node> onDragNode)
+        public Node(Vector2 position, Vector2 size, Direction direction, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node> onClickNode, Action<Node, ConnectionPointType> onClickConnectionPoint, Action<Node> OnClickRemoveNode, Action<Node> onDragNode, Action<Node> onClickUp)
         {
             rect = new Rect(position, size);
             Vector2 connectionPointDimensions;
@@ -41,22 +42,16 @@ namespace NodeEditor
                     connectionPointDimensions = new Vector2(20, 10);
                     break;
             }
-            inPoint = new ConnectionPoint(ConnectionPointType.In, connectionPointDimensions, inPointStyle, OnClickNode);
-            outPoint = new ConnectionPoint(ConnectionPointType.Out, connectionPointDimensions, outPointStyle, OnClickNode);
+            inPoint = new ConnectionPoint(ConnectionPointType.In, connectionPointDimensions, inPointStyle, onClickConnectionPoint);
+            outPoint = new ConnectionPoint(ConnectionPointType.Out, connectionPointDimensions, outPointStyle, onClickConnectionPoint);
             regularStyle = nodeStyle;
             this.selectedStyle = selectedStyle;
-            style = regularStyle;
             OnRemoveNode = OnClickRemoveNode;
             OnDragNode = onDragNode;
-            OnSelectNode = onSelect;
+            OnClickNode = onClickNode;
+            this.OnClickUp = onClickUp;
         }
 
-        public void Drag(Vector2 delta)
-        {
-            rect.position += delta;
-            OnDragNode.Invoke(this);
-        }
-        // OPTION: node has only rect,  
         public void Draw(Direction direction, float zoom)
         {
             inPoint.Draw(direction, this, zoom);
@@ -73,20 +68,8 @@ namespace NodeEditor
                     {
                         if (rect.Contains(e.mousePosition))
                         {
-                            isDragged = true;
-                            GUI.changed = true;
-                            OnSelect(true);
-                            style = selectedStyle;
+                            Click();
                             e.Use();
-                        }
-                        else
-                        {
-                            GUI.changed = true;
-                            if (!multiSelecting)
-                            {
-                                OnSelect(false);
-                                style = regularStyle;
-                            }
                         }
                     }
 
@@ -97,12 +80,13 @@ namespace NodeEditor
                     }
                     break;
                 case EventType.MouseUp:
-                    isDragged = false;
+                    ClickUp();
+                    e.Use();
                     break;
                 case EventType.MouseDrag:
                     if (e.button == 0 && isSelected)
                     {
-                        Drag(e.delta);
+                        Drag(e.delta, true);
                         e.Use();
                         return true;
                     }
@@ -128,20 +112,29 @@ namespace NodeEditor
             genericMenu.ShowAsContext();
         }
 
+        private void Click()
+        {
+            isDragged = true;
+            GUI.changed = true;
+            OnClickNode.Invoke(this);
+        }
+
+        private void ClickUp()
+        {
+            isDragged = false;
+            OnClickUp.Invoke(this);
+        }
+
         private void OnClickRemoveNode()
         {
             OnRemoveNode?.Invoke(this);
         }
 
-        private void OnSelect(bool selected)
+        public void Drag(Vector2 delta, bool invokeCallbacks)
         {
-            isSelected = selected;
-            OnSelectNode.Invoke(this, selected);
-        }
-
-        private void OnDrag()
-        {
-
+            rect.position += delta;
+            if (invokeCallbacks)
+                OnDragNode.Invoke(this);
         }
     }
 }
