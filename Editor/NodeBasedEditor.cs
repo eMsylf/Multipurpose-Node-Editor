@@ -13,6 +13,8 @@ namespace NodeEditor
 
     public class NodeBasedEditor : EditorWindow
     {
+        static NodeBasedEditor window;
+
         public Direction direction = Direction.TopBottom;
 
         private float toolbarHeight = 20f;
@@ -23,7 +25,7 @@ namespace NodeEditor
         private float toolbarSettingsHeight = EditorGUIUtility.singleLineHeight;
         private float toolbarSettingsWidth = 200;
         private GUIStyle toolbarSettingsStyle = new GUIStyle();
-
+        
         private List<Node> nodes = new List<Node>();
         private List<Connection> connections = new List<Connection>();
         public NodeStructure reference;
@@ -33,30 +35,28 @@ namespace NodeEditor
         private GUIStyle selectedNodeStyle;
         private GUIStyle inPointStyle;
         private GUIStyle outPointStyle;
-
+        
         private Node selectedNodeIn;
         private Node selectedNodeOut;
         private bool allowLoops;
-
+        
         private Vector2 offset;
         private Vector2 drag;
 
         private float zoom = 1f;
         private float zoomMin = .5f;
         private float zoomMax = 2f;
-
+        
         private bool drawingSelectionRect = false;
         private Rect selectionRect;
         private GUIStyle selectionRectStyle;
-
+        
         private Color gridSmallColor = new Color(.5f, .5f, .5f, .2f);
         private Color gridLargeColor = new Color(.5f, .5f, .5f, .4f);
-
-        static NodeBasedEditor window;
-
+        
         private List<Node> selectedNodes = new List<Node>();
         private bool multiSelecting;
-        private bool multiDragging;
+        private bool isDragging;
 
         [MenuItem("Window/Bob Jeltes/Node Based Editor")]
         public static NodeBasedEditor OpenWindow()
@@ -67,7 +67,7 @@ namespace NodeEditor
             return window;
         }
 
-        private void OnEnable()
+        internal virtual void OnEnable()
         {
             toolbarSettingsStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/dockarea back.png") as Texture2D;
 
@@ -114,7 +114,7 @@ namespace NodeEditor
             InitNodes();
         }
 
-        private void OnGUI()
+        internal virtual void OnGUI()
         {
             DrawGrid(20 * zoom, gridSmallColor);
             DrawGrid(100 * zoom, gridLargeColor);
@@ -133,7 +133,7 @@ namespace NodeEditor
         }
 
         #region File Management
-        private bool UnsavedChangesCheck()
+        internal virtual bool UnsavedChangesCheck()
         {
             if (hasUnsavedChanges)
             {
@@ -162,7 +162,7 @@ namespace NodeEditor
                 (focusedWindow as NodeBasedEditor).NewFile();
         }
 
-        private void NewFile()
+        internal virtual void NewFile()
         {
             if (!UnsavedChangesCheck()) return;
             fileName = "New Node Structure";
@@ -235,7 +235,7 @@ namespace NodeEditor
             return true;
         }
 
-        private void InitNodes()
+        internal virtual void InitNodes()
         {
             foreach (var node in nodes)
             {
@@ -264,7 +264,7 @@ namespace NodeEditor
         #endregion
 
         #region Draw functions
-        private void DrawGrid(float spacing, Color color)
+        internal virtual void DrawGrid(float spacing, Color color)
         {
             int widthDivs = Mathf.CeilToInt(position.width / spacing);
             int heightDivs = Mathf.CeilToInt(position.height / spacing);
@@ -374,7 +374,7 @@ namespace NodeEditor
             // Unsaved changes message
         }
 
-        private void DrawNodes(float zoom)
+        internal virtual void DrawNodes(float zoom)
         {
             if (nodes == null)
                 return;
@@ -385,7 +385,7 @@ namespace NodeEditor
             }
         }
 
-        private void DrawConnections()
+        internal virtual void DrawConnections()
         {
             if (connections == null) return;
             for (int i = 0; i < connections.Count; i++)
@@ -394,7 +394,7 @@ namespace NodeEditor
             }
         }
 
-        private void DrawConnectionLine(Event e)
+        internal virtual void DrawConnectionLine(Event e)
         {
             Vector2 dir;
             switch (direction)
@@ -441,7 +441,7 @@ namespace NodeEditor
         #endregion
 
         #region Editor events
-        private void ProcessEvents(Event e)
+        internal virtual void ProcessEvents(Event e)
         {
             drag = Vector2.zero;
 
@@ -463,8 +463,18 @@ namespace NodeEditor
                         OnClickBackground();
                     }
 
-                    if (e.button == 1) 
-                        ProcessContextMenu(e.mousePosition);
+                    if (e.button == 1)
+                    {
+                        if (selectedNodeIn != null || selectedNodeOut != null)
+                        {
+                            ClearConnectionSelection();
+                        }
+                        else
+                        {
+                            ProcessContextMenu(e.mousePosition);
+                        }
+                    }
+
                     break;
 
                 case EventType.MouseDrag:
@@ -536,7 +546,7 @@ namespace NodeEditor
             }
         }
 
-        private void OnDragView(Vector2 delta)
+        internal virtual void OnDragView(Vector2 delta)
         {
             drag = delta;
             if (nodes != null)
@@ -552,7 +562,7 @@ namespace NodeEditor
         #endregion
 
         #region Node Events
-        private void ProcessNodeEvents(Event e)
+        internal virtual void ProcessNodeEvents(Event e)
         {
             if (nodes == null) return;
 
@@ -564,7 +574,7 @@ namespace NodeEditor
             }
         }
 
-        private void ProcessContextMenu(Vector2 mousePosition)
+        internal virtual void ProcessContextMenu(Vector2 mousePosition)
         {
             Debug.Log("Show context menu");
             GenericMenu genericMenu = new GenericMenu();
@@ -588,7 +598,7 @@ namespace NodeEditor
         //    }
         //}
 
-        private Node OnClickAddNode(Vector2 mousePosition, bool centered)
+        internal virtual Node OnClickAddNode(Vector2 mousePosition, bool centered)
         {
             Debug.Log("Add node at " + mousePosition);
             if (nodes == null) nodes = new List<Node>();
@@ -603,7 +613,7 @@ namespace NodeEditor
             return node;
         }
 
-        private void OnClickRemoveNode(Node node)
+        internal virtual void OnClickRemoveNode(Node node)
         {
             if (connections != null)
             {
@@ -629,9 +639,9 @@ namespace NodeEditor
             hasUnsavedChanges = true;
         }
 
-        private bool isDragging;
+        
 
-        private void OnDragNode(Node node)
+        internal virtual void OnDragNode(Node node)
         {
             isDragging = true;
             if (nodes.Count > 1)
@@ -642,7 +652,7 @@ namespace NodeEditor
             hasUnsavedChanges = true;
         }
 
-        private void OnClickNode(Node node)
+        internal virtual void OnClickNode(Node node)
         {
             if (multiSelecting)
             {
@@ -658,7 +668,7 @@ namespace NodeEditor
             SelectNode(node);
         }
 
-        private void OnClickUpNode(Node node)
+        internal virtual void OnClickUpNode(Node node)
         {
             if (!multiSelecting && !isDragging && selectedNodes.Count > 1)
             {
@@ -670,21 +680,21 @@ namespace NodeEditor
             isDragging = false;
         }
 
-        private void SelectNode(Node node)
+        internal virtual void SelectNode(Node node)
         {
             selectedNodes.Add(node);
             node.isSelected = true;
             GUI.changed = true;
         }
 
-        private void DeselectNode(Node node)
+        internal virtual void DeselectNode(Node node)
         {
             selectedNodes.Remove(node);
             node.isSelected = false;
             GUI.changed = true;
         }
 
-        private void ClearNodeSelection()
+        internal virtual void ClearNodeSelection()
         {
             Debug.Log($"Deselect {selectedNodes.Count} nodes");
             selectedNodes.ForEach(node => node.isSelected = false);
@@ -699,13 +709,13 @@ namespace NodeEditor
                 (focusedWindow as NodeBasedEditor).SelectAllNodes();
         }
 
-        private void SelectAllNodes()
+        protected virtual void SelectAllNodes()
         {
             nodes.ForEach(node => SelectNode(node));
             GUI.changed = true;
         }
 
-        private void OnClickBackground()
+        protected virtual void OnClickBackground()
         {
             ClearConnectionSelection();
             ClearNodeSelection();
@@ -713,7 +723,7 @@ namespace NodeEditor
         #endregion
 
         #region Connection Events
-        private void OnClickConnectionPoint(Node node, ConnectionPointType type)
+        internal virtual void OnClickConnectionPoint(Node node, ConnectionPointType type)
         {
             switch (type)
             {
@@ -738,18 +748,21 @@ namespace NodeEditor
             }
             if (selectedNodeOut != selectedNodeIn)
             {
-                CreateConnection();
+                if (connections.Exists(c => c.inNode == selectedNodeIn && c.outNode == selectedNodeOut))
+                    Debug.LogWarning("A connection has already been established between these two nodes.");
+                else 
+                    CreateConnection();
             }
             ClearConnectionSelection();
         }
 
-        private void OnClickRemoveConnection(Connection connection)
+        internal virtual void OnClickRemoveConnection(Connection connection)
         {
             connections.Remove(connection);
             hasUnsavedChanges = true;
         }
 
-        private void CreateConnection()
+        internal virtual void CreateConnection()
         {
             if (connections == null) 
                 connections = new List<Connection>();
@@ -758,13 +771,13 @@ namespace NodeEditor
         }
 
         // TODO: new method of handling connections where the parent node keeps track of what children are connected to it
-        //private void CreateConnection(Node parent, Node child)
+        //internal virtual void CreateConnection(Node parent, Node child)
         //{
         //    parent.childNodes.Add(child);
         //    hasUnsavedChanges = true;
         //}
 
-        private void ClearConnectionSelection()
+        internal virtual void ClearConnectionSelection()
         {
             selectedNodeIn = null;
             selectedNodeOut = null;
