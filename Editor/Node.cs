@@ -80,8 +80,11 @@ namespace NodeEditor
                     }
                     break;
                 case EventType.MouseUp:
-                    ClickUp();
-                    e.Use();
+                    if (e.button == 0 && rect.Contains(e.mousePosition))
+                    {
+                        ClickUp();
+                        e.Use();
+                    }
                     break;
                 case EventType.MouseDrag:
                     if (e.button == 0 && isSelected)
@@ -121,6 +124,7 @@ namespace NodeEditor
 
         private void ClickUp()
         {
+            Debug.Log("Click up on node " + rect.position);
             isDragged = false;
             OnClickUp.Invoke(this);
         }

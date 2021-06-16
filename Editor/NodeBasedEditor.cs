@@ -55,7 +55,8 @@ namespace NodeEditor
         private Color gridSmallColor = new Color(.5f, .5f, .5f, .2f);
         private Color gridLargeColor = new Color(.5f, .5f, .5f, .4f);
         
-        private List<Node> selectedNodes = new List<Node>();
+        public List<Node> SelectedNodes { get => nodes.FindAll(x => x.isSelected); }
+
         private bool multiSelecting;
         private bool isDragging;
 
@@ -613,66 +614,73 @@ namespace NodeEditor
             hasUnsavedChanges = true;
         }
 
-        
-
         internal virtual void OnDragNode(Node node)
         {
-            isDragging = true;
+            Debug.Log("Drag " + Event.current.delta);
+            StartDrag();
             if (nodes.Count > 1)
-                selectedNodes.ForEach(x => {
+                SelectedNodes.ForEach(x => {
                     if (x != node)
                         x.Drag(Event.current.delta, false);
                     });
             hasUnsavedChanges = true;
         }
 
+        internal virtual void StartDrag()
+        {
+            isDragging = true;
+        }
+
+        internal virtual void EndDrag()
+        {
+            isDragging = false;
+        }
+
         internal virtual void OnClickNode(Node node)
         {
             if (multiSelecting)
             {
-                if (!selectedNodes.Contains(node)) SelectNode(node);
+                if (!SelectedNodes.Contains(node)) SelectNode(node);
+                else DeselectNode(node);
                 return;
             }
             if (node.isSelected)
             {
-                isDragging = true;
                 return;
             }
-            ClearNodeSelection();
+            DeselectAllNodes();
             SelectNode(node);
         }
 
         internal virtual void OnClickUpNode(Node node)
         {
-            if (!multiSelecting && !isDragging && selectedNodes.Count > 1)
+            Debug.Log("Click up on node " + node.rect.position);
+            if (!multiSelecting && !isDragging && SelectedNodes.Count > 1)
             {
-                Debug.Log("Select single node");
-                ClearNodeSelection();
+                DeselectAllNodes();
                 SelectNode(node);
+                Debug.Log("Click up on node " + node.rect.position);
             }
 
-            isDragging = false;
+            EndDrag();
         }
 
         internal virtual void SelectNode(Node node)
         {
-            selectedNodes.Add(node);
             node.isSelected = true;
             GUI.changed = true;
         }
 
         internal virtual void DeselectNode(Node node)
         {
-            selectedNodes.Remove(node);
             node.isSelected = false;
             GUI.changed = true;
         }
 
-        internal virtual void ClearNodeSelection()
+        internal virtual void DeselectAllNodes()
         {
-            Debug.Log($"Deselect {selectedNodes.Count} nodes");
-            selectedNodes.ForEach(node => node.isSelected = false);
-            selectedNodes.Clear();
+            Debug.Log($"Deselect {SelectedNodes.Count} nodes");
+            SelectedNodes.ForEach(node => node.isSelected = false);
             GUI.changed = true;
         }
 
@@ -692,7 +700,7 @@ namespace NodeEditor
         protected virtual void OnClickBackground()
         {
             ClearConnectionSelection();
-            ClearNodeSelection();
+            DeselectAllNodes();
         }
         #endregion
 
