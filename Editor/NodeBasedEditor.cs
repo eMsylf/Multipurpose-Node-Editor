@@ -9,13 +9,13 @@ using System;
 
 namespace NodeEditor
 {
-    public enum Direction { LeftRight, TopBottom }
+    public enum Orientation { LeftRight, TopBottom }
 
     public class NodeBasedEditor : EditorWindow
     {
         static NodeBasedEditor window;
 
-        public Direction direction = Direction.TopBottom;
+        public Orientation orientation = Orientation.TopBottom;
 
         private float toolbarHeight = 20f;
         private bool toolbarEnabled = true;
@@ -28,6 +28,7 @@ namespace NodeEditor
         
         private List<Node> nodes = new List<Node>();
         private List<Connection> connections = new List<Connection>();
+        private Connection connectionPreview = new Connection();
         public NodeStructure reference;
         string fileName = "New Node Structure";
 
@@ -82,15 +83,15 @@ namespace NodeEditor
             string inSide;
             string outSide;
             RectOffset border;
-            switch (direction)
+            switch (orientation)
             {
                 default:
-                case Direction.LeftRight:
+                case Orientation.LeftRight:
                     inSide = "left";
                     outSide = "right";
                     border = new RectOffset(4, 4, 12, 12);
                     break;
-                case Direction.TopBottom:
+                case Orientation.TopBottom:
                     inSide = "mid";
                     outSide = "mid";
                     border = new RectOffset(4, 4, 12, 12);
@@ -112,6 +113,7 @@ namespace NodeEditor
             selectionRectStyle.normal.background.SetPixel(1, 1, new Color(.5f, .5f, .5f, .3f));
             //selectionRectStyle.border = new RectOffset();
             InitNodes();
+            ClearConnectionSelection();
         }
 
         internal virtual void OnGUI()
@@ -122,7 +124,7 @@ namespace NodeEditor
             DrawNodes(zoom);
             DrawConnections();
 
-            DrawConnectionLine(Event.current);
+            DrawConnectionPreview(Event.current);
             
             DrawToolbar();
 
@@ -141,12 +143,14 @@ namespace NodeEditor
                 switch (result)
                 {
                     case 0:
+                        // Yes
                         SaveChanges();
                         break;
                     case 1:
                         // Cancel
                         return false;
                     case 2:
+                        // Discard
                         break;
                     default:
                         break;
@@ -224,7 +228,6 @@ namespace NodeEditor
             if (!UnsavedChangesCheck()) return false;
             nodes?.Clear();
             connections?.Clear();
-            ClearConnectionSelection();
             if (structure == null) return true;
             Debug.Log("Found " + structure.nodes.Count + " nodes");
             Debug.Log("Found " + structure.connections.Count + " connections");
@@ -232,6 +235,7 @@ namespace NodeEditor
             connections = structure.connections.ToList();
             reference = structure;
             InitNodes();
+            ClearConnectionSelection();
             return true;
         }
 
@@ -381,7 +385,7 @@ namespace NodeEditor
 
             for (int i = 0; i < nodes.Count; i++)
             {
-                nodes[i].Draw(direction, zoom);
+                nodes[i].Draw(orientation);
             }
         }
 
@@ -390,51 +394,21 @@ namespace NodeEditor
             if (connections == null) return;
             for (int i = 0; i < connections.Count; i++)
             {
-                connections[i].Draw(direction);
+                connections[i].Draw(orientation);
             }
         }
 
-        internal virtual void DrawConnectionLine(Event e)
+        internal virtual void DrawConnectionPreview(Event e)
         {
-            Vector2 dir;
-            switch (direction)
-            {
-                default:
-                case Direction.LeftRight:
-                    dir = Vector2.left;
-                    break;
-                case Direction.TopBottom:
-                    dir = -Vector2.up;
-                    break;
-            }
-
             if (selectedNodeIn != null && selectedNodeOut == null)
             {
-                Handles.DrawBezier(
-                    selectedNodeIn.inPoint.rect.center,
-                    e.mousePosition,
-                    selectedNodeIn.inPoint.rect.center + dir * 50f,
-                    e.mousePosition - dir * 50f,
-                    Color.white,
-                    null,
-                    2f
-                );
-
+                connectionPreview.Draw(selectedNodeIn.inPoint.rect.center, e.mousePosition, orientation, false);
                 GUI.changed = true;
             }
 
             if (selectedNodeOut != null && selectedNodeIn == null)
             {
-                Handles.DrawBezier(
-                    selectedNodeOut.outPoint.rect.center,
-                    e.mousePosition,
-                    selectedNodeOut.outPoint.rect.center - dir * 50f,
-                    e.mousePosition + dir * 50f,
-                    Color.white,
-                    null,
-                    2f
-                );
-
+                connectionPreview.Draw(e.mousePosition, selectedNodeOut.outPoint.rect.center, orientation, false);
                 GUI.changed = true;
             }
         }
@@ -453,12 +427,12 @@ namespace NodeEditor
                         if (selectedNodeIn == null && selectedNodeOut != null)
                         {
                             Node newNode = OnClickAddNode(e.mousePosition, true);
-                            OnClickConnectionPoint(newNode, ConnectionPointType.In);
+                            CreateConnection(newNode, selectedNodeOut);
                         }
                         if (selectedNodeIn != null && selectedNodeOut == null)
                         {
                             Node newNode = OnClickAddNode(e.mousePosition, true);
-                            OnClickConnectionPoint(newNode, ConnectionPointType.Out);
+                            CreateConnection(selectedNodeIn, newNode);
                         }
                         OnClickBackground();
                     }
@@ -602,7 +576,7 @@ namespace NodeEditor
         {
             Debug.Log("Add node at " + mousePosition);
             if (nodes == null) nodes = new List<Node>();
-            Node node = new Node(mousePosition, new Vector2(200, 50), direction, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnClickNode, OnClickConnectionPoint, OnClickRemoveNode: OnClickRemoveNode, onDragNode: OnDragNode, OnClickUpNode);
+            Node node = new Node(mousePosition, new Vector2(200, 50), orientation, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnClickNode, OnClickConnectionPoint, OnClickRemoveNode: OnClickRemoveNode, onDragNode: OnDragNode, OnClickUpNode);
             if (centered)
             {
                 node.rect.x -= node.rect.width * .5f;
@@ -751,7 +725,7 @@ namespace NodeEditor
                 if (connections.Exists(c => c.inNode == selectedNodeIn && c.outNode == selectedNodeOut))
                     Debug.LogWarning("A connection has already been established between these two nodes.");
                 else 
-                    CreateConnection();
+                    CreateConnection(selectedNodeIn, selectedNodeOut);
             }
             ClearConnectionSelection();
         }
@@ -762,11 +736,11 @@ namespace NodeEditor
             hasUnsavedChanges = true;
         }
 
-        internal virtual void CreateConnection()
+        internal virtual void CreateConnection(Node nodeIn, Node nodeOut)
         {
             if (connections == null) 
                 connections = new List<Connection>();
-            connections.Add(new Connection(selectedNodeIn, selectedNodeOut, OnClickRemoveConnection));
+            connections.Add(new Connection(nodeIn, nodeOut, OnClickRemoveConnection));
             hasUnsavedChanges = true;
         }
 

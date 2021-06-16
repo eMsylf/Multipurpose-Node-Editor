@@ -28,17 +28,17 @@ namespace NodeEditor
         public Action<Node> OnRemoveNode;
         public Action<Node> OnDragNode;
 
-        public Node(Vector2 position, Vector2 size, Direction direction, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node> onClickNode, Action<Node, ConnectionPointType> onClickConnectionPoint, Action<Node> OnClickRemoveNode, Action<Node> onDragNode, Action<Node> onClickUp)
+        public Node(Vector2 position, Vector2 size, Orientation direction, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node> onClickNode, Action<Node, ConnectionPointType> onClickConnectionPoint, Action<Node> OnClickRemoveNode, Action<Node> onDragNode, Action<Node> onClickUp)
         {
             rect = new Rect(position, size);
             Vector2 connectionPointDimensions;
             switch (direction)
             {
                 default:
-                case Direction.LeftRight:
+                case Orientation.LeftRight:
                     connectionPointDimensions = new Vector2(10f, 20f);
                     break;
-                case Direction.TopBottom:
+                case Orientation.TopBottom:
                     connectionPointDimensions = new Vector2(20, 10);
                     break;
             }
@@ -52,11 +52,11 @@ namespace NodeEditor
             this.OnClickUp = onClickUp;
         }
 
-        public void Draw(Direction direction, float zoom)
+        public void Draw(Orientation direction)
         {
-            inPoint.Draw(direction, this, zoom);
-            outPoint.Draw(direction, this, zoom);
             GUI.Box(rect, title, style);
+            inPoint.Draw(direction, this);
+            outPoint.Draw(direction, this);
         }
 
         public bool ProcessEvents(Event e)

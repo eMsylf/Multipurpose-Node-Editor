@@ -10,7 +10,6 @@ namespace NodeEditor
     public class ConnectionPoint
     {
         public Rect rect;
-        Vector2 originalSize;
         public ConnectionPointType type;
         public GUIStyle style;
         public Action<Node, ConnectionPointType> OnClickConnectionPoint;
@@ -20,7 +19,6 @@ namespace NodeEditor
             this.type = type;
             this.style = style;
             rect = new Rect(0, 0, size.x, size.y);
-            originalSize = rect.size;
             OnClickConnectionPoint = onClickConnectionPoint;
         }
 
@@ -28,11 +26,11 @@ namespace NodeEditor
         // [DONE] top-to-bottom variant
         // (and bottom-to-top)
         // (and right-to-left?)
-        public void Draw(Direction direction, Node node, float zoom)
+        public void Draw(Orientation direction, Node node)
         {
             switch (direction)
             {
-                case Direction.LeftRight:
+                case Orientation.LeftRight:
                     rect.y = node.rect.y + (node.rect.height * .5f) - rect.height * .5f;
 
                     switch (type)
@@ -47,7 +45,7 @@ namespace NodeEditor
                             break;
                     }
                     break;
-                case Direction.TopBottom:
+                case Orientation.TopBottom:
                     rect.x = node.rect.x + (node.rect.width* .5f) - rect.width * .5f;
 
                     switch (type)
@@ -65,7 +63,6 @@ namespace NodeEditor
                 default:
                     break;
             }
-            rect.size = originalSize * zoom;
             if (GUI.Button(rect, "", style))
             {
                 OnClickConnectionPoint?.Invoke(node, type);
