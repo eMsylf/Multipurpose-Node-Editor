@@ -348,12 +348,15 @@ namespace NodeEditor
                 Debug.Log("Save");
                 SaveChanges();
             }
-
+            if (reference == null && !hasUnsavedChanges)
+            {
+                GUI.enabled = false;
+            }
             if (GUILayout.Button("New", EditorStyles.toolbarButton, GUILayout.Width(40)))
             {
                 NewFile();
             }
-
+            GUI.enabled = true;
             //GUILayout.FlexibleSpace();
 
             //if (GUILayout.Button("Settings", EditorStyles.toolbarDropDown, GUILayout.Width(70)))
