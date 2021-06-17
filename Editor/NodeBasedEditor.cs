@@ -13,8 +13,6 @@ namespace NodeEditor
 
     public class NodeBasedEditor : EditorWindow
     {
-        static NodeBasedEditor window;
-
         public Orientation orientation = Orientation.TopBottom;
 
         private float toolbarHeight = 20f;
@@ -60,13 +58,13 @@ namespace NodeEditor
         private bool multiSelecting;
         private bool isDragging;
 
+        [MenuItem("Tools/Bob Jeltes/Node Based Editor")]
         [MenuItem("Window/Bob Jeltes/Node Based Editor")]
         public static NodeBasedEditor OpenWindow()
         {
-            window = GetWindow<NodeBasedEditor>();
-            window.titleContent = new GUIContent("Node Based Editor");
-            window.saveChangesMessage = "This node structure has not been saved. Would you like to save?";
-            return window;
+            NodeBasedEditor openedWindow = GetWindow<NodeBasedEditor>("Node Based Editor");
+            openedWindow.saveChangesMessage = "This node structure has not been saved. Would you like to save?";
+            return openedWindow;
         }
 
         internal virtual void OnEnable()
@@ -662,7 +660,6 @@ namespace NodeEditor
             {
                 DeselectAllNodes();
                 SelectNode(node);
-                Debug.Log("Click up on node " + node.rect.position);
             }
 
             EndDrag();
@@ -682,6 +679,11 @@ namespace NodeEditor
 
         internal virtual void DeselectAllNodes()
         {
+            // TODO: Is it faster to cache the SelectedNodes list?
+            //List<NodeVisual> selectedNodes = SelectedNodes;
+            //Debug.Log($"Deselect {selectedNodes.Count} nodes");
+            //selectedNodes.ForEach(node => node.isSelected = false);
+            //GUI.changed = true;
             Debug.Log($"Deselect {SelectedNodes.Count} nodes");
             SelectedNodes.ForEach(node => node.isSelected = false);
             GUI.changed = true;
@@ -697,7 +699,7 @@ namespace NodeEditor
         protected virtual void SelectAllNodes()
         {
             nodes.ForEach(node => SelectNode(node));
-            GUI.changed = true;
+            Repaint();
         }
 
         protected virtual void OnClickBackground()

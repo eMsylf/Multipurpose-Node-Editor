@@ -6,15 +6,12 @@ using NodeEditor;
 
 public class BehaviorTreeEditor : NodeBasedEditor
 {
-    static BehaviorTreeEditor window;
-
     [MenuItem("Window/Bob Jeltes/Behavior Tree Editor")]
     public static new BehaviorTreeEditor OpenWindow()
     {
-        window = GetWindow<BehaviorTreeEditor>();
-        window.titleContent = new GUIContent("Behavior Tree Editor");
-        window.saveChangesMessage = "This behavior tree has not been saved. Would you like to save?";
-        return window;
+        BehaviorTreeEditor openedWindow = GetWindow<BehaviorTreeEditor>("Behavior Tree Editor");
+        openedWindow.saveChangesMessage = "This behavior tree has not been saved. Would you like to save?";
+        return openedWindow;
     }
 
     internal override Node OnClickAddNode(Vector2 mousePosition, bool centered)

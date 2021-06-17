@@ -1,4 +1,4 @@
-1. Open the node editor
+1. Open the node editor window
 2. Add a start node 
 3. Connect 3 new nodes to it
 4. Create two more nodes and connect them both to one of the 3 lowest nodes
