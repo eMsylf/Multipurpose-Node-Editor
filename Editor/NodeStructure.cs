@@ -7,8 +7,13 @@ namespace NodeEditor
 {
     public class NodeStructure : ScriptableObject
     {
-        public List<Node> nodes;
-        public List<Connection> connections;
+        public List<Node> nodes = new List<Node>();
+        public List<Connection> connections = new List<Connection>();
+
+        public NodeStructure Copy()
+        {
+            return (NodeStructure)MemberwiseClone();
+        }
 
         [OnOpenAsset()]
         public static bool Open(int instanceID, int line)
