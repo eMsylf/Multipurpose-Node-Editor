@@ -109,7 +109,7 @@ namespace NodeEditor
             selectionRectStyle = new GUIStyle();
             selectionRectStyle.normal.background = new Texture2D(1, 1);
             selectionRectStyle.normal.background.SetPixel(1, 1, new Color(.5f, .5f, .5f, .3f));
-            //selectionRectStyle.border = new RectOffset();
+
             InitNodes();
             ClearConnectionSelection();
         }
@@ -177,9 +177,7 @@ namespace NodeEditor
         [Shortcut("Node Based Editor/Save node structure", defaultKeyCode: KeyCode.S, defaultShortcutModifiers: ShortcutModifiers.Alt)]
         public static void SaveChanges_Shortcut()
         {
-            // Is dit netjes? Mag dit? Kan dit fout gaan?
-            // Kan zijn dat als de editor derivet en niet de directe type is, dat de if-statement false returnt.
-            Debug.Log("");
+            // Kan zijn dat als de editor derivet en niet de directe type is, dat de if-statement false returnt
             if (focusedWindow.GetType() == typeof(NodeBasedEditor))
                 (focusedWindow as NodeBasedEditor).SaveChanges();
         }
@@ -191,8 +189,13 @@ namespace NodeEditor
             {
                 reference = CreateInstance<NodeStructure>();
             }
-
+            
             reference = temp.Copy();
+            foreach (var connection in reference.connections)
+            {
+                connection.inNodeID = reference.nodes.IndexOf(connection.inNode);
+                connection.outNodeID = reference.nodes.IndexOf(connection.outNode);
+            }
             EditorUtility.SetDirty(reference);
 
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))
@@ -254,14 +257,14 @@ namespace NodeEditor
                 node.isSelected = false;
                 node.multiSelecting = false;
             }
-            if (temp.connections == null) temp.connections = new List<Connection>();
             foreach (var connection in temp.connections)
             {
                 // TODO: Upon saving and loading, pass an index to the connection that belongs to the connected node.
                 // When initializing the nodes, get the indices stored in the Connection to reconnect them to the proper node in the new list
+                connection.inNode = temp.nodes[connection.inNodeID];
+                connection.outNode = temp.nodes[connection.outNodeID];
                 connection.OnClickRemoveConnection = OnClickRemoveConnection;
             }
-            hasUnsavedChanges = false;
         }
         #endregion
 
@@ -616,7 +619,6 @@ namespace NodeEditor
 
         internal virtual void OnDragNode(Node node)
         {
-            Debug.Log("Drag " + Event.current.delta);
             StartDrag();
             if (temp.nodes.Count > 1)
                 SelectedNodes.ForEach(x => {
@@ -752,7 +754,13 @@ namespace NodeEditor
         {
             if (temp.connections == null)
                 temp.connections = new List<Connection>();
-            temp.connections.Add(new Connection(nodeIn, nodeOut, OnClickRemoveConnection));
+            temp.connections.Add(
+                new Connection(nodeIn, nodeOut, OnClickRemoveConnection) 
+                { 
+                    inNodeID = temp.nodes.IndexOf(nodeIn), 
+                    outNodeID = temp.nodes.IndexOf(nodeOut)
+                });
+            
             hasUnsavedChanges = true;
         }
 

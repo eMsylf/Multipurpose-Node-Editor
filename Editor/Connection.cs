@@ -1,6 +1,7 @@
 /// Based on the tutorial by Oguzkonya at https://oguzkonya.com/creating-node-based-editor-unity/
 
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,9 +12,16 @@ namespace NodeEditor
     {
         public Node inNode;
         public Node outNode;
+        public int inNodeID;
+        public int outNodeID;
         //public GUID inNode;
         //public GUID outNode;
         public Action<Connection> OnClickRemoveConnection;
+
+        private Dictionary<Orientation, Vector2> orientationToDirection = new Dictionary<Orientation, Vector2> {
+            { Orientation.LeftRight, Vector2.left},
+            { Orientation.TopBottom, -Vector2.up} 
+        };
 
         public Connection()
         {
@@ -34,17 +42,7 @@ namespace NodeEditor
 
         public void Draw(Vector2 from, Vector2 to, Orientation orientation, bool hasRemoveButton)
         {
-            Vector2 dir;
-            switch (orientation)
-            {
-                default:
-                case Orientation.LeftRight:
-                    dir = Vector2.left;
-                    break;
-                case Orientation.TopBottom:
-                    dir = -Vector2.up;
-                    break;
-            }
+            Vector2 dir = orientationToDirection[orientation];
 
             Handles.DrawBezier(
                 from,

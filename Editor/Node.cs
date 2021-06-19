@@ -1,6 +1,7 @@
 /// Based on the tutorial by Oguzkonya at https://oguzkonya.com/creating-node-based-editor-unity/
 
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -28,20 +29,16 @@ namespace NodeEditor
         public Action<Node> OnRemoveNode;
         public Action<Node> OnDragNode;
 
-        public Node(Vector2 position, Vector2 size, Orientation direction, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node> onClickNode, Action<Node, ConnectionPointType> onClickConnectionPoint, Action<Node> OnClickRemoveNode, Action<Node> onDragNode, Action<Node> onClickUp)
+        private Dictionary<Orientation, Vector2> orientationToSize = new Dictionary<Orientation, Vector2>
+        {
+            {Orientation.LeftRight, new Vector2(10f, 20f) },
+            {Orientation.TopBottom, new Vector2(20f, 10f) }
+        };
+
+        public Node(Vector2 position, Vector2 size, Orientation orientation, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node> onClickNode, Action<Node, ConnectionPointType> onClickConnectionPoint, Action<Node> OnClickRemoveNode, Action<Node> onDragNode, Action<Node> onClickUp)
         {
             rect = new Rect(position, size);
-            Vector2 connectionPointDimensions;
-            switch (direction)
-            {
-                default:
-                case Orientation.LeftRight:
-                    connectionPointDimensions = new Vector2(10f, 20f);
-                    break;
-                case Orientation.TopBottom:
-                    connectionPointDimensions = new Vector2(20, 10);
-                    break;
-            }
+            Vector2 connectionPointDimensions = orientationToSize[orientation];
             inPoint = new ConnectionPoint(ConnectionPointType.In, connectionPointDimensions, inPointStyle, onClickConnectionPoint);
             outPoint = new ConnectionPoint(ConnectionPointType.Out, connectionPointDimensions, outPointStyle, onClickConnectionPoint);
             regularStyle = nodeStyle;
