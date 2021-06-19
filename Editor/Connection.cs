@@ -12,8 +12,8 @@ namespace NodeEditor
     {
         public Node inNode;
         public Node outNode;
-        public int inNodeID;
-        public int outNodeID;
+        public int inNodeIndex;
+        public int outNodeIndex;
         //public GUID inNode;
         //public GUID outNode;
         public Action<Connection> OnClickRemoveConnection;

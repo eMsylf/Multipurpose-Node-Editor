@@ -193,8 +193,8 @@ namespace NodeEditor
             reference = temp.Copy();
             foreach (var connection in reference.connections)
             {
-                connection.inNodeID = reference.nodes.IndexOf(connection.inNode);
-                connection.outNodeID = reference.nodes.IndexOf(connection.outNode);
+                connection.inNodeIndex = reference.nodes.IndexOf(connection.inNode);
+                connection.outNodeIndex = reference.nodes.IndexOf(connection.outNode);
             }
             EditorUtility.SetDirty(reference);
 
@@ -226,9 +226,14 @@ namespace NodeEditor
         public bool Load(NodeStructure structure)
         {
             if (!UnsavedChangesCheck()) return false;
-            temp.nodes?.Clear();
-            temp.connections?.Clear();
-            if (structure == null) return true;
+            if (structure == null)
+            {
+                NewFile();
+                return true;
+            }
+
+            temp.nodes.Clear();
+            temp.connections.Clear();
             Debug.Log("Found " + structure.nodes.Count + " nodes");
             Debug.Log("Found " + structure.connections.Count + " connections");
 
@@ -261,8 +266,8 @@ namespace NodeEditor
             {
                 // TODO: Upon saving and loading, pass an index to the connection that belongs to the connected node.
                 // When initializing the nodes, get the indices stored in the Connection to reconnect them to the proper node in the new list
-                connection.inNode = temp.nodes[connection.inNodeID];
-                connection.outNode = temp.nodes[connection.outNodeID];
+                connection.inNode = temp.nodes[connection.inNodeIndex];
+                connection.outNode = temp.nodes[connection.outNodeIndex];
                 connection.OnClickRemoveConnection = OnClickRemoveConnection;
             }
         }
@@ -757,8 +762,8 @@ namespace NodeEditor
             temp.connections.Add(
                 new Connection(nodeIn, nodeOut, OnClickRemoveConnection) 
                 { 
-                    inNodeID = temp.nodes.IndexOf(nodeIn), 
-                    outNodeID = temp.nodes.IndexOf(nodeOut)
+                    inNodeIndex = temp.nodes.IndexOf(nodeIn), 
+                    outNodeIndex = temp.nodes.IndexOf(nodeOut)
                 });
             
             hasUnsavedChanges = true;
