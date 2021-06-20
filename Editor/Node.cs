@@ -35,9 +35,9 @@ namespace NodeEditor
             {Orientation.TopBottom, new Vector2(20f, 10f) }
         };
 
-        public Node(Vector2 position, Vector2 size, Orientation orientation, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node> onClickNode, Action<Node, ConnectionPointType> onClickConnectionPoint, Action<Node> OnClickRemoveNode, Action<Node> onDragNode, Action<Node> onClickUp)
+        public Node(Rect rect, Orientation orientation, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node> onClickNode, Action<Node, ConnectionPointType> onClickConnectionPoint, Action<Node> OnClickRemoveNode, Action<Node> onDragNode, Action<Node> onClickUp)
         {
-            rect = new Rect(position, size);
+            this.rect = rect;
             Vector2 connectionPointDimensions = orientationToSize[orientation];
             inPoint = new ConnectionPoint(ConnectionPointType.In, connectionPointDimensions, inPointStyle, onClickConnectionPoint);
             outPoint = new ConnectionPoint(ConnectionPointType.Out, connectionPointDimensions, outPointStyle, onClickConnectionPoint);
@@ -51,9 +51,9 @@ namespace NodeEditor
 
         public void Draw(Orientation direction)
         {
-            GUI.Box(rect, title, style);
             inPoint.Draw(direction, this);
             outPoint.Draw(direction, this);
+            GUI.Box(rect, title, style);
         }
 
         public bool ProcessEvents(Event e)

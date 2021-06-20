@@ -24,10 +24,13 @@ namespace NodeEditor
         private float toolbarSettingsWidth = 200;
         private GUIStyle toolbarSettingsStyle = new GUIStyle();
 
-        private NodeStructure temp;
         public NodeStructure reference;
-        private Connection connectionPreview = new Connection();
         string fileName = "New Node Structure";
+
+        public List<Node> nodes;
+        public List<Connection> connections;
+        public List<Node> SelectedNodes { get => nodes.FindAll(x => x.isSelected); }
+        private Connection connectionPreview = new Connection();
 
         private GUIStyle nodeStyle;
         private GUIStyle selectedNodeStyle;
@@ -51,8 +54,6 @@ namespace NodeEditor
         
         private Color gridSmallColor = new Color(.5f, .5f, .5f, .2f);
         private Color gridLargeColor = new Color(.5f, .5f, .5f, .4f);
-        
-        public List<Node> SelectedNodes { get => temp.nodes.FindAll(x => x.isSelected); }
 
         private bool multiSelecting;
         private bool isDragging;
@@ -169,8 +170,8 @@ namespace NodeEditor
             if (!UnsavedChangesCheck()) return;
             fileName = "New Node Structure";
             reference = null;
-            temp.nodes = new List<Node>();
-            temp.connections = new List<Connection>();
+            nodes = new List<Node>();
+            connections = new List<Connection>();
             hasUnsavedChanges = false;
         }
 
@@ -189,12 +190,18 @@ namespace NodeEditor
             {
                 reference = CreateInstance<NodeStructure>();
             }
-            
-            reference = temp.Copy();
-            foreach (var connection in reference.connections)
+            reference.nodePositions.Clear();
+            foreach (var node in nodes)
             {
-                connection.inNodeIndex = reference.nodes.IndexOf(connection.inNode);
-                connection.outNodeIndex = reference.nodes.IndexOf(connection.outNode);
+                reference.nodePositions.Add(new Vector2(node.rect.position.x, node.rect.position.y));
+            }
+            reference.connectionIndices.Clear();
+            foreach (var connection in connections)
+            {
+                reference.connectionIndices.Add(new Vector2Int(
+                    nodes.IndexOf(connection.outNode),
+                    nodes.IndexOf(connection.inNode)
+                    ));
             }
             EditorUtility.SetDirty(reference);
 
@@ -216,7 +223,7 @@ namespace NodeEditor
             EditorUtility.FocusProjectWindow();
             Selection.activeObject = reference;
             EditorGUIUtility.PingObject(Selection.activeObject);
-            // TODO: testen of dit nodig is & testen of dit een grote performance impact heeft met veel assets
+            // TODO: test if assetdatabase refresh is needed & if it has great performance impact in large projects
             //AssetDatabase.Refresh();
 
             Debug.Log($"{this} saved successfully to file {reference.name}", reference);
@@ -232,22 +239,28 @@ namespace NodeEditor
                 return true;
             }
 
-            temp.nodes.Clear();
-            temp.connections.Clear();
-            Debug.Log("Found " + structure.nodes.Count + " nodes");
-            Debug.Log("Found " + structure.connections.Count + " connections");
+            nodes.Clear();
+            connections.Clear();
+            Debug.Log("Found " + structure.nodePositions.Count + " nodes");
+            Debug.Log("Found " + structure.connectionIndices.Count + " connections");
 
-            temp = structure.Copy();
+            foreach (var nodePosition in structure.nodePositions)
+            {
+                CreateNode(nodePosition, false);
+            }
+            foreach (var connection in structure.connectionIndices)
+            {
+                CreateConnection(nodes[connection.x], nodes[connection.y]);
+            }
             reference = structure;
-            InitNodes();
+            hasUnsavedChanges = false;
             ClearConnectionSelection();
             return true;
         }
 
         internal virtual void InitNodes()
         {
-            if (temp == null) temp = CreateInstance<NodeStructure>();
-            foreach (var node in temp.nodes)
+            foreach (var node in nodes)
             {
                 node.regularStyle = nodeStyle;
                 node.selectedStyle = selectedNodeStyle;
@@ -262,12 +275,12 @@ namespace NodeEditor
                 node.isSelected = false;
                 node.multiSelecting = false;
             }
-            foreach (var connection in temp.connections)
+            foreach (var connection in connections)
             {
                 // TODO: Upon saving and loading, pass an index to the connection that belongs to the connected node.
                 // When initializing the nodes, get the indices stored in the Connection to reconnect them to the proper node in the new list
-                connection.inNode = temp.nodes[connection.inNodeIndex];
-                connection.outNode = temp.nodes[connection.outNodeIndex];
+                //connection.inNode = nodes[connection.inNodeIndex];
+                //connection.outNode = nodes[connection.outNodeIndex];
                 connection.OnClickRemoveConnection = OnClickRemoveConnection;
             }
         }
@@ -389,21 +402,21 @@ namespace NodeEditor
 
         internal virtual void DrawNodes(float zoom)
         {
-            if (temp.nodes == null)
+            if (nodes == null)
                 return;
 
-            for (int i = 0; i < temp.nodes.Count; i++)
+            for (int i = 0; i < nodes.Count; i++)
             {
-                temp.nodes[i].Draw(orientation);
+                nodes[i].Draw(orientation);
             }
         }
 
         internal virtual void DrawConnections()
         {
-            if (temp.connections == null) return;
-            for (int i = 0; i < temp.connections.Count; i++)
+            if (connections == null) return;
+            for (int i = 0; i < connections.Count; i++)
             {
-                temp.connections[i].Draw(orientation);
+                connections[i].Draw(orientation);
             }
         }
 
@@ -436,12 +449,12 @@ namespace NodeEditor
                         if (selectedNodeIn == null && selectedNodeOut != null)
                         {
                             Node newNode = OnClickAddNode(e.mousePosition, true);
-                            CreateConnection(newNode, selectedNodeOut);
+                            CreateConnection(selectedNodeOut, newNode);
                         }
                         if (selectedNodeIn != null && selectedNodeOut == null)
                         {
                             Node newNode = OnClickAddNode(e.mousePosition, true);
-                            CreateConnection(selectedNodeIn, newNode);
+                            CreateConnection(newNode, selectedNodeIn);
                         }
                         OnClickBackground();
                     }
@@ -500,9 +513,9 @@ namespace NodeEditor
                     if (e.keyCode == KeyCode.Delete || e.keyCode == KeyCode.Backspace)
                     {
                         Debug.Log("Delete");
-                        for (int i = 0; i < temp.nodes.Count; i++)
+                        for (int i = 0; i < nodes.Count; i++)
                         {
-                            Node node = temp.nodes[i];
+                            Node node = nodes[i];
                             if (node.isSelected)
                             {
                                 OnClickRemoveNode(node);
@@ -532,11 +545,11 @@ namespace NodeEditor
         internal virtual void OnDragView(Vector2 delta)
         {
             drag = delta;
-            if (temp.nodes != null)
+            if (nodes != null)
             {
-                for (int i = 0; i < temp.nodes.Count; i++)
+                for (int i = 0; i < nodes.Count; i++)
                 {
-                    temp.nodes[i].Drag(delta, false);
+                    nodes[i].Drag(delta, false);
                 }
             }
 
@@ -547,11 +560,11 @@ namespace NodeEditor
         #region Node Events
         internal virtual void ProcessNodeEvents(Event e)
         {
-            if (temp.nodes == null) return;
+            if (nodes == null) return;
 
-            for (int i = temp.nodes.Count - 1; i >= 0; i--)
+            for (int i = nodes.Count - 1; i >= 0; i--)
             {
-                bool guiChanged = temp.nodes[i].ProcessEvents(e);
+                bool guiChanged = nodes[i].ProcessEvents(e);
 
                 if (guiChanged) GUI.changed = true;
             }
@@ -583,49 +596,63 @@ namespace NodeEditor
 
         internal virtual Node OnClickAddNode(Vector2 mousePosition, bool centered)
         {
-            Debug.Log("Add node at " + mousePosition);
-            if (temp.nodes == null) temp.nodes = new List<Node>();
-            Node node = new Node(mousePosition, new Vector2(200, 50), orientation, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnClickNode, OnClickConnectionPoint, OnClickRemoveNode: OnClickRemoveNode, onDragNode: OnDragNode, OnClickUpNode);
+            return CreateNode(mousePosition, centered);
+        }
+
+        private Node CreateNode(Vector2 position, bool centered)
+        {
+            Node node = new Node(new Rect(position, new Vector2(200, 50)),
+                                 orientation,
+                                 nodeStyle,
+                                 selectedNodeStyle,
+                                 inPointStyle,
+                                 outPointStyle,
+                                 onClickNode: OnClickNode,
+                                 onClickConnectionPoint: OnClickConnectionPoint,
+                                 OnClickRemoveNode: OnClickRemoveNode,
+                                 onDragNode: OnDragNode,
+                                 onClickUp: OnClickUpNode);
             if (centered)
             {
                 node.rect.x -= node.rect.width * .5f;
                 node.rect.y -= node.rect.height * .5f;
             }
-            temp.nodes.Add(node);
+            if (nodes == null) nodes = new List<Node>();
+            nodes.Add(node);
             hasUnsavedChanges = true;
             return node;
         }
 
         internal virtual void OnClickRemoveNode(Node node)
         {
-            if (temp.connections != null)
+            if (connections != null)
             {
                 List<Connection> connectionsToRemove = new List<Connection>();
 
-                for (int i = 0; i < temp.connections.Count; i++)
+                for (int i = 0; i < connections.Count; i++)
                 {
-                    if (temp.connections[i].inNode == node || temp.connections[i].outNode == node)
+                    if (connections[i].inNode == node || connections[i].outNode == node)
                     {
-                        connectionsToRemove.Add(temp.connections[i]);
+                        connectionsToRemove.Add(connections[i]);
                     }
                 }
 
                 for (int i = 0; i < connectionsToRemove.Count; i++)
                 {
-                    temp.connections.Remove(connectionsToRemove[i]);
+                    connections.Remove(connectionsToRemove[i]);
                 }
                 // TODO: Is this necessary? Doesn't the list get disposed of once the if-statement is exited?
                 connectionsToRemove = null;
             }
 
-            temp.nodes.Remove(node);
+            nodes.Remove(node);
             hasUnsavedChanges = true;
         }
 
         internal virtual void OnDragNode(Node node)
         {
             StartDrag();
-            if (temp.nodes.Count > 1)
+            if (nodes.Count > 1)
                 SelectedNodes.ForEach(x => {
                     if (x != node)
                         x.Drag(Event.current.delta, false);
@@ -685,11 +712,6 @@ namespace NodeEditor
 
         internal virtual void DeselectAllNodes()
         {
-            // TODO: Is it faster to cache the SelectedNodes list?
-            //List<NodeVisual> selectedNodes = SelectedNodes;
-            //Debug.Log($"Deselect {selectedNodes.Count} nodes");
-            //selectedNodes.ForEach(node => node.isSelected = false);
-            //GUI.changed = true;
             Debug.Log($"Deselect {SelectedNodes.Count} nodes");
             SelectedNodes.ForEach(node => node.isSelected = false);
             GUI.changed = true;
@@ -704,7 +726,7 @@ namespace NodeEditor
 
         protected virtual void SelectAllNodes()
         {
-            temp.nodes.ForEach(node => SelectNode(node));
+            nodes.ForEach(node => SelectNode(node));
             Repaint();
         }
 
@@ -741,30 +763,25 @@ namespace NodeEditor
             }
             if (selectedNodeOut != selectedNodeIn)
             {
-                if (temp.connections.Exists(c => c.inNode == selectedNodeIn && c.outNode == selectedNodeOut))
+                if (connections.Exists(c => c.inNode == selectedNodeIn && c.outNode == selectedNodeOut))
                     Debug.LogWarning("A connection has already been established between these two nodes.");
                 else 
-                    CreateConnection(selectedNodeIn, selectedNodeOut);
+                    CreateConnection(selectedNodeOut, selectedNodeIn);
             }
             ClearConnectionSelection();
         }
 
         internal virtual void OnClickRemoveConnection(Connection connection)
         {
-            temp.connections.Remove(connection);
+            connections.Remove(connection);
             hasUnsavedChanges = true;
         }
 
-        internal virtual void CreateConnection(Node nodeIn, Node nodeOut)
+        internal virtual void CreateConnection(Node nodeOut, Node nodeIn)
         {
-            if (temp.connections == null)
-                temp.connections = new List<Connection>();
-            temp.connections.Add(
-                new Connection(nodeIn, nodeOut, OnClickRemoveConnection) 
-                { 
-                    inNodeIndex = temp.nodes.IndexOf(nodeIn), 
-                    outNodeIndex = temp.nodes.IndexOf(nodeOut)
-                });
+            if (connections == null)
+                connections = new List<Connection>();
+            connections.Add(new Connection(nodeOut, nodeIn, OnClickRemoveConnection));
             
             hasUnsavedChanges = true;
         }

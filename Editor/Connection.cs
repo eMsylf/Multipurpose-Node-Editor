@@ -12,10 +12,6 @@ namespace NodeEditor
     {
         public Node inNode;
         public Node outNode;
-        public int inNodeIndex;
-        public int outNodeIndex;
-        //public GUID inNode;
-        //public GUID outNode;
         public Action<Connection> OnClickRemoveConnection;
 
         private Dictionary<Orientation, Vector2> orientationToDirection = new Dictionary<Orientation, Vector2> {
@@ -28,7 +24,7 @@ namespace NodeEditor
 
         }
 
-        public Connection (Node inNode, Node outNode, Action<Connection> OnClickRemoveConnection)
+        public Connection(Node outNode, Node inNode, Action<Connection> OnClickRemoveConnection)
         {
             this.inNode = inNode;
             this.outNode = outNode;
