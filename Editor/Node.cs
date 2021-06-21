@@ -32,7 +32,7 @@ namespace NodeEditor
         private Dictionary<Orientation, Vector2> orientationToSize = new Dictionary<Orientation, Vector2>
         {
             {Orientation.LeftRight, new Vector2(10f, 20f) },
-            {Orientation.TopBottom, new Vector2(20f, 10f) }
+            {Orientation.TopBottom, new Vector2(20f, 15f) }
         };
 
         public Node(Rect rect, Orientation orientation, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node> onClickNode, Action<Node, ConnectionPointType> onClickConnectionPoint, Action<Node> OnClickRemoveNode, Action<Node> onDragNode, Action<Node> onClickUp)

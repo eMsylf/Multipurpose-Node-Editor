@@ -93,7 +93,7 @@ namespace NodeEditor
                 case Orientation.TopBottom:
                     inSide = "mid";
                     outSide = "mid";
-                    border = new RectOffset(4, 4, 12, 12);
+                    border = new RectOffset(4, 4, 2, 2);
                     break;
             }
             
