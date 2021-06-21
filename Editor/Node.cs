@@ -121,7 +121,7 @@ namespace NodeEditor
 
         private void ClickUp()
         {
-            Debug.Log("Click up on node " + rect.position);
+            //Debug.Log("Click up on node " + rect.position);
             isDragged = false;
             OnClickUp.Invoke(this);
         }

@@ -5,10 +5,11 @@ using UnityEngine;
 
 namespace NodeEditor
 {
+
     public class NodeStructure : ScriptableObject
     {
         public List<Vector2> nodePositions = new List<Vector2>();
-        public List<Vector2Int> connectionIndices = new List<Vector2Int>();
+        public List<Int2> connectionIndices = new List<Int2>();
 
         [OnOpenAsset()]
         public static bool Open(int instanceID, int line)

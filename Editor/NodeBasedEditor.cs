@@ -11,7 +11,7 @@ namespace NodeEditor
 {
     public enum Orientation { LeftRight, TopBottom }
 
-    public class NodeBasedEditor : EditorWindow
+    public class NodeBasedEditor : EditorWindow, ISerializationCallbackReceiver
     {
         public Orientation orientation = Orientation.TopBottom;
 
@@ -172,6 +172,7 @@ namespace NodeEditor
             reference = null;
             nodes = new List<Node>();
             connections = new List<Connection>();
+            ClearConnectionSelection();
             hasUnsavedChanges = false;
         }
 
@@ -198,7 +199,7 @@ namespace NodeEditor
             reference.connectionIndices.Clear();
             foreach (var connection in connections)
             {
-                reference.connectionIndices.Add(new Vector2Int(
+                reference.connectionIndices.Add(new Int2(
                     nodes.IndexOf(connection.outNode),
                     nodes.IndexOf(connection.inNode)
                     ));
@@ -250,7 +251,7 @@ namespace NodeEditor
             }
             foreach (var connection in structure.connectionIndices)
             {
-                CreateConnection(nodes[connection.x], nodes[connection.y]);
+                CreateConnection(nodes[connection.a], nodes[connection.b]);
             }
             reference = structure;
             hasUnsavedChanges = false;
@@ -258,8 +259,20 @@ namespace NodeEditor
             return true;
         }
 
+        public void OnBeforeSerialize()
+        {
+            Debug.Log("Serialize");
+        }
+
+        public void OnAfterDeserialize()
+        {
+            Debug.Log("Deserialize");
+        }
+
         internal virtual void InitNodes()
         {
+            Debug.Log("Init nodes");
+            if (nodes == null) nodes = new List<Node>();
             foreach (var node in nodes)
             {
                 node.regularStyle = nodeStyle;
@@ -275,6 +288,7 @@ namespace NodeEditor
                 node.isSelected = false;
                 node.multiSelecting = false;
             }
+            if (connections == null) connections = new List<Connection>();
             foreach (var connection in connections)
             {
                 // TODO: Upon saving and loading, pass an index to the connection that belongs to the connected node.
@@ -740,6 +754,7 @@ namespace NodeEditor
         #region Connection Events
         internal virtual void OnClickConnectionPoint(Node node, ConnectionPointType type)
         {
+            Debug.Log("Click " + type + " connection point of node at index " + nodes.IndexOf(node));
             switch (type)
             {
                 case ConnectionPointType.In:
@@ -784,6 +799,7 @@ namespace NodeEditor
             connections.Add(new Connection(nodeOut, nodeIn, OnClickRemoveConnection));
             
             hasUnsavedChanges = true;
+            Debug.Log("Created connection between " + nodes.IndexOf(nodeOut) + " and " + nodes.IndexOf(nodeIn));
         }
 
         // TODO: new method of handling connections where the parent node keeps track of what children are connected to it
