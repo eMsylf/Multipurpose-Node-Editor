@@ -112,6 +112,7 @@ namespace NodeEditor
             selectionRectStyle.normal.background.SetPixel(1, 1, new Color(.5f, .5f, .5f, .3f));
 
             InitNodes();
+            InitConnections();
             ClearConnectionSelection();
         }
 
@@ -259,14 +260,31 @@ namespace NodeEditor
             return true;
         }
 
+        private List<Int2> tempConnectionIndices;
+
         public void OnBeforeSerialize()
         {
-            Debug.Log("Serialize");
+            if (tempConnectionIndices == null) tempConnectionIndices = new List<Int2>();
+            Debug.Log("Connections found: " + connections.Count);
+            foreach (var connection in connections)
+            {
+                tempConnectionIndices.Add(new Int2(
+                    nodes.IndexOf(connection.outNode),
+                    nodes.IndexOf(connection.inNode)
+                    ));
+            }
         }
 
         public void OnAfterDeserialize()
         {
-            Debug.Log("Deserialize");
+            connections.Clear();
+            if (nodes == null) Debug.Log("Nodes is null");
+            else Debug.Log("Nodes found: " + nodes.Count);
+            foreach (var connectionData in tempConnectionIndices)
+            {
+                CreateConnection(nodes[connectionData.a], nodes[connectionData.b]);
+            }
+            tempConnectionIndices = null;
         }
 
         internal virtual void InitNodes()
@@ -288,13 +306,13 @@ namespace NodeEditor
                 node.isSelected = false;
                 node.multiSelecting = false;
             }
+        }
+
+        private void InitConnections()
+        {
             if (connections == null) connections = new List<Connection>();
             foreach (var connection in connections)
             {
-                // TODO: Upon saving and loading, pass an index to the connection that belongs to the connected node.
-                // When initializing the nodes, get the indices stored in the Connection to reconnect them to the proper node in the new list
-                //connection.inNode = nodes[connection.inNodeIndex];
-                //connection.outNode = nodes[connection.outNodeIndex];
                 connection.OnClickRemoveConnection = OnClickRemoveConnection;
             }
         }
