@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace NodeEditor
 {
-    public class BehaviorTreeEditor : NodeBasedEditor<BehaviorTree>
+    public class BehaviorTreeEditor : NodeBasedEditor
     {
         [MenuItem("Tools/Bob Jeltes/Behavior Tree editor")]
         [MenuItem("Window/Bob Jeltes/Behavior Tree editor")]

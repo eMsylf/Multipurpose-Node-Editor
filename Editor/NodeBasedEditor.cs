@@ -12,8 +12,7 @@ namespace NodeEditor
 {
     public enum Orientation { LeftRight, TopBottom }
 
-    public class NodeBasedEditor<T> : EditorWindow, ISerializationCallbackReceiver 
-        where T : NodeStructure
+    public class NodeBasedEditor : EditorWindow, ISerializationCallbackReceiver
     {
         public Orientation orientation = Orientation.TopBottom;
 
@@ -26,8 +25,8 @@ namespace NodeEditor
         private float toolbarSettingsWidth = 200;
         private GUIStyle toolbarSettingsStyle = new GUIStyle();
 
-        public T reference;
-        string fileName = "New " + typeof(T).Name;
+        public NodeStructure reference;
+        string fileName = "New file";
 
         public List<Node> nodes;
         public List<Connection> connections;
@@ -59,19 +58,12 @@ namespace NodeEditor
 
         private bool multiSelecting;
         private bool isDragging;
-        public static NodeBasedEditor<T> OpenWindow()
-        {
-            NodeBasedEditor<T> openedWindow = GetWindow<NodeBasedEditor<T>>(typeof(T).Name);
-            openedWindow.saveChangesMessage = "This "+ typeof(T).Name +" has not been saved. Would you like to save?";
-            return openedWindow;
-        }
 
-        [MenuItem("Tools/Bob Jeltes/Node Based Editor")]
-        [MenuItem("Window/Bob Jeltes/Node Based Editor")]
-        public static NodeBasedEditor<NodeStructure> OpenBasicWindow()
+        [MenuItem("Window/Bob Jeltes/Node Editor")]
+        public static NodeBasedEditor OpenWindow()
         {
-            NodeBasedEditor<NodeStructure> openedWindow = GetWindow<NodeBasedEditor<NodeStructure>>(title: typeof(T).Name);
-            openedWindow.saveChangesMessage = "This node structure has not been saved. Would you like to save?";
+            NodeBasedEditor openedWindow = GetWindow<NodeBasedEditor>("Node Structure");
+            openedWindow.saveChangesMessage = "This "+ "Node Structure" +" has not been saved. Would you like to save?";
             return openedWindow;
         }
 
@@ -175,14 +167,14 @@ namespace NodeEditor
         [Shortcut("Node Based Editor/New node structure", KeyCode.N, ShortcutModifiers.Alt)]
         public static void NewFile_Shortcut()
         {
-            if (focusedWindow.GetType() == typeof(NodeBasedEditor<T>))
-                (focusedWindow as NodeBasedEditor<T>).NewFile();
+            if (focusedWindow.GetType() == typeof(NodeBasedEditor))
+                (focusedWindow as NodeBasedEditor).NewFile();
         }
 
         internal virtual void NewFile()
         {
             if (!UnsavedChangesCheck()) return;
-            fileName = $"New {typeof(T).Name}";
+            fileName = $"New {"Node Structure"}";
             reference = default;
             nodes = new List<Node>();
             connections = new List<Connection>();
@@ -194,8 +186,8 @@ namespace NodeEditor
         public static void SaveChanges_Shortcut()
         {
             // Kan zijn dat als de editor derivet en niet de directe type is, dat de if-statement false returnt
-            if (focusedWindow.GetType() == typeof(NodeBasedEditor<T>))
-                (focusedWindow as NodeBasedEditor<T>).SaveChanges();
+            if (focusedWindow.GetType() == typeof(NodeBasedEditor))
+                (focusedWindow as NodeBasedEditor).SaveChanges();
         }
 
         public override void SaveChanges()
@@ -203,7 +195,7 @@ namespace NodeEditor
             if (!hasUnsavedChanges) return;
             if (reference == null)
             {
-                reference = CreateInstance<T>();
+                reference = CreateInstance<NodeStructure>();
             }
             reference.nodePositions.Clear();
             foreach (var node in nodes)
@@ -245,7 +237,7 @@ namespace NodeEditor
             base.SaveChanges();
         }
 
-        public bool Load(T structure)
+        public bool Load(NodeStructure structure)
         {
             if (!UnsavedChangesCheck()) return false;
             if (structure == null)
@@ -394,9 +386,9 @@ namespace NodeEditor
 
             if (reference == null) 
                 fileName = EditorGUILayout.TextField(fileName, GUILayout.MinWidth(50), GUILayout.MaxWidth(150));
-            T oldReference = reference;
+            NodeStructure oldReference = reference;
             EditorGUI.BeginChangeCheck();
-            T newReference = (T)EditorGUILayout.ObjectField(reference, typeof(T), false, GUILayout.MinWidth(50), GUILayout.MaxWidth(150));
+            NodeStructure newReference = (NodeStructure)EditorGUILayout.ObjectField(reference, typeof(NodeStructure), false, GUILayout.MinWidth(50), GUILayout.MaxWidth(150));
             if (EditorGUI.EndChangeCheck())
             {
                 Debug.Log("New file selected");
@@ -769,8 +761,8 @@ namespace NodeEditor
         [Shortcut("Node Based Editor/Select All", KeyCode.A, ShortcutModifiers.Alt)]
         public static void SelectAllNodes_Shortcut()
         {
-            if (focusedWindow.GetType() == typeof(NodeBasedEditor<T>))
-                (focusedWindow as NodeBasedEditor<T>).SelectAllNodes();
+            if (focusedWindow.GetType() == typeof(NodeBasedEditor))
+                (focusedWindow as NodeBasedEditor).SelectAllNodes();
         }
 
         protected virtual void SelectAllNodes()
