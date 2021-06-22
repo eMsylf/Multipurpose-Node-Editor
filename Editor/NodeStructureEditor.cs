@@ -10,18 +10,35 @@ using BobJeltes.AI.BehaviorTree;
 [CustomEditor(typeof(NodeStructure))]
 public class NodeStructureEditor : Editor
 {
+    public static Dictionary<Type, string> typedEditorNames = new Dictionary<Type, string>
+    {
+        {typeof(NodeStructure), "Node editor" },
+        {typeof(BehaviorTree), "Behavior tree" }
+    };
+
     [OnOpenAsset()]
     public static bool Open(int instanceID, int line)
     {
         UnityEngine.Object asset = EditorUtility.InstanceIDToObject(instanceID);
-        if (asset.GetType() == typeof(NodeStructure))
+        BehaviorTree behaviorTree = asset as BehaviorTree;
+        if (behaviorTree)
         {
-            NodeBasedEditor editor = NodeBasedEditor.OpenWindow();
+            var editor = NodeBasedEditor<BehaviorTree>.OpenWindow();
+            editor.Load(behaviorTree);
+            string name = EditorUtility.InstanceIDToObject(instanceID).name;
+            Debug.Log("Open " + name);
+            return false;
+        }
+
+        NodeStructure nodeStructure = asset as NodeStructure;
+        if (nodeStructure)
+        {
+            var editor = NodeBasedEditor<NodeStructure>.OpenWindow();
             editor.Load(asset as NodeStructure);
             string name = EditorUtility.InstanceIDToObject(instanceID).name;
             Debug.Log("Open " + name);
+            return false;
         }
-        //Debug.Log("Line: " + line);
-        return false;
+        return true;
     }
 }

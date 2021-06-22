@@ -4,11 +4,12 @@ using UnityEngine;
 
 namespace BobJeltes.AI.BehaviorTree
 {
+    [CreateAssetMenu(fileName = "New behavior tree", menuName = "AI/Behavior Tree")]
     public class BehaviorTree : NodeStructure
     {
         public List<BTNode> nodes;
         public Blackboard blackboard;
-        public Decorator root;
+        public RootNode root;
 
         // TODO: Call this from NodeBasedEditor
         public Action<List<Vector2>, List<Int2>, List<BTNode>> onSave;
