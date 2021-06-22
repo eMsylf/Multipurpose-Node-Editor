@@ -5,6 +5,7 @@ using UnityEditor;
 using NodeEditor;
 using System;
 using UnityEditor.Callbacks;
+using BobJeltes.AI.BehaviorTree;
 
 [CustomEditor(typeof(NodeStructure))]
 public class NodeStructureEditor : Editor

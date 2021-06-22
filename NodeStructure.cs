@@ -1,9 +1,7 @@
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.Callbacks;
 using UnityEngine;
 
-namespace NodeEditor
+namespace BobJeltes.AI.BehaviorTree
 {
     public class NodeStructure : ScriptableObject
     {

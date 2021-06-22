@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.ShortcutManagement;
 using System;
+using BobJeltes.AI.BehaviorTree;
 
 namespace NodeEditor
 {
