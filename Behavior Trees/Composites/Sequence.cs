@@ -8,7 +8,7 @@ namespace BobJeltes.AI.BehaviorTree
     {
         public override Result Tick()
         {
-            for (; i < children.Length; i++)
+            for (; i < children.Count; i++)
             {
                 Result result = children[i].Tick();
                 switch (result)

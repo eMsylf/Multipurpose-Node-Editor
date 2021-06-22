@@ -10,5 +10,12 @@ namespace BobJeltes.AI.BehaviorTree
         {
             return child.Tick();
         }
+
+        public override Node Clone()
+        {
+            RootNode node = (RootNode)MemberwiseClone();
+            node.child = child.Clone();
+            return node;
+        }
     }
 }

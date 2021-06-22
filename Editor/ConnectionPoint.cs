@@ -3,7 +3,7 @@
 using System;
 using UnityEngine;
 
-namespace NodeEditor
+namespace BobJeltes.NodeEditor
 {
     public enum ConnectionPointType { In, Out }
     [Serializable]
@@ -12,9 +12,9 @@ namespace NodeEditor
         public Rect rect;
         public ConnectionPointType type;
         public GUIStyle style;
-        public Action<Node, ConnectionPointType> OnClickConnectionPoint;
+        public Action<NodeView, ConnectionPointType> OnClickConnectionPoint;
 
-        public ConnectionPoint(ConnectionPointType type, Vector2 size, GUIStyle style, Action<Node, ConnectionPointType> onClickConnectionPoint)
+        public ConnectionPoint(ConnectionPointType type, Vector2 size, GUIStyle style, Action<NodeView, ConnectionPointType> onClickConnectionPoint)
         {
             this.type = type;
             this.style = style;
@@ -26,12 +26,12 @@ namespace NodeEditor
         // [DONE] top-to-bottom variant
         // (and bottom-to-top)
         // (and right-to-left?)
-        public void Draw(Orientation direction, Node node)
+        public void Draw(Orientation direction, NodeView node)
         {
             switch (direction)
             {
                 case Orientation.LeftRight:
-                    rect.y = node.rect.y + (node.rect.height * .5f) - rect.height * .5f;
+                    rect.y = node.rect.y + node.rect.height * .5f - rect.height * .5f;
 
                     switch (type)
                     {
@@ -46,7 +46,7 @@ namespace NodeEditor
                     }
                     break;
                 case Orientation.TopBottom:
-                    rect.x = node.rect.x + (node.rect.width* .5f) - rect.width * .5f;
+                    rect.x = node.rect.x + node.rect.width * .5f - rect.width * .5f;
 
                     switch (type)
                     {

@@ -8,7 +8,7 @@ using UnityEditor.ShortcutManagement;
 using System;
 using BobJeltes.AI.BehaviorTree;
 
-namespace NodeEditor
+namespace BobJeltes.NodeEditor
 {
     public enum Orientation { LeftRight, TopBottom }
 
@@ -28,31 +28,31 @@ namespace NodeEditor
         public NodeStructure reference;
         string fileName = "New file";
 
-        public List<Node> nodes;
+        public List<NodeView> nodes;
         public List<Connection> connections;
-        public List<Node> SelectedNodes { get => nodes.FindAll(x => x.isSelected); }
+        public List<NodeView> SelectedNodes { get => nodes.FindAll(x => x.isSelected); }
         private Connection connectionPreview = new Connection();
 
         private GUIStyle nodeStyle;
         private GUIStyle selectedNodeStyle;
         private GUIStyle inPointStyle;
         private GUIStyle outPointStyle;
-        
-        private Node selectedNodeIn;
-        private Node selectedNodeOut;
+
+        private NodeView selectedNodeIn;
+        private NodeView selectedNodeOut;
         private bool allowLoops;
-        
+
         private Vector2 offset;
         private Vector2 drag;
 
         private float zoom = 1f;
         private float zoomMin = .5f;
         private float zoomMax = 2f;
-        
+
         private bool drawingSelectionRect = false;
         private Rect selectionRect;
         private GUIStyle selectionRectStyle;
-        
+
         private Color gridSmallColor = new Color(.5f, .5f, .5f, .2f);
         private Color gridLargeColor = new Color(.5f, .5f, .5f, .4f);
 
@@ -63,7 +63,7 @@ namespace NodeEditor
         public static NodeBasedEditor OpenWindow()
         {
             NodeBasedEditor openedWindow = GetWindow<NodeBasedEditor>("Node Structure");
-            openedWindow.saveChangesMessage = "This "+ "Node Structure" +" has not been saved. Would you like to save?";
+            openedWindow.saveChangesMessage = "This " + "Node Structure" + " has not been saved. Would you like to save?";
             return openedWindow;
         }
 
@@ -96,7 +96,7 @@ namespace NodeEditor
                     border = new RectOffset(4, 4, 2, 2);
                     break;
             }
-            
+
             inPointStyle = new GUIStyle();
             inPointStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn " + inSide + ".png") as Texture2D;
             inPointStyle.active.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn " + inSide + " on.png") as Texture2D;
@@ -115,11 +115,6 @@ namespace NodeEditor
             InitConnections();
             ClearConnectionSelection();
         }
-        [ContextMenu("Ahhhhhh")]
-        public static void DebugView()
-        {
-            Debug.Log("Enable debug view");
-        }
 
         internal virtual void OnGUI()
         {
@@ -130,7 +125,7 @@ namespace NodeEditor
             DrawConnections();
 
             DrawConnectionPreview(Event.current);
-            
+
             DrawToolbar();
 
             ProcessNodeEvents(Event.current);
@@ -176,7 +171,7 @@ namespace NodeEditor
             if (!UnsavedChangesCheck()) return;
             fileName = $"New {"Node Structure"}";
             reference = default;
-            nodes = new List<Node>();
+            nodes = new List<NodeView>();
             connections = new List<Connection>();
             ClearConnectionSelection();
             hasUnsavedChanges = false;
@@ -287,7 +282,7 @@ namespace NodeEditor
             connections.Clear();
             if (nodes == null) Debug.Log("Nodes list is null");
             else Debug.Log("Nodes found: " + nodes.Count);
-            if (tempConnectionIndices == null) 
+            if (tempConnectionIndices == null)
                 return;
             foreach (var connectionData in tempConnectionIndices)
             {
@@ -298,8 +293,7 @@ namespace NodeEditor
 
         internal virtual void InitNodes()
         {
-            Debug.Log("Init nodes");
-            if (nodes == null) nodes = new List<Node>();
+            if (nodes == null) nodes = new List<NodeView>();
             foreach (var node in nodes)
             {
                 node.regularStyle = nodeStyle;
@@ -342,12 +336,12 @@ namespace NodeEditor
             {
                 Handles.DrawLine(
                     new Vector3(
-                        spacing * i, 
-                        -spacing, 
-                        0) + newOffset, 
+                        spacing * i,
+                        -spacing,
+                        0) + newOffset,
                     new Vector3(
-                        spacing * i, 
-                        position.height, 
+                        spacing * i,
+                        position.height,
                         0f) + newOffset);
             }
 
@@ -355,9 +349,9 @@ namespace NodeEditor
             {
                 Handles.DrawLine(
                     new Vector3(
-                        -spacing, 
-                        spacing * j, 
-                        0) + newOffset, 
+                        -spacing,
+                        spacing * j,
+                        0) + newOffset,
                     new Vector3(
                         position.width,
                         spacing * j,
@@ -384,7 +378,7 @@ namespace NodeEditor
             GUILayout.BeginArea(menuBarRect, EditorStyles.toolbar);
             GUILayout.BeginHorizontal();
 
-            if (reference == null) 
+            if (reference == null)
                 fileName = EditorGUILayout.TextField(fileName, GUILayout.MinWidth(50), GUILayout.MaxWidth(150));
             NodeStructure oldReference = reference;
             EditorGUI.BeginChangeCheck();
@@ -428,14 +422,14 @@ namespace NodeEditor
             // TODO: Re-enable settings dropdown
             //if (showSettings)
             //{
-                //Rect toolbarSettingsRect = new Rect(position.width - toolbarSettingsWidth - 5, EditorGUIUtility.singleLineHeight + 5, toolbarSettingsWidth, toolbarSettingsHeight * 1 + 5);
-                //GUILayout.BeginArea(toolbarSettingsRect, toolbarSettingsStyle);
-                //GUILayout.BeginHorizontal();
-                //GUILayout.Label("Zoom");
-                //zoom = GUILayout.HorizontalSlider(zoom, zoomMin, zoomMax);
-                //GUILayout.EndHorizontal();
+            //Rect toolbarSettingsRect = new Rect(position.width - toolbarSettingsWidth - 5, EditorGUIUtility.singleLineHeight + 5, toolbarSettingsWidth, toolbarSettingsHeight * 1 + 5);
+            //GUILayout.BeginArea(toolbarSettingsRect, toolbarSettingsStyle);
+            //GUILayout.BeginHorizontal();
+            //GUILayout.Label("Zoom");
+            //zoom = GUILayout.HorizontalSlider(zoom, zoomMin, zoomMax);
+            //GUILayout.EndHorizontal();
 
-                //GUILayout.EndArea();
+            //GUILayout.EndArea();
             //}
 
             // Unsaved changes message
@@ -489,12 +483,12 @@ namespace NodeEditor
                     {
                         if (selectedNodeIn == null && selectedNodeOut != null)
                         {
-                            Node newNode = OnClickAddNode(e.mousePosition, true);
+                            NodeView newNode = OnClickAddNode(e.mousePosition, true);
                             CreateConnection(selectedNodeOut, newNode);
                         }
                         if (selectedNodeIn != null && selectedNodeOut == null)
                         {
-                            Node newNode = OnClickAddNode(e.mousePosition, true);
+                            NodeView newNode = OnClickAddNode(e.mousePosition, true);
                             CreateConnection(newNode, selectedNodeIn);
                         }
                         OnClickBackground();
@@ -521,7 +515,7 @@ namespace NodeEditor
                     //    if (!drawingSelectionRect)
                     //    {
                     //        selectionRect = new Rect(e.mousePosition, new Vector2());
-                            
+
                     //        Debug.Log("Start new rect");
                     //        drawingSelectionRect = true;
                     //    }
@@ -556,7 +550,7 @@ namespace NodeEditor
                         Debug.Log("Delete");
                         for (int i = 0; i < nodes.Count; i++)
                         {
-                            Node node = nodes[i];
+                            NodeView node = nodes[i];
                             if (node.isSelected)
                             {
                                 OnClickRemoveNode(node);
@@ -616,8 +610,6 @@ namespace NodeEditor
             Debug.Log("Show context menu");
             GenericMenu genericMenu = new GenericMenu();
             genericMenu.AddItem(new GUIContent("Add node"), false, () => OnClickAddNode(mousePosition, true));
-            //genericMenu.AddItem(new GUIContent("Action"), true, () => Debug.Log("Actions"));
-            //genericMenu.AddItem(new GUIContent("Action/Wait"), false, () => Debug.Log("Ayy"));
             genericMenu.ShowAsContext();
         }
 
@@ -635,14 +627,14 @@ namespace NodeEditor
         //    }
         //}
 
-        internal virtual Node OnClickAddNode(Vector2 mousePosition, bool centered)
+        internal virtual NodeView OnClickAddNode(Vector2 mousePosition, bool centered)
         {
             return CreateNode(mousePosition, centered);
         }
 
-        private Node CreateNode(Vector2 position, bool centered)
+        internal NodeView CreateNode(Vector2 position, bool centered)
         {
-            Node node = new Node(new Rect(position, new Vector2(200, 50)),
+            NodeView node = new NodeView(new Rect(position, new Vector2(200, 50)),
                                  orientation,
                                  nodeStyle,
                                  selectedNodeStyle,
@@ -658,13 +650,13 @@ namespace NodeEditor
                 node.rect.x -= node.rect.width * .5f;
                 node.rect.y -= node.rect.height * .5f;
             }
-            if (nodes == null) nodes = new List<Node>();
+            if (nodes == null) nodes = new List<NodeView>();
             nodes.Add(node);
             hasUnsavedChanges = true;
             return node;
         }
 
-        internal virtual void OnClickRemoveNode(Node node)
+        internal virtual void OnClickRemoveNode(NodeView node)
         {
             if (connections != null)
             {
@@ -690,14 +682,15 @@ namespace NodeEditor
             hasUnsavedChanges = true;
         }
 
-        internal virtual void OnDragNode(Node node)
+        internal virtual void OnDragNode(NodeView node)
         {
             StartDrag();
             if (nodes.Count > 1)
-                SelectedNodes.ForEach(x => {
+                SelectedNodes.ForEach(x =>
+                {
                     if (x != node)
                         x.Drag(Event.current.delta, false);
-                    });
+                });
             hasUnsavedChanges = true;
         }
 
@@ -711,7 +704,7 @@ namespace NodeEditor
             isDragging = false;
         }
 
-        internal virtual void OnClickNode(Node node)
+        internal virtual void OnClickNode(NodeView node)
         {
             if (multiSelecting)
             {
@@ -727,7 +720,7 @@ namespace NodeEditor
             SelectNode(node);
         }
 
-        internal virtual void OnClickUpNode(Node node)
+        internal virtual void OnClickUpNode(NodeView node)
         {
             Debug.Log("Click up on node " + node.rect.position);
             if (!multiSelecting && !isDragging && SelectedNodes.Count > 1)
@@ -739,13 +732,13 @@ namespace NodeEditor
             EndDrag();
         }
 
-        internal virtual void SelectNode(Node node)
+        internal virtual void SelectNode(NodeView node)
         {
             node.isSelected = true;
             GUI.changed = true;
         }
 
-        internal virtual void DeselectNode(Node node)
+        internal virtual void DeselectNode(NodeView node)
         {
             node.isSelected = false;
             GUI.changed = true;
@@ -779,7 +772,7 @@ namespace NodeEditor
         #endregion
 
         #region Connection Events
-        internal virtual void OnClickConnectionPoint(Node node, ConnectionPointType type)
+        internal virtual void OnClickConnectionPoint(NodeView node, ConnectionPointType type)
         {
             Debug.Log("Click " + type + " connection point of node at index " + nodes.IndexOf(node));
             switch (type)
@@ -807,7 +800,7 @@ namespace NodeEditor
             {
                 if (connections.Exists(c => c.inNode == selectedNodeIn && c.outNode == selectedNodeOut))
                     Debug.LogWarning("A connection has already been established between these two nodes.");
-                else 
+                else
                     CreateConnection(selectedNodeOut, selectedNodeIn);
             }
             ClearConnectionSelection();
@@ -819,12 +812,12 @@ namespace NodeEditor
             hasUnsavedChanges = true;
         }
 
-        internal virtual void CreateConnection(Node nodeOut, Node nodeIn)
+        internal virtual void CreateConnection(NodeView nodeOut, NodeView nodeIn)
         {
             if (connections == null)
                 connections = new List<Connection>();
             connections.Add(new Connection(nodeOut, nodeIn, OnClickRemoveConnection));
-            
+
             hasUnsavedChanges = true;
             Debug.Log("Created connection between " + nodes.IndexOf(nodeOut) + " and " + nodes.IndexOf(nodeIn));
         }

@@ -5,18 +5,18 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace NodeEditor
+namespace BobJeltes.NodeEditor
 {
     [Serializable]
     public class Connection
     {
-        public Node inNode;
-        public Node outNode;
+        public NodeView inNode;
+        public NodeView outNode;
         public Action<Connection> OnClickRemoveConnection;
 
         private Dictionary<Orientation, Vector2> orientationToDirection = new Dictionary<Orientation, Vector2> {
             { Orientation.LeftRight, Vector2.left},
-            { Orientation.TopBottom, -Vector2.up} 
+            { Orientation.TopBottom, -Vector2.up}
         };
 
         public Connection()
@@ -24,7 +24,7 @@ namespace NodeEditor
 
         }
 
-        public Connection(Node outNode, Node inNode, Action<Connection> OnClickRemoveConnection)
+        public Connection(NodeView outNode, NodeView inNode, Action<Connection> OnClickRemoveConnection)
         {
             this.inNode = inNode;
             this.outNode = outNode;

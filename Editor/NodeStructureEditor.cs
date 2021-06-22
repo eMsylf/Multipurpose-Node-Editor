@@ -1,11 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using NodeEditor;
 using System;
 using UnityEditor.Callbacks;
 using BobJeltes.AI.BehaviorTree;
+using BobJeltes.NodeEditor;
 
 [CustomEditor(typeof(NodeStructure))]
 public class NodeStructureEditor : Editor
@@ -23,7 +22,7 @@ public class NodeStructureEditor : Editor
         BehaviorTree behaviorTree = asset as BehaviorTree;
         if (behaviorTree)
         {
-            var editor = NodeBasedEditor.OpenWindow();
+            var editor = BehaviorTreeEditor.OpenBehaviorTreeEditor();
             editor.Load(behaviorTree);
             string name = EditorUtility.InstanceIDToObject(instanceID).name;
             Debug.Log("Open " + name);

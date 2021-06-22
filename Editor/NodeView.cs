@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace NodeEditor
+namespace BobJeltes.NodeEditor
 {
     [Serializable]
-    public class Node
+    public class NodeView
     {
         public Rect rect;
         public string title;
@@ -24,10 +24,10 @@ namespace NodeEditor
         public GUIStyle regularStyle;
         public GUIStyle selectedStyle;
 
-        public Action<Node> OnClickNode;
-        public Action<Node> OnClickUp;
-        public Action<Node> OnRemoveNode;
-        public Action<Node> OnDragNode;
+        public Action<NodeView> OnClickNode;
+        public Action<NodeView> OnClickUp;
+        public Action<NodeView> OnRemoveNode;
+        public Action<NodeView> OnDragNode;
 
         private Dictionary<Orientation, Vector2> orientationToSize = new Dictionary<Orientation, Vector2>
         {
@@ -35,7 +35,7 @@ namespace NodeEditor
             {Orientation.TopBottom, new Vector2(20f, 15f) }
         };
 
-        public Node(Rect rect, Orientation orientation, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<Node> onClickNode, Action<Node, ConnectionPointType> onClickConnectionPoint, Action<Node> OnClickRemoveNode, Action<Node> onDragNode, Action<Node> onClickUp)
+        public NodeView(Rect rect, Orientation orientation, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<NodeView> onClickNode, Action<NodeView, ConnectionPointType> onClickConnectionPoint, Action<NodeView> OnClickRemoveNode, Action<NodeView> onDragNode, Action<NodeView> onClickUp)
         {
             this.rect = rect;
             Vector2 connectionPointDimensions = orientationToSize[orientation];
@@ -46,7 +46,7 @@ namespace NodeEditor
             OnRemoveNode = OnClickRemoveNode;
             OnDragNode = onDragNode;
             OnClickNode = onClickNode;
-            this.OnClickUp = onClickUp;
+            OnClickUp = onClickUp;
         }
 
         public void Draw(Orientation direction)

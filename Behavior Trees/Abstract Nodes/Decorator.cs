@@ -4,8 +4,15 @@ using UnityEngine;
 
 namespace BobJeltes.AI.BehaviorTree
 {
-    public abstract class Decorator : BTNode
+    public abstract class Decorator : Node
     {
-        public BTNode child;
+        public Node child;
+
+        public override Node Clone()
+        {
+            Decorator node = (Decorator)MemberwiseClone();
+            node.child = child.Clone();
+            return node;
+        }
     }
 }
