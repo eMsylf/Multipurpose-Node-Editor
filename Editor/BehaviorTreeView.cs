@@ -142,16 +142,22 @@ namespace BobJeltes.NodeEditor
         {
             NodeView nodeView = new NodeView(node);
             nodeView.title = node.GetType().Name;
+            CreateNodeView(nodeView);
             return nodeView;
         }
 
-        //public Node CreateNode(NodeView nodeView)
-        //{
-        //    if (BehaviorTree.GetNodeType(nodeView.title, out Type nodeType))
-        //    {
-        //        Node node = new Node() as nodeType;
-
-        //    }
-        //}
+        // TODO: Get the type of the node contained by the NodeView 
+        public Node CreateNode(NodeView nodeView)
+        {
+            Node createdNode;
+            if (nodeView.node.GetType() == typeof(Sequence))
+            {
+                // Create node of type Sequence
+                createdNode = new Sequence();
+                //connections.
+            }
+            // TODO: Replace with created node
+            return null;
+        }
     }
 }

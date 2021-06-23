@@ -11,6 +11,8 @@ namespace BobJeltes.NodeEditor
     [Serializable]
     public class NodeView
     {
+        public Node node;
+
         public Rect rect;
         public string title = "Node";
         public bool isDragged;
@@ -36,7 +38,8 @@ namespace BobJeltes.NodeEditor
 
         public NodeView(Node node)
         {
-
+            this.node = node;
+            this.title = node.GetType().Name;
         }
 
         public NodeView(Rect rect, Orientation orientation, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<NodeView> onClickNode, Action<NodeView, ConnectionPointType> onClickConnectionPoint, Action<NodeView> OnClickRemoveNode, Action<NodeView> onDragNode, Action<NodeView> onClickUp)

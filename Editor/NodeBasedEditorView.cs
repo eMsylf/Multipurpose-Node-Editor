@@ -804,6 +804,14 @@ namespace BobJeltes.NodeEditor
             DeselectAllNodes();
             SelectNode(CreateNodeView(Event.current.mousePosition, centered: true));
         }
+
+        internal virtual List<NodeView> GetChildren(NodeView nodeView)
+        {
+            // TODO: Get all children of this node by finding all connections that have this nodeView as output node, then adding the corresponding input node to the list
+            int index = nodeViews.IndexOf(nodeView);
+            connections.Where(c => c.outNode == nodeView);
+            return new List<NodeView>();
+        }
         #endregion
 
         #region Connection Events
