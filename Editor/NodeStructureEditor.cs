@@ -22,11 +22,11 @@ public class NodeStructureEditor : Editor
         BehaviorTree behaviorTree = asset as BehaviorTree;
         if (behaviorTree)
         {
-            var editor = BehaviorTreeEditor.OpenBehaviorTreeEditor();
+            var editor = BehaviorTreeEditor.OpenBehaviorTreeWindow();
             editor.Load(behaviorTree);
             string name = EditorUtility.InstanceIDToObject(instanceID).name;
             Debug.Log("Open " + name);
-            return false;
+            return true;
         }
 
         NodeStructure nodeStructure = asset as NodeStructure;
@@ -36,8 +36,8 @@ public class NodeStructureEditor : Editor
             editor.Load(asset as NodeStructure);
             string name = EditorUtility.InstanceIDToObject(instanceID).name;
             Debug.Log("Open " + name);
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 }

@@ -11,15 +11,13 @@ namespace BobJeltes.NodeEditor
     public class NodeView
     {
         public Rect rect;
-        public string title;
+        public string title = "Node";
         public bool isDragged;
         public bool isSelected;
         public bool multiSelecting;
         public ConnectionPoint inPoint;
         public ConnectionPoint outPoint;
 
-        // OPTION: Remove these styles and pass them as parameters in Draw()
-        // Would that be less efficient?
         public GUIStyle style { get => isSelected ? selectedStyle : regularStyle; }
         public GUIStyle regularStyle;
         public GUIStyle selectedStyle;
@@ -51,8 +49,8 @@ namespace BobJeltes.NodeEditor
 
         public void Draw(Orientation direction)
         {
-            inPoint.Draw(direction, this);
-            outPoint.Draw(direction, this);
+            inPoint?.Draw(direction, this);
+            outPoint?.Draw(direction, this);
             GUI.Box(rect, title, style);
         }
 
@@ -116,14 +114,14 @@ namespace BobJeltes.NodeEditor
         {
             isDragged = true;
             GUI.changed = true;
-            OnClickNode.Invoke(this);
+            OnClickNode?.Invoke(this);
         }
 
         private void ClickUp()
         {
             //Debug.Log("Click up on node " + rect.position);
             isDragged = false;
-            OnClickUp.Invoke(this);
+            OnClickUp?.Invoke(this);
         }
 
         private void OnClickRemoveNode()
@@ -135,7 +133,7 @@ namespace BobJeltes.NodeEditor
         {
             rect.position += delta;
             if (invokeCallbacks)
-                OnDragNode.Invoke(this);
+                OnDragNode?.Invoke(this);
         }
     }
 }

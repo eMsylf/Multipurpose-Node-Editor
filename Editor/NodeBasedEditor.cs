@@ -33,13 +33,13 @@ namespace BobJeltes.NodeEditor
         public List<NodeView> SelectedNodes { get => nodes.FindAll(x => x.isSelected); }
         private Connection connectionPreview = new Connection();
 
-        private GUIStyle nodeStyle;
-        private GUIStyle selectedNodeStyle;
-        private GUIStyle inPointStyle;
-        private GUIStyle outPointStyle;
+        internal GUIStyle nodeStyle;
+        internal GUIStyle selectedNodeStyle;
+        internal GUIStyle inPointStyle;
+        internal GUIStyle outPointStyle;
 
-        private NodeView selectedNodeIn;
-        private NodeView selectedNodeOut;
+        internal NodeView selectedNodeIn;
+        internal NodeView selectedNodeOut;
         private bool allowLoops;
 
         private Vector2 offset;
@@ -173,6 +173,7 @@ namespace BobJeltes.NodeEditor
             reference = default;
             nodes = new List<NodeView>();
             connections = new List<Connection>();
+            InitNodes();
             ClearConnectionSelection();
             hasUnsavedChanges = false;
         }
@@ -248,7 +249,7 @@ namespace BobJeltes.NodeEditor
 
             foreach (var nodePosition in structure.nodePositions)
             {
-                CreateNode(nodePosition, false);
+                CreateNode(nodePosition, centered: false);
             }
             foreach (var connection in structure.connectionIndices)
             {
@@ -265,8 +266,9 @@ namespace BobJeltes.NodeEditor
         public void OnBeforeSerialize()
         {
             // Create temporary storage of connection indices
+            if (connections == null) return;
             if (tempConnectionIndices == null) tempConnectionIndices = new List<Int2>();
-            Debug.Log("Connections found: " + connections.Count);
+            //Debug.Log("Connections found: " + connections.Count);
             foreach (var connection in connections)
             {
                 tempConnectionIndices.Add(new Int2(
@@ -296,14 +298,17 @@ namespace BobJeltes.NodeEditor
             if (nodes == null) nodes = new List<NodeView>();
             foreach (var node in nodes)
             {
-                node.regularStyle = nodeStyle;
-                node.selectedStyle = selectedNodeStyle;
-                node.OnDragNode = OnDragNode;
-                node.OnRemoveNode = OnClickRemoveNode;
-                node.OnClickNode = OnClickNode;
-                node.OnClickUp = OnClickUpNode;
-                node.inPoint.OnClickConnectionPoint = OnClickConnectionPoint;
-                node.outPoint.OnClickConnectionPoint = OnClickConnectionPoint;
+                //node.regularStyle = nodeStyle;
+                //node.selectedStyle = selectedNodeStyle;
+                if (node.OnClickNode != null) node.OnDragNode = OnDragNode;
+                if (node.OnRemoveNode != null) node.OnRemoveNode = OnClickRemoveNode;
+                if (node.OnClickNode != null) node.OnClickNode = OnClickNode;
+                if (node.OnClickUp != null)
+                    node.OnClickUp = OnClickUpNode;
+                if (node.inPoint.OnClickConnectionPoint != null)
+                    node.inPoint.OnClickConnectionPoint = OnClickConnectionPoint;
+                if (node.outPoint.OnClickConnectionPoint != null)
+                    node.outPoint.OnClickConnectionPoint = OnClickConnectionPoint;
 
                 node.isDragged = false;
                 node.isSelected = false;
@@ -396,11 +401,13 @@ namespace BobJeltes.NodeEditor
                 }
             }
 
+            if (!hasUnsavedChanges) GUI.enabled = false;
             if (GUILayout.Button("Save", EditorStyles.toolbarButton, GUILayout.Width(40)))
             {
                 Debug.Log("Save");
                 SaveChanges();
             }
+            GUI.enabled = true;
             if (reference == null && !hasUnsavedChanges)
             {
                 GUI.enabled = false;
@@ -481,16 +488,6 @@ namespace BobJeltes.NodeEditor
                 case EventType.MouseDown:
                     if (e.button == 0)
                     {
-                        if (selectedNodeIn == null && selectedNodeOut != null)
-                        {
-                            NodeView newNode = OnClickAddNode(e.mousePosition, true);
-                            CreateConnection(selectedNodeOut, newNode);
-                        }
-                        if (selectedNodeIn != null && selectedNodeOut == null)
-                        {
-                            NodeView newNode = OnClickAddNode(e.mousePosition, true);
-                            CreateConnection(newNode, selectedNodeIn);
-                        }
                         OnClickBackground();
                     }
 
@@ -609,7 +606,7 @@ namespace BobJeltes.NodeEditor
         {
             Debug.Log("Show context menu");
             GenericMenu genericMenu = new GenericMenu();
-            genericMenu.AddItem(new GUIContent("Add node"), false, () => OnClickAddNode(mousePosition, true));
+            genericMenu.AddItem(new GUIContent("Add node"), false, () => CreateNode(mousePosition));
             genericMenu.ShowAsContext();
         }
 
@@ -627,14 +624,14 @@ namespace BobJeltes.NodeEditor
         //    }
         //}
 
-        internal virtual NodeView OnClickAddNode(Vector2 mousePosition, bool centered)
+        internal virtual NodeView CreateNode(Vector2 position, float width = 200, float height = 50, bool centered = true)
         {
-            return CreateNode(mousePosition, centered);
-        }
-
-        internal NodeView CreateNode(Vector2 position, bool centered)
-        {
-            NodeView node = new NodeView(new Rect(position, new Vector2(200, 50)),
+            if (centered)
+            {
+                position.x -= width * .5f;
+                position.y -= height * .5f;
+            }
+            NodeView nodeView = new NodeView(new Rect(position, new Vector2(width, height)),
                                  orientation,
                                  nodeStyle,
                                  selectedNodeStyle,
@@ -645,15 +642,27 @@ namespace BobJeltes.NodeEditor
                                  OnClickRemoveNode: OnClickRemoveNode,
                                  onDragNode: OnDragNode,
                                  onClickUp: OnClickUpNode);
-            if (centered)
-            {
-                node.rect.x -= node.rect.width * .5f;
-                node.rect.y -= node.rect.height * .5f;
-            }
+            CreateNode(nodeView);
+            return nodeView;
+        }
+
+        internal virtual void CreateNode(NodeView nodeView)
+        {
             if (nodes == null) nodes = new List<NodeView>();
-            nodes.Add(node);
+            Debug.Log("Create node");
+            if (selectedNodeIn != null &&selectedNodeOut == null)
+            {
+                Debug.Log("Has node in selected");
+                CreateConnection(nodeView, selectedNodeIn);
+            }
+            if (selectedNodeIn == null && selectedNodeOut != null)
+            {
+                Debug.Log("Has node out selected");
+                CreateConnection(selectedNodeOut, nodeView);
+            }
+            ClearConnectionSelection();
+            nodes.Add(nodeView);
             hasUnsavedChanges = true;
-            return node;
         }
 
         internal virtual void OnClickRemoveNode(NodeView node)
@@ -766,8 +775,21 @@ namespace BobJeltes.NodeEditor
 
         protected virtual void OnClickBackground()
         {
-            ClearConnectionSelection();
+            if ((selectedNodeIn == null && selectedNodeOut != null) || (selectedNodeIn != null && selectedNodeOut == null))
+            {
+                OnClickBackgroundWithConnection();
+            }
+            else
+            {
+                ClearConnectionSelection();
+                DeselectAllNodes();
+            }
+        }
+
+        protected virtual void OnClickBackgroundWithConnection()
+        {
             DeselectAllNodes();
+            SelectNode(CreateNode(Event.current.mousePosition, centered: true));
         }
         #endregion
 
