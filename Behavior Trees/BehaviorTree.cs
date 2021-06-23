@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using System.Linq;
 
 namespace BobJeltes.AI.BehaviorTree
 {
@@ -32,17 +33,42 @@ namespace BobJeltes.AI.BehaviorTree
             return state;
         }
 
-        //public Node CreateNode(Type type)
-        //{
-        //    Node node = new Node(type) as Node;
-        //    node.name = type.Name;
-        //    node.guid = GUID.Generate().ToString();
-        //    nodes.Add(node);
+        public static Dictionary<string, Type> stringTypeLookup;
+        public static bool GetNodeType(string typeName, out Type nodeType)
+        {
+            // Update dictionary
+            stringTypeLookup = new Dictionary<string, Type>();
+            TypeCache.TypeCollection nodeTypes = TypeCache.GetTypesDerivedFrom<Node>();
+            foreach (var type in nodeTypes)
+            {
+                stringTypeLookup.Add(type.Name, type);
+            }
+            if (!stringTypeLookup.ContainsKey(typeName))
+            {
+                Debug.LogError(typeName + " is an invalid node type");
+                nodeType = typeof(Node);
+                return false;
+            }
+            nodeType = stringTypeLookup[typeName];
+            return true;
+        }
 
-        //    return node;
-        //}
+        public void AddNode(string type)
+        {
+            if (GetNodeType(type, out Type nodeType))
+            {
 
-        public void DeleteNode(Node node)
+            }
+            //nodes.Add();
+            //Node node = new Type(type) as Node;
+            //node.name = type.Name;
+            //node.guid = GUID.Generate().ToString();
+            //nodes.Add(node);
+
+            //return node;
+        }
+
+        public void RemoveNode(Node node)
         {
             nodes.Remove(node);
         }

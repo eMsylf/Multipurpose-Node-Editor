@@ -1,5 +1,6 @@
 /// Based on the tutorial by Oguzkonya at https://oguzkonya.com/creating-node-based-editor-unity/
 
+using BobJeltes.AI.BehaviorTree;
 using System;
 using System.Collections.Generic;
 using UnityEditor;
@@ -32,6 +33,11 @@ namespace BobJeltes.NodeEditor
             {Orientation.LeftRight, new Vector2(10f, 20f) },
             {Orientation.TopBottom, new Vector2(20f, 15f) }
         };
+
+        public NodeView(Node node)
+        {
+
+        }
 
         public NodeView(Rect rect, Orientation orientation, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<NodeView> onClickNode, Action<NodeView, ConnectionPointType> onClickConnectionPoint, Action<NodeView> OnClickRemoveNode, Action<NodeView> onDragNode, Action<NodeView> onClickUp)
         {

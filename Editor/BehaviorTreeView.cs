@@ -1,4 +1,5 @@
 using BobJeltes.AI.BehaviorTree;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -6,13 +7,13 @@ using UnityEngine;
 
 namespace BobJeltes.NodeEditor
 {
-    public class BehaviorTreeEditor : NodeBasedEditor
+    public class BehaviorTreeView : NodeBasedEditorView
     {
         [MenuItem("Tools/Bob Jeltes/Behavior Tree editor")]
         [MenuItem("Window/Bob Jeltes/Behavior Tree editor")]
-        public static BehaviorTreeEditor OpenBehaviorTreeWindow()
+        public static BehaviorTreeView OpenBehaviorTreeWindow()
         {
-            BehaviorTreeEditor openedWindow = CreateWindow<BehaviorTreeEditor>("Behavior Tree editor");
+            BehaviorTreeView openedWindow = CreateWindow<BehaviorTreeView>("Behavior Tree editor");
             openedWindow.saveChangesMessage = "This behavior tree has not been saved. Would you like to save?";
             return openedWindow;
         }
@@ -72,43 +73,38 @@ namespace BobJeltes.NodeEditor
             "builtin skins/darkskin/images/node6 on.png", 
             12);
 
-        internal override void InitNodes()
+        internal override void PopulateView(NodeStructure nodeStructure)
         {
-            base.InitNodes();
-            if (nodes == null || nodes.Count == 0)
+            BehaviorTree behaviorTree = nodeStructure as BehaviorTree;
+            nodeViews = new List<NodeView>();
+            nodeViews.Add(CreateRootNode());
+            foreach (var node in behaviorTree.nodes)
             {
-                CreateRootNode();
+                Debug.Log(node.GetType().Name);
+                behaviorTree.nodes.ForEach(n => CreateNodeView(n));
             }
-        }
-
-        internal void CreateRootNode()
-        {
-            preset1.Load(out GUIStyle rootNodeStyle, out GUIStyle rootNodeStyleSelected);
-            NodeView root = new NodeView(new Rect(position.size * .5f, new Vector2(200, 50)), orientation, rootNodeStyle, rootNodeStyleSelected, GUIStyle.none, outPointStyle, null, OnClickConnectionPoint, null, null, null);
-            CreateNode(root);
-            Debug.Log("Create root node");
         }
 
         internal override void ProcessContextMenu(Vector2 mousePosition)
         {
             GenericMenu genericMenu = new GenericMenu();
             var composites = TypeCache.GetTypesDerivedFrom<Composite>();
-            foreach (var node in composites)
+            foreach (var nodeType in composites)
             {
                 //Debug.Log(node.Name);
-                genericMenu.AddItem(new GUIContent("Composite/" + node.Name), false, () => CreateNode(mousePosition).title = node.Name);
+                genericMenu.AddItem(new GUIContent("Composite/" + nodeType.Name), false, () => CreateNodeView(mousePosition).title = nodeType.Name);
             }
             var decorators = TypeCache.GetTypesDerivedFrom<Decorator>();
-            foreach (var node in decorators)
+            foreach (var nodeType in decorators)
             {
                 //Debug.Log(node.Name);
-                genericMenu.AddItem(new GUIContent("Decorator/" + node.Name), false, () => CreateNode(mousePosition).title = node.Name);
+                genericMenu.AddItem(new GUIContent("Decorator/" + nodeType.Name), false, () => CreateNodeView(mousePosition).title = nodeType.Name);
             }
             var actionNodes = TypeCache.GetTypesDerivedFrom<ActionNode>();
-            foreach (var node in actionNodes)
+            foreach (var nodeType in actionNodes)
             {
                 //Debug.Log(node.Name);
-                genericMenu.AddItem(new GUIContent("Actions/" + node.Name), false, () => CreateNode(mousePosition).title = node.Name);
+                genericMenu.AddItem(new GUIContent("Actions/" + nodeType.Name), false, () => CreateNodeView(mousePosition).title = nodeType.Name);
             }
             genericMenu.ShowAsContext();
         }
@@ -117,5 +113,45 @@ namespace BobJeltes.NodeEditor
         {
             ProcessContextMenu(Event.current.mousePosition);
         }
+
+        public override void SaveChanges()
+        {
+            base.SaveChanges();
+            BehaviorTree behaviorTree = reference as BehaviorTree;
+            foreach (var nodeView in nodeViews)
+            {
+
+            }
+        }
+
+        internal NodeView CreateRootNode()
+        {
+            preset1.Load(out GUIStyle rootNodeStyle, out GUIStyle rootNodeStyleSelected);
+            NodeView root = new NodeView(new Rect(position.size * .5f, new Vector2(200, 50)), orientation, rootNodeStyle, rootNodeStyleSelected, GUIStyle.none, outPointStyle, null, OnClickConnectionPoint, null, null, null);
+            CreateNodeView(root);
+            Debug.Log("Create root node");
+            return root;
+        }
+
+        /// <summary>
+        /// Create a behavior tree node view from a behavior tree node
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public NodeView CreateNodeView(Node node)
+        {
+            NodeView nodeView = new NodeView(node);
+            nodeView.title = node.GetType().Name;
+            return nodeView;
+        }
+
+        //public Node CreateNode(NodeView nodeView)
+        //{
+        //    if (BehaviorTree.GetNodeType(nodeView.title, out Type nodeType))
+        //    {
+        //        Node node = new Node() as nodeType;
+
+        //    }
+        //}
     }
 }
