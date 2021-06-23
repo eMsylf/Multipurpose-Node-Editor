@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.ShortcutManagement;
 using System;
 using BobJeltes.AI.BehaviorTree;
+using Debug = UnityEngine.Debug;
 
 namespace BobJeltes.NodeEditor
 {

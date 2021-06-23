@@ -45,7 +45,7 @@ namespace BobJeltes.AI.BehaviorTree
             }
             if (!stringTypeLookup.ContainsKey(typeName))
             {
-                Debug.LogError(typeName + " is an invalid node type");
+                UnityEngine.Debug.LogError(typeName + " is an invalid node type");
                 nodeType = typeof(Node);
                 return false;
             }

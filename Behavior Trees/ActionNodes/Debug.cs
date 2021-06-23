@@ -4,22 +4,24 @@ using UnityEngine;
 
 namespace BobJeltes.AI.BehaviorTree
 {
-    public class Repeat : Decorator
+    public class Debug : ActionNode
     {
+        public string message = "";
+
         public override void OnStart()
         {
-            
+            UnityEngine.Debug.Log("Start: " + message);
         }
 
         public override void OnStop()
         {
-            
+            UnityEngine.Debug.Log("Stop: " + message);
         }
 
         public override Result Tick()
         {
-            child.Tick();
-            return Result.Running;
+            UnityEngine.Debug.Log("Tick: " + message);
+            return Result.Success;
         }
     }
 }

@@ -25,7 +25,6 @@ public class NodeStructureEditor : Editor
             var editor = BehaviorTreeView.OpenBehaviorTreeWindow();
             editor.Load(behaviorTree);
             string name = EditorUtility.InstanceIDToObject(instanceID).name;
-            Debug.Log("Open " + name);
             return true;
         }
 
@@ -35,7 +34,6 @@ public class NodeStructureEditor : Editor
             var editor = NodeBasedEditorView.OpenWindow();
             editor.Load(asset as NodeStructure);
             string name = EditorUtility.InstanceIDToObject(instanceID).name;
-            Debug.Log("Open " + name);
             return true;
         }
         return false;

@@ -5,6 +5,8 @@
     {
         public string name;
         public string guid;
+        public abstract void OnStart();
+        public abstract void OnStop();
         public abstract Result Tick();
         public virtual Node Clone()
         {

@@ -80,7 +80,7 @@ namespace BobJeltes.NodeEditor
             nodeViews.Add(CreateRootNode());
             foreach (var node in behaviorTree.nodes)
             {
-                Debug.Log(node.GetType().Name);
+                UnityEngine.Debug.Log(node.GetType().Name);
                 behaviorTree.nodes.ForEach(n => CreateNodeView(n));
             }
         }
@@ -129,7 +129,7 @@ namespace BobJeltes.NodeEditor
             preset1.Load(out GUIStyle rootNodeStyle, out GUIStyle rootNodeStyleSelected);
             NodeView root = new NodeView(new Rect(position.size * .5f, new Vector2(200, 50)), orientation, rootNodeStyle, rootNodeStyleSelected, GUIStyle.none, outPointStyle, null, OnClickConnectionPoint, null, null, null);
             CreateNodeView(root);
-            Debug.Log("Create root node");
+            UnityEngine.Debug.Log("Create root node");
             return root;
         }
 
@@ -147,16 +147,26 @@ namespace BobJeltes.NodeEditor
         }
 
         // TODO: Get the type of the node contained by the NodeView 
+        // 
         public Node CreateNode(NodeView nodeView)
         {
-            Node createdNode;
+            if (nodeView.node.GetType() == typeof(RootNode))
+            {
+                return new RootNode();
+            }
             if (nodeView.node.GetType() == typeof(Sequence))
             {
-                // Create node of type Sequence
-                createdNode = new Sequence();
-                //connections.
+                return new Sequence();
             }
-            // TODO: Replace with created node
+            if (nodeView.node.GetType() == typeof(Selector))
+            {
+                return new Selector();
+            }
+            if (nodeView.node.GetType() == typeof(Repeat))
+            {
+                return new Repeat();
+            }
+
             return null;
         }
     }

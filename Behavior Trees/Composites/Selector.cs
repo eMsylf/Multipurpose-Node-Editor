@@ -2,6 +2,16 @@ namespace BobJeltes.AI.BehaviorTree
 {
     public class Selector : Composite
     {
+        public override void OnStart()
+        {
+            i = 0;
+        }
+
+        public override void OnStop()
+        {
+
+        }
+
         public override Result Tick()
         {
             for (; i < children.Count; i++)
