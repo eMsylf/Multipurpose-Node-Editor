@@ -7,13 +7,13 @@ using UnityEngine;
 
 namespace BobJeltes.NodeEditor
 {
-    public class BehaviorTreeView : NodeBasedEditorView
+    public class BehaviorTreeEditorView : NodeBasedEditorView
     {
         [MenuItem("Tools/Bob Jeltes/Behavior Tree editor")]
         [MenuItem("Window/Bob Jeltes/Behavior Tree editor")]
-        public static BehaviorTreeView OpenBehaviorTreeWindow()
+        public static BehaviorTreeEditorView OpenBehaviorTreeWindow()
         {
-            BehaviorTreeView openedWindow = CreateWindow<BehaviorTreeView>("Behavior Tree editor");
+            BehaviorTreeEditorView openedWindow = CreateWindow<BehaviorTreeEditorView>("Behavior Tree editor");
             openedWindow.saveChangesMessage = "This behavior tree has not been saved. Would you like to save?";
             return openedWindow;
         }
@@ -81,8 +81,10 @@ namespace BobJeltes.NodeEditor
             foreach (var node in behaviorTree.nodes)
             {
                 UnityEngine.Debug.Log(node.GetType().Name);
-                behaviorTree.nodes.ForEach(n => CreateNodeView(n));
+
             }
+            // Gives null-ref upon creating new file
+            behaviorTree.nodes.ForEach(n => CreateNodeView(n));
         }
 
         internal override void ProcessContextMenu(Vector2 mousePosition)
