@@ -162,7 +162,7 @@ namespace BobJeltes.NodeEditor
         [Shortcut("Node Based Editor/New node structure", KeyCode.N, ShortcutModifiers.Alt)]
         public static void NewFile_Shortcut()
         {
-            if (focusedWindow.GetType() == typeof(NodeBasedEditorView))
+            if (focusedWindow.GetType().BaseType == typeof(NodeBasedEditorView))
                 (focusedWindow as NodeBasedEditorView).NewFile();
         }
 
@@ -182,7 +182,7 @@ namespace BobJeltes.NodeEditor
         public static void SaveChanges_Shortcut()
         {
             // Kan zijn dat als de editor derivet en niet de directe type is, dat de if-statement false returnt
-            if (focusedWindow.GetType() == typeof(NodeBasedEditorView))
+            if (focusedWindow.GetType().BaseType == typeof(NodeBasedEditorView))
                 (focusedWindow as NodeBasedEditorView).SaveChanges();
         }
 
@@ -777,7 +777,7 @@ namespace BobJeltes.NodeEditor
         [Shortcut("Node Based Editor/Select All", KeyCode.A, ShortcutModifiers.Alt)]
         public static void SelectAllNodes_Shortcut()
         {
-            if (focusedWindow.GetType() == typeof(NodeBasedEditorView))
+            if (focusedWindow.GetType().BaseType == typeof(NodeBasedEditorView))
                 (focusedWindow as NodeBasedEditorView).SelectAllNodes();
         }
 
