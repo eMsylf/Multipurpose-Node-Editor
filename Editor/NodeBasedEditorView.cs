@@ -27,11 +27,11 @@ namespace BobJeltes.NodeEditor
         private GUIStyle toolbarSettingsStyle = new GUIStyle();
 
         public NodeStructure reference;
-        string fileName = "New file";
+        public string fileName = "New file";
 
-        public List<NodeView> nodeViews;
+        public List<NodeView> nodeViews = new List<NodeView>();
         public List<Connection> connections;
-        public List<NodeView> SelectedNodes { get => nodeViews.FindAll(x => x.isSelected); }
+        public List<NodeView> SelectedNodes { get => nodeViews.FindAll(x => x.IsSelected); }
         private Connection connectionPreview = new Connection();
 
         internal GUIStyle nodeStyle;
@@ -75,10 +75,12 @@ namespace BobJeltes.NodeEditor
             nodeStyle = new GUIStyle();
             nodeStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/node6.png") as Texture2D;
             nodeStyle.border = new RectOffset(12, 12, 12, 12);
+            nodeStyle.alignment = TextAnchor.MiddleCenter;
 
             selectedNodeStyle = new GUIStyle();
             selectedNodeStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/node6 on.png") as Texture2D;
             selectedNodeStyle.border = new RectOffset(12, 12, 12, 12);
+            selectedNodeStyle.alignment = TextAnchor.MiddleCenter;
 
             string inSide;
             string outSide;
@@ -112,8 +114,9 @@ namespace BobJeltes.NodeEditor
             selectionRectStyle.normal.background = new Texture2D(1, 1);
             selectionRectStyle.normal.background.SetPixel(1, 1, new Color(.5f, .5f, .5f, .3f));
 
-            PopulateView(reference);
+            PopulateView();
             ClearConnectionSelection();
+            hasUnsavedChanges = false;
         }
 
         internal virtual void OnGUI()
@@ -144,7 +147,7 @@ namespace BobJeltes.NodeEditor
                 {
                     case 0:
                         // Yes
-                        SaveChanges();
+                        Save();
                         break;
                     case 1:
                         // Cancel
@@ -173,6 +176,7 @@ namespace BobJeltes.NodeEditor
             reference = default;
             nodeViews = new List<NodeView>();
             connections = new List<Connection>();
+            tempConnectionIndices?.Clear();
             PopulateView();
             ClearConnectionSelection();
             hasUnsavedChanges = false;
@@ -183,10 +187,10 @@ namespace BobJeltes.NodeEditor
         {
             // Kan zijn dat als de editor derivet en niet de directe type is, dat de if-statement false returnt
             if (focusedWindow.GetType().BaseType == typeof(NodeBasedEditorView))
-                (focusedWindow as NodeBasedEditorView).SaveChanges();
+                (focusedWindow as NodeBasedEditorView).Save();
         }
 
-        public override void SaveChanges()
+        public virtual void Save()
         {
             if (!hasUnsavedChanges) return;
             if (reference == null)
@@ -206,6 +210,11 @@ namespace BobJeltes.NodeEditor
                     nodeViews.IndexOf(connection.inNode)
                     ));
             }
+            SaveChanges();
+        }
+
+        public override void SaveChanges()
+        {
             EditorUtility.SetDirty(reference);
 
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))
@@ -229,11 +238,11 @@ namespace BobJeltes.NodeEditor
             // TODO: test if assetdatabase refresh is needed & if it has great performance impact in large projects
             //AssetDatabase.Refresh();
 
-            Debug.Log($"{this} saved successfully to file {reference.name}", reference);
+            Debug.Log("Nodes saved successfully to file " + reference.name, reference);
             base.SaveChanges();
         }
 
-        public bool Load(NodeStructure structure)
+        public virtual bool Load(NodeStructure structure)
         {
             if (!UnsavedChangesCheck()) return false;
             if (structure == null)
@@ -286,56 +295,50 @@ namespace BobJeltes.NodeEditor
             else Debug.Log("Nodes found: " + nodeViews.Count);
             if (tempConnectionIndices == null)
                 return;
+            Debug.Log("Node views: " + nodeViews.Count);
+            Debug.Log("Connection index sets: " + tempConnectionIndices.Count);
+            tempConnectionIndices.RemoveAll(c => c.a < 0 || c.b < 0);
             foreach (var connectionData in tempConnectionIndices)
             {
+                // Somewhere new connections are added and not removed. 9 connection indices and only 4 nodes is unlikely.
+                Debug.Log("Connection indices requested: " + connectionData.a + " & " + connectionData.b);
                 CreateConnection(nodeViews[connectionData.a], nodeViews[connectionData.b]);
             }
-            tempConnectionIndices = null;
+            tempConnectionIndices.Clear();
         }
 
         internal virtual void PopulateView()
         {
-            if (nodeViews == null) nodeViews = new List<NodeView>();
-            foreach (var nodeView in nodeViews)
+            if (reference == null)
             {
-                if (nodeView.OnClickNode != null) nodeView.OnDragNode = OnDragNode;
-                if (nodeView.OnRemoveNode != null) nodeView.OnRemoveNode = OnClickRemoveNode;
-                if (nodeView.OnClickNode != null) nodeView.OnClickNode = OnClickNode;
-                if (nodeView.OnClickUp != null) nodeView.OnClickUp = OnClickUpNode;
-                if (nodeView.inPoint.OnClickConnectionPoint != null) nodeView.inPoint.OnClickConnectionPoint = OnClickConnectionPoint;
-                if (nodeView.outPoint.OnClickConnectionPoint != null) nodeView.outPoint.OnClickConnectionPoint = OnClickConnectionPoint;
+                if (nodeViews == null) nodeViews = new List<NodeView>();
+                foreach (var nodeView in nodeViews)
+                {
+                    if (nodeView.OnClickNode != null) nodeView.OnDragNode = OnDragNode;
+                    if (nodeView.OnRemoveNode != null) nodeView.OnRemoveNode = OnClickRemoveNode;
+                    if (nodeView.OnClickNode != null) nodeView.OnClickNode = OnClickNode;
+                    if (nodeView.OnClickUp != null) nodeView.OnClickUp = OnClickUpNode;
+                    if (nodeView.inPoint.OnClickConnectionPoint != null) nodeView.inPoint.OnClickConnectionPoint = OnClickConnectionPoint;
+                    if (nodeView.outPoint.OnClickConnectionPoint != null) nodeView.outPoint.OnClickConnectionPoint = OnClickConnectionPoint;
 
-                nodeView.isDragged = false;
-                nodeView.isSelected = false;
-                nodeView.multiSelecting = false;
+                    nodeView.isDragged = false;
+                    nodeView.IsSelected = false;
+                    nodeView.multiSelecting = false;
+                }
             }
-        }
-
-        internal virtual void PopulateView(NodeStructure nodeStructure)
-        {
-            if (nodeStructure == null) return;
-            if (nodeViews == null) nodeViews = new List<NodeView>();
-            foreach (var nodePosition in nodeStructure.nodePositions)
+            else
             {
-                CreateNodeView(nodePosition);
-                //node.regularStyle = nodeStyle;
-                //node.selectedStyle = selectedNodeStyle;
-                //if (nodePosition.OnClickNode != null) nodePosition.OnDragNode = OnDragNode;
-                //if (nodePosition.OnRemoveNode != null) nodePosition.OnRemoveNode = OnClickRemoveNode;
-                //if (nodePosition.OnClickNode != null) nodePosition.OnClickNode = OnClickNode;
-                //if (nodePosition.OnClickUp != null) nodePosition.OnClickUp = OnClickUpNode;
-                //if (nodePosition.inPoint.OnClickConnectionPoint != null) nodePosition.inPoint.OnClickConnectionPoint = OnClickConnectionPoint;
-                //if (nodePosition.outPoint.OnClickConnectionPoint != null) nodePosition.outPoint.OnClickConnectionPoint = OnClickConnectionPoint;
+                if (nodeViews == null) nodeViews = new List<NodeView>();
+                foreach (var nodePosition in reference.nodePositions)
+                {
+                    CreateNodeView(nodePosition);
+                }
 
-                //nodePosition.isDragged = false;
-                //nodePosition.isSelected = false;
-                //nodePosition.multiSelecting = false;
-            }
-
-            if (connections == null) connections = new List<Connection>();
-            foreach (var connection in connections)
-            {
-                connection.OnClickRemoveConnection = OnClickRemoveConnection;
+                if (connections == null) connections = new List<Connection>();
+                foreach (var connection in connections)
+                {
+                    connection.OnClickRemoveConnection = OnClickRemoveConnection;
+                }
             }
         }
         #endregion
@@ -419,7 +422,7 @@ namespace BobJeltes.NodeEditor
             if (GUILayout.Button("Save", EditorStyles.toolbarButton, GUILayout.Width(40)))
             {
                 Debug.Log("Save");
-                SaveChanges();
+                Save();
             }
             GUI.enabled = true;
             if (reference == null && !hasUnsavedChanges)
@@ -562,7 +565,7 @@ namespace BobJeltes.NodeEditor
                         for (int i = 0; i < nodeViews.Count; i++)
                         {
                             NodeView node = nodeViews[i];
-                            if (node.isSelected)
+                            if (node.IsSelected)
                             {
                                 OnClickRemoveNode(node);
                                 i--;
@@ -646,16 +649,14 @@ namespace BobJeltes.NodeEditor
                 position.y -= height * .5f;
             }
             NodeView nodeView = new NodeView(new Rect(position, new Vector2(width, height)),
-                                 orientation,
                                  nodeStyle,
                                  selectedNodeStyle,
-                                 inPointStyle,
-                                 outPointStyle,
-                                 onClickNode: OnClickNode,
-                                 onClickConnectionPoint: OnClickConnectionPoint,
-                                 OnClickRemoveNode: OnClickRemoveNode,
+                                 new ConnectionPoint(ConnectionPointType.In, NodeView.connectionPointSizeByOrientation[orientation], inPointStyle, OnClickConnectionPoint),
+                                 new ConnectionPoint(ConnectionPointType.Out, NodeView.connectionPointSizeByOrientation[orientation], outPointStyle, OnClickConnectionPoint),
+                                 onClickNode: OnClickNode, OnClickRemoveNode: OnClickRemoveNode,
                                  onDragNode: OnDragNode,
-                                 onClickUp: OnClickUpNode);
+                                 onClickUp: OnClickUpNode,
+                                 selectable: true);
             CreateNodeView(nodeView);
             return nodeView;
         }
@@ -663,6 +664,7 @@ namespace BobJeltes.NodeEditor
         internal virtual void CreateNodeView(NodeView nodeView)
         {
             if (nodeViews == null) nodeViews = new List<NodeView>();
+            nodeViews.Add(nodeView);
             Debug.Log("Create node");
             if (selectedNodeIn != null &&selectedNodeOut == null)
             {
@@ -675,7 +677,6 @@ namespace BobJeltes.NodeEditor
                 CreateConnection(selectedNodeOut, nodeView);
             }
             ClearConnectionSelection();
-            nodeViews.Add(nodeView);
             hasUnsavedChanges = true;
         }
 
@@ -735,7 +736,7 @@ namespace BobJeltes.NodeEditor
                 else DeselectNode(node);
                 return;
             }
-            if (node.isSelected)
+            if (node.IsSelected)
             {
                 return;
             }
@@ -757,20 +758,20 @@ namespace BobJeltes.NodeEditor
 
         internal virtual void SelectNode(NodeView node)
         {
-            node.isSelected = true;
+            node.IsSelected = true;
             GUI.changed = true;
         }
 
         internal virtual void DeselectNode(NodeView node)
         {
-            node.isSelected = false;
+            node.IsSelected = false;
             GUI.changed = true;
         }
 
         internal virtual void DeselectAllNodes()
         {
             Debug.Log($"Deselect {SelectedNodes.Count} nodes");
-            SelectedNodes.ForEach(node => node.isSelected = false);
+            SelectedNodes.ForEach(node => node.IsSelected = false);
             GUI.changed = true;
         }
 
@@ -809,9 +810,15 @@ namespace BobJeltes.NodeEditor
         internal virtual List<NodeView> GetChildren(NodeView nodeView)
         {
             // TODO: Get all children of this node by finding all connections that have this nodeView as output node, then adding the corresponding input node to the list
-            int index = nodeViews.IndexOf(nodeView);
-            connections.Where(c => c.outNode == nodeView);
-            return new List<NodeView>();
+            List<NodeView> children = new List<NodeView>();
+            foreach (var connection in connections)
+            {
+                if (connection.outNode == nodeView)
+                {
+                    children.Add(connection.inNode);
+                }
+            }
+            return children;
         }
         #endregion
 
@@ -858,12 +865,37 @@ namespace BobJeltes.NodeEditor
 
         internal virtual void CreateConnection(NodeView nodeOut, NodeView nodeIn)
         {
+            int indexOfNodeOut = nodeViews.IndexOf(nodeOut);
+            if (indexOfNodeOut < 0) return;
+            int indexOfNodeIn = nodeViews.IndexOf(nodeIn);
+            if (indexOfNodeIn < 0) return;
             if (connections == null)
                 connections = new List<Connection>();
-            connections.Add(new Connection(nodeOut, nodeIn, OnClickRemoveConnection));
+            List<NodeView> children = GetChildren(nodeOut);
+            List<Connection> connectionsToRemove = new List<Connection>();
+            Type nodeOutType = nodeOut.node.GetType();
+            if (nodeOut.node == null)
+            {
+                return;
+            }
+
+            if (typeof(NodeInterfaces.ISingleConnection).IsAssignableFrom(nodeOutType))
+            {
+                // Node has too many connections. Set back to single
+                if (connections.Where(c => nodeOut == c.outNode).ToList().Count >= 1)
+                {
+                    connectionsToRemove = connections.Where(c => c.outNode == nodeOut).ToList();
+                    connectionsToRemove.ForEach(c => connections.Remove(c));
+                }
+                connections.Add(new Connection(nodeOut, nodeIn, OnClickRemoveConnection));
+            }
+            else if (typeof(NodeInterfaces.IMultipleConnection).IsAssignableFrom(nodeOutType))
+            {
+                connections.Add(new Connection(nodeOut, nodeIn, OnClickRemoveConnection));
+            }
 
             hasUnsavedChanges = true;
-            Debug.Log("Created connection between " + nodeViews.IndexOf(nodeOut) + " and " + nodeViews.IndexOf(nodeIn));
+            Debug.Log("Created connection between " + indexOfNodeOut + " and " + indexOfNodeIn);
         }
 
         // TODO: new method of handling connections where the parent node keeps track of what children are connected to it

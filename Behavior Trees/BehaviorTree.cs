@@ -9,18 +9,10 @@ namespace BobJeltes.AI.BehaviorTree
     [CreateAssetMenu(fileName = "New behavior tree", menuName = "AI/Behavior Tree")]
     public class BehaviorTree : NodeStructure
     {
-        public RootNode root;
-        public List<Node> nodes;
+        public RootNode root = new RootNode();
+        public List<Node> nodes = new List<Node>();
         public Result state = Result.Running;
         public Blackboard blackboard;
-
-        // TODO: Call this from NodeBasedEditor
-        public Action<List<Vector2>, List<Int2>, List<Node>> onSave;
-
-        public void Save(List<Node> nodes, List<Int2> connections)
-        {
-            
-        }
 
         public Result Tick()
         {

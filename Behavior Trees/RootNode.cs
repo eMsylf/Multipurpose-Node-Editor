@@ -4,19 +4,24 @@ using UnityEngine;
 
 namespace BobJeltes.AI.BehaviorTree
 {
-    public class RootNode : Node
+    public class RootNode : Node, NodeInterfaces.IHasOutPort, NodeInterfaces.ISingleConnection
     {
         public Node child;
-        public override Result Tick()
+        public void SetChild(Node node)
         {
-            return child.Tick();
+            child = node;
         }
 
         public override Node Clone()
         {
             RootNode node = (RootNode)MemberwiseClone();
-            node.child = child.Clone();
+            node.child = child?.Clone();
             return node;
+        }
+
+        public override Result Tick()
+        {
+            return child.Tick();
         }
 
         public override void OnStart()
@@ -27,6 +32,11 @@ namespace BobJeltes.AI.BehaviorTree
         public override void OnStop()
         {
 
+        }
+
+        public Node GetChild()
+        {
+            return child;
         }
     }
 }

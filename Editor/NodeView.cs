@@ -16,51 +16,81 @@ namespace BobJeltes.NodeEditor
         public Rect rect;
         public string title = "Node";
         public bool isDragged;
-        public bool isSelected;
+        private bool isSelected;
         public bool multiSelecting;
         public ConnectionPoint inPoint;
         public ConnectionPoint outPoint;
 
-        public GUIStyle style { get => isSelected ? selectedStyle : regularStyle; }
+        public GUIStyle GetStyle()
+        {
+            return IsSelected ?
+                selectedStyle 
+                : 
+                regularStyle;
+        }
+
+        public bool IsSelected { get => isSelected; set { if (Selectable) isSelected = value; } }
+
         public GUIStyle regularStyle;
         public GUIStyle selectedStyle;
 
+        public bool Selectable;
         public Action<NodeView> OnClickNode;
         public Action<NodeView> OnClickUp;
         public Action<NodeView> OnRemoveNode;
         public Action<NodeView> OnDragNode;
 
-        private Dictionary<Orientation, Vector2> orientationToSize = new Dictionary<Orientation, Vector2>
+        public static Dictionary<Orientation, Vector2> connectionPointSizeByOrientation = new Dictionary<Orientation, Vector2>
         {
             {Orientation.LeftRight, new Vector2(10f, 20f) },
             {Orientation.TopBottom, new Vector2(20f, 15f) }
         };
 
-        public NodeView(Node node)
+        public NodeView(Rect rect, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Orientation orientation, Action<NodeView, ConnectionPointType> onClickConnectionPoint, Action<NodeView> onClickNode, Action<NodeView> OnClickRemoveNode, Action<NodeView> onDragNode, Action<NodeView> onClickUp, Node node)
         {
             this.node = node;
+            this.rect = rect;
+            Type nodeType = node.GetType();
             this.title = node.GetType().Name;
+            this.regularStyle = nodeStyle;
+            this.selectedStyle = selectedStyle;
+            if (node == null || typeof(NodeInterfaces.IHasInPort).IsAssignableFrom(nodeType))
+            {
+                inPoint = new ConnectionPoint(ConnectionPointType.In, connectionPointSizeByOrientation[orientation], inPointStyle, onClickConnectionPoint);
+            }
+            if (node == null || typeof(NodeInterfaces.IHasOutPort).IsAssignableFrom(nodeType))
+            {
+                outPoint = new ConnectionPoint(ConnectionPointType.Out, connectionPointSizeByOrientation[orientation], outPointStyle, onClickConnectionPoint);
+            }
+            if (node == null || typeof(NodeInterfaces.IInteractable).IsAssignableFrom(nodeType))
+            {
+                this.OnClickNode = onClickNode;
+                this.OnClickUp = onClickUp;
+                this.OnDragNode = onDragNode;
+                this.OnRemoveNode = OnClickRemoveNode;
+                Selectable = true;
+            }
         }
 
-        public NodeView(Rect rect, Orientation orientation, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<NodeView> onClickNode, Action<NodeView, ConnectionPointType> onClickConnectionPoint, Action<NodeView> OnClickRemoveNode, Action<NodeView> onDragNode, Action<NodeView> onClickUp)
+        public NodeView(Rect rect, GUIStyle nodeStyle, GUIStyle selectedStyle, ConnectionPoint inPoint, ConnectionPoint outPoint, Action<NodeView> onClickNode, Action<NodeView> OnClickRemoveNode, Action<NodeView> onDragNode, Action<NodeView> onClickUp, bool selectable)
         {
             this.rect = rect;
-            Vector2 connectionPointDimensions = orientationToSize[orientation];
-            inPoint = new ConnectionPoint(ConnectionPointType.In, connectionPointDimensions, inPointStyle, onClickConnectionPoint);
-            outPoint = new ConnectionPoint(ConnectionPointType.Out, connectionPointDimensions, outPointStyle, onClickConnectionPoint);
             regularStyle = nodeStyle;
             this.selectedStyle = selectedStyle;
+            this.inPoint = inPoint;
+            this.outPoint = outPoint;
             OnRemoveNode = OnClickRemoveNode;
             OnDragNode = onDragNode;
             OnClickNode = onClickNode;
             OnClickUp = onClickUp;
+            Selectable = selectable;
         }
 
         public void Draw(Orientation direction)
         {
             inPoint?.Draw(direction, this);
             outPoint?.Draw(direction, this);
-            GUI.Box(rect, title, style);
+            GUI.Box(rect, title, GetStyle());
         }
 
         public bool ProcessEvents(Event e)
@@ -77,7 +107,7 @@ namespace BobJeltes.NodeEditor
                         }
                     }
 
-                    if (e.button == 1 && isSelected && rect.Contains(e.mousePosition))
+                    if (e.button == 1 && IsSelected && rect.Contains(e.mousePosition))
                     {
                         ProcessContextMenu();
                         e.Use();
@@ -91,7 +121,7 @@ namespace BobJeltes.NodeEditor
                     }
                     break;
                 case EventType.MouseDrag:
-                    if (e.button == 0 && isSelected)
+                    if (e.button == 0 && IsSelected)
                     {
                         Drag(e.delta, true);
                         e.Use();

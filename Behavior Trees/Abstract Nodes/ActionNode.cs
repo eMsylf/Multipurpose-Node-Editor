@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace BobJeltes.AI.BehaviorTree
 {
-    public abstract class ActionNode : Node
+    public abstract class ActionNode : Node, NodeInterfaces.IHasInPort, NodeInterfaces.IInteractable
     {
-
+        
     }
 }

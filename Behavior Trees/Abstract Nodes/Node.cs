@@ -1,15 +1,18 @@
-﻿namespace BobJeltes.AI.BehaviorTree
+﻿using UnityEditor;
+
+namespace BobJeltes.AI.BehaviorTree
 {
     [System.Serializable]
     public abstract class Node
     {
         public string name;
-        public string guid;
+        public GUID guid = new GUID();
         public abstract void OnStart();
         public abstract void OnStop();
         public abstract Result Tick();
         public virtual Node Clone()
         {
+            if (guid.Empty()) guid = GUID.Generate();
             return (Node)MemberwiseClone();
         }
     }
