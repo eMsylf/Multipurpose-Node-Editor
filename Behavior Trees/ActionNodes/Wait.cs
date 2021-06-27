@@ -17,10 +17,10 @@ namespace BobJeltes.AI.BehaviorTree
 
         public override void OnStop()
         {
-            throw new System.NotImplementedException();
+
         }
 
-        public override Result Tick()
+        public override Result OnUpdate()
         {
             if (Time.time - startTime > duration)
                 return Result.Success;

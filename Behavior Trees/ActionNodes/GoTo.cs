@@ -15,7 +15,7 @@ public class GoTo : ActionNode
         
     }
 
-    public override Result Tick()
+    public override Result OnUpdate()
     {
         return Result.Success;
     }

@@ -19,9 +19,9 @@ namespace BobJeltes.AI.BehaviorTree
             return node;
         }
 
-        public override Result Tick()
+        public override Result OnUpdate()
         {
-            return child.Tick();
+            return child.Update();
         }
 
         public override void OnStart()

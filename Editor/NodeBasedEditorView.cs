@@ -213,6 +213,12 @@ namespace BobJeltes.NodeEditor
         {
             EditorUtility.SetDirty(reference);
 
+            if (string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(reference)))
+            {
+                string assetPath = AssetDatabase.GenerateUniqueAssetPath($"Assets/Resources/Nodes/{fileName}.asset");
+                AssetDatabase.CreateAsset(reference, assetPath);
+            }
+
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))
             {
                 AssetDatabase.CreateFolder("Assets", "Resources");

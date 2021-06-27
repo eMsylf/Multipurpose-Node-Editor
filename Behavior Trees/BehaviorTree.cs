@@ -8,6 +8,7 @@ namespace BobJeltes.AI.BehaviorTree
     [CreateAssetMenu(fileName = "New behavior tree", menuName = "AI/Behavior Tree")]
     public class BehaviorTree : NodeStructure
     {
+        public static readonly string baseFolder = "Assets/Resources/Behavior Trees";
         [SerializeField]
         private RootNode root;
         public RootNode Root { 
@@ -21,39 +22,19 @@ namespace BobJeltes.AI.BehaviorTree
             }
             set => root = value;
         }
-        public Result state = Result.Running;
+        public Result result = Result.Running;
         public Blackboard blackboard;
 
-        public Result Tick()
+        public Result Update()
         {
-            switch (state)
+            switch (result)
             {
                 case Result.Running:
-                    state = root.Tick();
+                    result = root.Update();
                     break;
             }
-            return state;
+            return result;
         }
-
-        //public static Dictionary<string, Type> stringTypeLookup;
-        //public static bool GetNodeType(string typeName, out Type nodeType)
-        //{
-        //    // Update dictionary
-        //    stringTypeLookup = new Dictionary<string, Type>();
-        //    TypeCache.TypeCollection nodeTypes = TypeCache.GetTypesDerivedFrom<Node>();
-        //    foreach (var type in nodeTypes)
-        //    {
-        //        stringTypeLookup.Add(type.Name, type);
-        //    }
-        //    if (!stringTypeLookup.ContainsKey(typeName))
-        //    {
-        //        UnityEngine.Debug.LogError(typeName + " is an invalid node type");
-        //        nodeType = typeof(Node);
-        //        return false;
-        //    }
-        //    nodeType = stringTypeLookup[typeName];
-        //    return true;
-        //}
 
         public Node CreateNode(Type type)
         {
@@ -65,9 +46,54 @@ namespace BobJeltes.AI.BehaviorTree
             return node;
         }
 
-        public void RemoveNode(Node node)
+        public void DeleteNode(Node node)
         {
             nodes.Remove(node);
+        }
+
+        public void Save()
+        {
+            string ownAssetPath = AssetDatabase.GetAssetPath(this);
+            if (string.IsNullOrWhiteSpace(ownAssetPath))
+            {
+                string folder = EnsureFolderIsInAssets("Resources", "Behavior Trees");
+                string uniquePath = AssetDatabase.GenerateUniqueAssetPath(folder + "Test asset" + ".asset");
+                AssetDatabase.CreateAsset(this, uniquePath);
+                UnityEngine.Debug.Log("File saved at " + uniquePath, this);
+            }
+            foreach (var node in nodes)
+            {
+                string assetPath = AssetDatabase.GetAssetPath(node);
+                // Check if the node is already added to the node. If so, do nothing.
+                if (assetPath == null || assetPath.Contains(ownAssetPath))
+                {
+                    // Node already added to behavior tree. Do nothing.
+                }
+                else
+                {
+                    // The node has not been added to the asset, so add it to the asset.
+                    AssetDatabase.AddObjectToAsset(node, this);
+                }
+            }
+            AssetDatabase.SaveAssets();
+        }
+
+        /// <summary>
+        /// Creates a folder in the Assets folder
+        /// </summary>
+        /// <param name="folders">Cascading subfolders. For example: "Characters", "Materials"</param>
+        /// <returns>The folder path including the last forward slash (/). For example: Assets/Characters/Materials/</returns>
+        public string EnsureFolderIsInAssets(params string[] folders)
+        {
+            string completeFolderPath = "Assets";
+            for (int i = 0; i < folders.Length; i++)
+            {
+                if (!AssetDatabase.IsValidFolder(completeFolderPath + "/" + folders[i])) 
+                    AssetDatabase.CreateFolder(completeFolderPath, folders[i]);
+                completeFolderPath += "/" + folders[i];
+            }
+            UnityEngine.Debug.Log("Folder created: " + completeFolderPath);
+            return completeFolderPath + "/";
         }
 
         public BehaviorTree Clone()

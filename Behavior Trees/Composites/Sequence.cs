@@ -16,11 +16,11 @@ namespace BobJeltes.AI.BehaviorTree
             
         }
 
-        public override Result Tick()
+        public override Result OnUpdate()
         {
             for (; i < children.Count; i++)
             {
-                Result result = children[i].Tick();
+                Result result = children[i].Update();
                 switch (result)
                 {
                     case Result.Failure:

@@ -18,9 +18,9 @@ namespace BobJeltes.AI.BehaviorTree
             UnityEngine.Debug.Log("Stop: " + message);
         }
 
-        public override Result Tick()
+        public override Result OnUpdate()
         {
-            UnityEngine.Debug.Log("Tick: " + message);
+            UnityEngine.Debug.Log("Update: " + message);
             return Result.Success;
         }
     }
