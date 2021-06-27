@@ -1,19 +1,19 @@
 ﻿using UnityEditor;
+using UnityEngine;
 
 namespace BobJeltes.AI.BehaviorTree
 {
     [System.Serializable]
-    public abstract class Node
+    public abstract class Node : ScriptableObject
     {
-        public string name;
-        public GUID guid = new GUID();
+        public string guid;
+        public Vector2 positionOnView;
         public abstract void OnStart();
         public abstract void OnStop();
         public abstract Result Tick();
         public virtual Node Clone()
         {
-            if (guid.Empty()) guid = GUID.Generate();
-            return (Node)MemberwiseClone();
+            return Instantiate(this);
         }
     }
 

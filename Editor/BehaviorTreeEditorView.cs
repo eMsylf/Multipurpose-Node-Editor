@@ -10,6 +10,7 @@ namespace BobJeltes.NodeEditor
 {
     public class BehaviorTreeEditorView : NodeBasedEditorView
     {
+        BehaviorTree behaviorTree;
         public Vector2 GetDefaultRootPosition() => new Vector2(position.width * .5f, 100f);
         [MenuItem("Tools/Bob Jeltes/Behavior Tree editor")]
         [MenuItem("Window/Bob Jeltes/Behavior Tree editor")]
@@ -22,19 +23,15 @@ namespace BobJeltes.NodeEditor
 
         internal override void PopulateView()
         {
-            BehaviorTree behaviorTree = reference as BehaviorTree;
+            behaviorTree = reference as BehaviorTree;
+            if (behaviorTree == null) behaviorTree = CreateInstance<BehaviorTree>();
             nodeViews = new List<NodeView>();
 
-            if (behaviorTree == null || behaviorTree.root == null)
-            {
-                CreateNodeView(new RootNode(), GetDefaultRootPosition());
-                return;
-            }
-            CreateNodeView(behaviorTree.root.Clone(), GetDefaultRootPosition());
+            CreateNodeView(behaviorTree.Root.Clone(), GetDefaultRootPosition());
 
             for (int i = 0; i < behaviorTree.nodes.Count; i++)
             {
-                CreateNodeView(behaviorTree.nodes[i].Clone(), behaviorTree.nodePositions[i], false);
+                CreateNodeView(behaviorTree.nodes[i].Clone(), behaviorTree.nodes[i].positionOnView, false);
             }
         }
 
@@ -63,6 +60,11 @@ namespace BobJeltes.NodeEditor
             genericMenu.ShowAsContext();
         }
 
+        Node CreateNode(Type type)
+        {
+            return behaviorTree.CreateNode(type);
+        }
+
         protected override void OnClickBackgroundWithConnection()
         {
             ProcessContextMenu(Event.current.mousePosition);
@@ -70,12 +72,11 @@ namespace BobJeltes.NodeEditor
 
         public override void Save()
         {
+            // Check for unsaved changes
             if (!hasUnsavedChanges) return;
-            if (reference == null) reference = CreateInstance<BehaviorTree>();
-            BehaviorTree behaviorTree = reference as BehaviorTree;
-            behaviorTree.nodePositions = new List<Vector2>();
+            // If there is no reference, assign it from the view's behavior tree
+            if (reference == null) reference = behaviorTree;
             behaviorTree.nodes = new List<Node>();
-            Vector2 rootNodePosition = new Vector2();
 
             foreach (var nodeView in nodeViews)
             {
@@ -87,17 +88,15 @@ namespace BobJeltes.NodeEditor
                 // Root node is skipped
                 if (nodeView.node.GetType() == typeof(RootNode))
                 {
-                    rootNodePosition = nodeView.rect.position;
-                    behaviorTree.root = (RootNode)nodeView.node.Clone();
+                    behaviorTree.Root = (RootNode)nodeView.node.Clone();
                     List<NodeView> rootNodeViewChildren = GetChildren(nodeView);
                     UnityEngine.Debug.Log("Root node has " + rootNodeViewChildren.Count + " children");
                     if (rootNodeViewChildren.Count != 0)
-                        behaviorTree.root.SetChild(rootNodeViewChildren[0].node.Clone());
+                        behaviorTree.Root.SetChild(rootNodeViewChildren[0].node.Clone());
                     continue;
                 }
                 // Bug: The root's child node is cloned just above. Then the next node is cloned right below here. This causes two node clones of the same node to be created.
                 // Solution: clone the entire list from the start and work with that list as a parallel to the node view's list
-                behaviorTree.nodePositions.Add(rootNodePosition + nodeView.rect.position);
                 behaviorTree.nodes.Add(nodeView.node.Clone());
 
                 // Add children to nodes that have them
@@ -135,16 +134,15 @@ namespace BobJeltes.NodeEditor
             nodeViews = new List<NodeView>();
             connections = new List<Connection>();
             UnityEngine.Debug.Log("Found " + tree.nodes.Count + " nodes");
-            UnityEngine.Debug.Log("Found " + tree.nodePositions.Count + " node positions");
             // Create a root node view from a new root node
-            CreateNodeView(tree.root.Clone(), GetDefaultRootPosition(), false);
+            CreateNodeView(tree.Root.Clone(), GetDefaultRootPosition(), false);
             // Look for connections by children in behavior tree
             // Root node has a fixed position and so the position does not need to be saved
             // ...probably
             for (int i = 0; i < tree.nodes.Count; i++)
             {
                 Node node = tree.nodes[i];
-                CreateNodeView(node.Clone(), tree.nodePositions[i], false);
+                CreateNodeView(node.Clone(), node.positionOnView, false);
             }
             // Iterate over nodes 
             foreach (var nodeView in nodeViews)
@@ -182,73 +180,6 @@ namespace BobJeltes.NodeEditor
             hasUnsavedChanges = false;
             ClearConnectionSelection();
             return true;
-        }
-
-        /// <summary>
-        /// Creates a node view and adds it to the nodeViews list
-        /// </summary>
-        /// <param name="node"></param>
-        /// <returns></returns>
-        public NodeView CreateNodeView(Node node, Vector2 position, bool centered = true)
-        {
-            GUIStyle normalStyle;
-            GUIStyle selectedStyle;
-            Vector2 size;
-            if (node.GetType() == typeof(RootNode))
-            {
-                NodeStyles.rootStyle.Load(out normalStyle, out selectedStyle, out size);
-            }
-            else
-            {
-                NodeStyles.standard1.Load(out normalStyle, out selectedStyle, out size);
-            }
-            if (centered)
-            {
-                position -= size * .5f;
-            }
-            NodeView nodeView = new NodeView(new Rect(position, size), normalStyle, selectedStyle, inPointStyle, outPointStyle, orientation, OnClickConnectionPoint, OnClickNode, OnClickRemoveNode, OnDragNode, OnClickUpNode, node);
-            CreateNodeView(nodeView);
-            return nodeView;
-        }
-
-        // NOTE: Might be confusing leaving this in instead of just doing the Clone() operation yourself.
-        public Node CloneNode(NodeView nodeView)
-        {
-            return nodeView.node.Clone();
-        }
-
-        public Node CreateNode(string type)
-        {
-            return CreateNode(Type.GetType(type));
-        }
-
-        public Node CreateNode(Type type)
-        {
-            if (type == typeof(RootNode))
-            {
-                return new RootNode();
-            }
-            if (type == typeof(Sequence))
-            {
-                return new Sequence();
-            }
-            if (type == typeof(Selector))
-            {
-                return new Selector();
-            }
-            if (type == typeof(Repeat))
-            {
-                return new Repeat();
-            }
-            if (type == typeof(AI.BehaviorTree.Debug))
-            {
-                return new AI.BehaviorTree.Debug();
-            }
-            if (type == typeof(Wait))
-            {
-                return new Wait();
-            }
-            return null;
         }
     }
 

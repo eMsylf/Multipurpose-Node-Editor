@@ -19,6 +19,7 @@ namespace BobJeltes.NodeEditor
 
         private float toolbarHeight = 20f;
         private bool toolbarEnabled = true;
+        private const int toolbarButtonWidth = 40;
         private Rect toolbarToggle = new Rect(0, 0, 20, 20);
         private Rect toolbarToggleActive = new Rect(0, 20, 20, 20);
         private bool showSettings;
@@ -197,18 +198,13 @@ namespace BobJeltes.NodeEditor
             {
                 reference = CreateInstance<NodeStructure>();
             }
-            reference.nodePositions.Clear();
-            foreach (var node in nodeViews)
+            foreach (var nodeView in nodeViews)
             {
-                reference.nodePositions.Add(new Vector2(node.rect.position.x, node.rect.position.y));
+                nodeView.node.positionOnView = new Vector2(nodeView.rect.position.x, nodeView.rect.position.y);
             }
-            reference.connectionIndices.Clear();
             foreach (var connection in connections)
             {
-                reference.connectionIndices.Add(new Int2(
-                    nodeViews.IndexOf(connection.outNode),
-                    nodeViews.IndexOf(connection.inNode)
-                    ));
+                // Add children to connected nodes in the CreateConnection function
             }
             SaveChanges();
         }
@@ -253,17 +249,17 @@ namespace BobJeltes.NodeEditor
 
             nodeViews.Clear();
             connections.Clear();
-            Debug.Log("Found " + structure.nodePositions.Count + " nodes");
-            Debug.Log("Found " + structure.connectionIndices.Count + " connections");
+            //Debug.Log("Found " + structure.nodePositions.Count + " nodes");
+            //Debug.Log("Found " + structure.connectionIndices.Count + " connections");
 
-            foreach (var nodePosition in structure.nodePositions)
-            {
-                CreateNodeView(nodePosition, centered: false);
-            }
-            foreach (var connection in structure.connectionIndices)
-            {
-                CreateConnection(nodeViews[connection.a], nodeViews[connection.b]);
-            }
+            //foreach (var nodePosition in structure.nodePositions)
+            //{
+            //    CreateNodeView(nodePosition, centered: false);
+            //}
+            //foreach (var connection in structure.connectionIndices)
+            //{
+            //    CreateConnection(nodeViews[connection.a], nodeViews[connection.b]);
+            //}
             reference = structure;
             hasUnsavedChanges = false;
             ClearConnectionSelection();
@@ -329,9 +325,9 @@ namespace BobJeltes.NodeEditor
             else
             {
                 if (nodeViews == null) nodeViews = new List<NodeView>();
-                foreach (var nodePosition in reference.nodePositions)
+                foreach (var node in reference.nodes)
                 {
-                    CreateNodeView(nodePosition);
+                    CreateNodeView(node, node.positionOnView);
                 }
 
                 if (connections == null) connections = new List<Connection>();
@@ -419,7 +415,7 @@ namespace BobJeltes.NodeEditor
             }
 
             if (!hasUnsavedChanges) GUI.enabled = false;
-            if (GUILayout.Button("Save", EditorStyles.toolbarButton, GUILayout.Width(40)))
+            if (GUILayout.Button("Save", EditorStyles.toolbarButton, GUILayout.Width(toolbarButtonWidth)))
             {
                 Debug.Log("Save");
                 Save();
@@ -429,7 +425,7 @@ namespace BobJeltes.NodeEditor
             {
                 GUI.enabled = false;
             }
-            if (GUILayout.Button("New", EditorStyles.toolbarButton, GUILayout.Width(40)))
+            if (GUILayout.Button("New", EditorStyles.toolbarButton, GUILayout.Width(toolbarButtonWidth)))
             {
                 NewFile();
             }
@@ -873,12 +869,13 @@ namespace BobJeltes.NodeEditor
                 connections = new List<Connection>();
             List<NodeView> children = GetChildren(nodeOut);
             List<Connection> connectionsToRemove = new List<Connection>();
-            Type nodeOutType = nodeOut.node.GetType();
             if (nodeOut.node == null)
             {
                 return;
             }
+            Type nodeOutType = nodeOut.node.GetType();
 
+            // Node can have one connection
             if (typeof(NodeInterfaces.ISingleConnection).IsAssignableFrom(nodeOutType))
             {
                 // Node has too many connections. Set back to single
@@ -888,7 +885,9 @@ namespace BobJeltes.NodeEditor
                     connectionsToRemove.ForEach(c => connections.Remove(c));
                 }
                 connections.Add(new Connection(nodeOut, nodeIn, OnClickRemoveConnection));
+                (nodeOut.node as NodeInterfaces.ISingleConnection).SetChild(nodeIn.node);
             }
+            // Node can have multiple connections
             else if (typeof(NodeInterfaces.IMultipleConnection).IsAssignableFrom(nodeOutType))
             {
                 connections.Add(new Connection(nodeOut, nodeIn, OnClickRemoveConnection));
@@ -909,6 +908,33 @@ namespace BobJeltes.NodeEditor
         {
             selectedNodeIn = null;
             selectedNodeOut = null;
+        }
+
+        /// <summary>
+        /// Creates a node view and adds it to the nodeViews list
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public NodeView CreateNodeView(Node node, Vector2 position, bool centered = true)
+        {
+            GUIStyle normalStyle;
+            GUIStyle selectedStyle;
+            Vector2 size;
+            if (node.GetType() == typeof(RootNode))
+            {
+                NodeStyles.rootStyle.Load(out normalStyle, out selectedStyle, out size);
+            }
+            else
+            {
+                NodeStyles.standard1.Load(out normalStyle, out selectedStyle, out size);
+            }
+            if (centered)
+            {
+                position -= size * .5f;
+            }
+            NodeView nodeView = new NodeView(new Rect(position, size), normalStyle, selectedStyle, inPointStyle, outPointStyle, orientation, OnClickConnectionPoint, OnClickNode, OnClickRemoveNode, OnDragNode, OnClickUpNode, node);
+            CreateNodeView(nodeView);
+            return nodeView;
         }
         #endregion
     }

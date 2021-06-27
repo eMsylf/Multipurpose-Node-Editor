@@ -15,7 +15,7 @@ namespace BobJeltes.AI.BehaviorTree
 
         public override Node Clone()
         {
-            Composite node = (Composite)MemberwiseClone();
+            Composite node = Instantiate(this);
             node.children = children.ConvertAll(c => c.Clone());
             return node;
         }
