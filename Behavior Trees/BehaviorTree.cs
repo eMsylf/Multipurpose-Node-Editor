@@ -98,7 +98,7 @@ namespace BobJeltes.AI.BehaviorTree
 
         public BehaviorTree Clone()
         {
-            BehaviorTree tree = (BehaviorTree)MemberwiseClone();
+            BehaviorTree tree = Instantiate(this);
             tree.root = (RootNode)tree.root.Clone();
             return tree;
         }

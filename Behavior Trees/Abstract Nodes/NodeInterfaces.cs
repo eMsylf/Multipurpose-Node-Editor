@@ -16,6 +16,7 @@ namespace BobJeltes.AI.BehaviorTree
         {
             public abstract void SetChildren(List<Node> nodes);
             public abstract void AddChild(Node node);
+            public abstract void RemoveChild(Node node);
             public abstract List<Node> GetChildren();
         }
 

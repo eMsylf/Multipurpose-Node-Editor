@@ -25,6 +25,11 @@ namespace BobJeltes.AI.BehaviorTree
             return children;
         }
 
+        public void RemoveChild(Node node)
+        {
+            children.Remove(node);
+        }
+
         public void SetChildren(List<Node> nodes)
         {
             children = nodes;

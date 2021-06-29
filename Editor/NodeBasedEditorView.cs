@@ -600,7 +600,7 @@ namespace BobJeltes.NodeEditor
             {
                 for (int i = 0; i < nodeViews.Count; i++)
                 {
-                    nodeViews[i].Drag(delta, false);
+                    nodeViews[i].SetPosition(nodeViews[i].rect.position + delta);
                 }
             }
 
@@ -659,15 +659,42 @@ namespace BobJeltes.NodeEditor
                                  onDragNode: OnDragNode,
                                  onClickUp: OnClickUpNode,
                                  selectable: true);
-            CreateNodeView(nodeView);
+            AddNodeView(nodeView);
             return nodeView;
         }
 
-        internal virtual void CreateNodeView(NodeView nodeView)
+        /// <summary>
+        /// Creates a node view and adds it to the nodeViews list
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public NodeView CreateNodeView(Node node, Vector2 position, bool centered = true)
+        {
+            GUIStyle normalStyle;
+            GUIStyle selectedStyle;
+            Vector2 size;
+            if (node.GetType() == typeof(RootNode))
+            {
+                NodeStyles.rootStyle.Load(out normalStyle, out selectedStyle, out size);
+            }
+            else
+            {
+                NodeStyles.standard1.Load(out normalStyle, out selectedStyle, out size);
+            }
+            if (centered)
+            {
+                position -= size * .5f;
+            }
+            NodeView nodeView = new NodeView(new Rect(position, size), normalStyle, selectedStyle, inPointStyle, outPointStyle, orientation, OnClickConnectionPoint, OnClickNode, OnClickRemoveNode, OnDragNode, OnClickUpNode, node);
+            AddNodeView(nodeView);
+            return nodeView;
+        }
+
+        internal virtual void AddNodeView(NodeView nodeView)
         {
             if (nodeViews == null) nodeViews = new List<NodeView>();
             nodeViews.Add(nodeView);
-            Debug.Log("Create node");
+            Debug.Log("Add node view");
             if (selectedNodeIn != null &&selectedNodeOut == null)
             {
                 Debug.Log("Has node in selected");
@@ -715,7 +742,7 @@ namespace BobJeltes.NodeEditor
                 SelectedNodes.ForEach(x =>
                 {
                     if (x != node)
-                        x.Drag(Event.current.delta, false);
+                        x.SetPosition(x.rect.position + Event.current.delta);
                 });
             hasUnsavedChanges = true;
         }
@@ -914,33 +941,6 @@ namespace BobJeltes.NodeEditor
         {
             selectedNodeIn = null;
             selectedNodeOut = null;
-        }
-
-        /// <summary>
-        /// Creates a node view and adds it to the nodeViews list
-        /// </summary>
-        /// <param name="node"></param>
-        /// <returns></returns>
-        public NodeView CreateNodeView(Node node, Vector2 position, bool centered = true)
-        {
-            GUIStyle normalStyle;
-            GUIStyle selectedStyle;
-            Vector2 size;
-            if (node.GetType() == typeof(RootNode))
-            {
-                NodeStyles.rootStyle.Load(out normalStyle, out selectedStyle, out size);
-            }
-            else
-            {
-                NodeStyles.standard1.Load(out normalStyle, out selectedStyle, out size);
-            }
-            if (centered)
-            {
-                position -= size * .5f;
-            }
-            NodeView nodeView = new NodeView(new Rect(position, size), normalStyle, selectedStyle, inPointStyle, outPointStyle, orientation, OnClickConnectionPoint, OnClickNode, OnClickRemoveNode, OnDragNode, OnClickUpNode, node);
-            CreateNodeView(nodeView);
-            return nodeView;
         }
         #endregion
     }

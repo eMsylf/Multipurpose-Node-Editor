@@ -23,6 +23,8 @@ namespace BobJeltes.NodeEditor
 
         internal override void PopulateView()
         {
+            if (reference == null) behaviorTree = CreateInstance<BehaviorTree>();
+            else behaviorTree = (reference as BehaviorTree).Clone();
             behaviorTree = reference as BehaviorTree;
             if (behaviorTree == null) behaviorTree = CreateInstance<BehaviorTree>();
             nodeViews = new List<NodeView>();
@@ -35,7 +37,6 @@ namespace BobJeltes.NodeEditor
             }
         }
 
-        // This does NOT add typed nodes.
         internal override void ProcessContextMenu(Vector2 mousePosition)
         {
             GenericMenu genericMenu = new GenericMenu();

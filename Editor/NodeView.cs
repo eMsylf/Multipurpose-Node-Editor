@@ -170,9 +170,16 @@ namespace BobJeltes.NodeEditor
 
         public void Drag(Vector2 delta, bool invokeCallbacks)
         {
-            rect.position += delta;
+            SetPosition(rect.position + delta);
             if (invokeCallbacks)
                 OnDragNode?.Invoke(this);
+        }
+
+        public void SetPosition(Vector2 position)
+        {
+            rect.position = position;
+            node.positionOnView.x = position.x;
+            node.positionOnView.y = position.y;
         }
     }
 }

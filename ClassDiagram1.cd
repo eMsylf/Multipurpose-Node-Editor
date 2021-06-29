@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="BobJeltes.AI.BehaviorTree.ActionNode" Collapsed="true">
+    <Position X="5.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\Abstract Nodes\ActionNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="BobJeltes.AI.BehaviorTree.Composite" Collapsed="true">
+    <Position X="13.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAEAQAAAAAAAAAAAIAQAAAIAAAAAAAABA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\Abstract Nodes\Composite.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="BobJeltes.AI.BehaviorTree.Decorator" Collapsed="true">
+    <Position X="17.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAKgAAAAAAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\Abstract Nodes\Decorator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="BobJeltes.AI.BehaviorTree.Node" Collapsed="true">
+    <Position X="10.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAFAAIAgAEAAAAAAAAAEAAAAEAABA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\Abstract Nodes\Node.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BobJeltes.AI.BehaviorTree.NodeInterfaces" Collapsed="true">
+    <Position X="22" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\Abstract Nodes\NodeInterfaces.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BobJeltes.AI.BehaviorTree.Debug" Collapsed="true">
+    <Position X="3.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAEAAAAEAACA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\ActionNodes\Debug.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BobJeltes.AI.BehaviorTree.Wait" Collapsed="true">
+    <Position X="7.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAEAAgAAAAAAAAAAAAAEAAAAEAAAA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\ActionNodes\Wait.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BobJeltes.AI.BehaviorTree.BehaviorTree" Collapsed="true">
+    <Position X="0.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAIAAAFAAACAEBAEgAAAEAAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\BehaviorTree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BobJeltes.AI.BehaviorTree.Blackboard" Collapsed="true">
+    <Position X="20.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEQAAAEAAAIAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\Blackboard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BobJeltes.AI.BehaviorTree.Selector" Collapsed="true">
+    <Position X="12.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAEAAAAEAAAA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\Composites\Selector.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BobJeltes.AI.BehaviorTree.Sequence" Collapsed="true">
+    <Position X="14.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAEAAAAEAAAA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\Composites\Sequence.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BobJeltes.AI.BehaviorTree.Repeat" Collapsed="true">
+    <Position X="17.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAEAAAAEAAAA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\Decorators\Repeat.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BobJeltes.AI.BehaviorTree.RootNode" Collapsed="true">
+    <Position X="10.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAKgAAAAAAAAAAAAAEAAAAEAABA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\RootNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="BobJeltes.AI.BehaviorTree.Variable&lt;T&gt;" Collapsed="true">
+    <Position X="20.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\Variable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BobJeltes.AI.BehaviorTree.NodeStructure" Collapsed="true">
+    <Position X="0.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\NodeStructure.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GoTo" Collapsed="true">
+    <Position X="5.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAEAAAAEAAAA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\ActionNodes\GoTo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="BobJeltes.AI.BehaviorTree.Result" Collapsed="true">
+    <Position X="20.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAgAAAACIAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Behavior Trees\Abstract Nodes\Node.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
