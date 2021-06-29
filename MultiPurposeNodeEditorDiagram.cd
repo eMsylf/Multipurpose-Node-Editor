@@ -35,7 +35,7 @@
       <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Editor\ConnectionPoint.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BobJeltes.NodeEditor.NodeBasedEditorView">
+  <Class Name="BobJeltes.NodeEditor.NodeBasedEditorView" Collapsed="true">
     <Position X="4.25" Y="5.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>sBCRgoSABGgFsAECI9gxABOY2ABASAAzJESQKRQASkA=</HashCode>
