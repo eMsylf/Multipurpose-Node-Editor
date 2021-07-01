@@ -77,7 +77,21 @@ namespace BobJeltes.NodeEditor
             if (!hasUnsavedChanges) return;
             // If there is no reference, assign it from the view's behavior tree
             if (reference == null) reference = behaviorTree;
-            behaviorTree.nodes = new List<Node>();
+
+            foreach (var nodeView in nodeViews)
+            {
+                if (nodeView.node.GetType() == typeof(RootNode))
+                {
+                    (reference as BehaviorTree).Root = (RootNode)nodeView.node.Clone();
+                    continue;
+                }
+                if ((reference as BehaviorTree).nodes.Exists(x => x.guid == nodeView.node.guid))
+                {
+                    continue;
+                }
+                (reference as BehaviorTree).nodes.Add(nodeView.node.Clone());
+            }
+
             foreach (var nodeView in nodeViews)
             {
                 if (nodeView.node == null)
@@ -85,21 +99,7 @@ namespace BobJeltes.NodeEditor
                     UnityEngine.Debug.LogError("Node at index " + nodeViews.IndexOf(nodeView) + " is null");
                     continue;
                 }
-                // Root node is skipped
-                if (nodeView.node.GetType() == typeof(RootNode))
-                {
-                    behaviorTree.Root = (RootNode)nodeView.node.Clone();
-                    List<NodeView> rootNodeViewChildren = GetChildren(nodeView);
-                    UnityEngine.Debug.Log("Root node has " + rootNodeViewChildren.Count + " children");
-                    if (rootNodeViewChildren.Count != 0)
-                        behaviorTree.Root.SetChild(rootNodeViewChildren[0].node.Clone());
-                    continue;
-                }
-                // Bug: The root's child node is cloned just above. Then the next node is cloned right below here. This causes two node clones of the same node to be created.
-                // Solution: clone the entire list from the start and work with that list as a parallel to the node view's list
-                Node nodeClone = nodeView.node.Clone();
-                behaviorTree.nodes.Add(nodeClone);
-                // Add children to nodes that have them
+
                 Type nodeType = nodeView.node.GetType();
                 List<NodeView> childNodeViews = GetChildren(nodeView);
                 if (typeof(NodeInterfaces.IMultipleConnection).IsAssignableFrom(nodeType))
@@ -107,18 +107,24 @@ namespace BobJeltes.NodeEditor
                     List<Node> childNodes = new List<Node>();
                     foreach (var childNodeView in childNodeViews)
                     {
-                        childNodes.Add(childNodeView.node.Clone());
+                        Node childNode = (reference as BehaviorTree).nodes.Find(x => x.guid == childNodeView.node.guid);
+                        if (childNode != null)
+                            childNodes.Add(childNode);
                     }
                     (nodeView.node as NodeInterfaces.IMultipleConnection).SetChildren(childNodes);
                 }
                 else if (typeof(NodeInterfaces.ISingleConnection).IsAssignableFrom(nodeType)) 
                 {
                     if (childNodeViews.Count != 0)
-                        (nodeView.node as NodeInterfaces.ISingleConnection).SetChild(childNodeViews[0].node.Clone());
+                    {
+                        Node childNode = (reference as BehaviorTree).nodes.Find(x => x.guid == childNodeViews[0].node.guid);
+                        if (childNode != null)
+                            (nodeView.node as NodeInterfaces.ISingleConnection).SetChild(childNodeViews[0].node);
+                    }
                 }
             }
-            UnityEngine.Debug.Log("Nodes saved: " + behaviorTree.nodes.Count);
-            behaviorTree.Save(fileName);
+            UnityEngine.Debug.Log("Nodes saved: " + (reference as BehaviorTree).nodes.Count);
+            (reference as BehaviorTree).Save(fileName);
             base.SaveChanges();
         }
 

@@ -13,7 +13,7 @@ namespace BobJeltes.NodeEditor
 {
     public enum Orientation { LeftRight, TopBottom }
 
-    public class NodeBasedEditorView : EditorWindow, ISerializationCallbackReceiver
+    public class NodeBasedEditorView : EditorWindow/*, ISerializationCallbackReceiver*/////
     {
         public Orientation orientation = Orientation.TopBottom;
 
@@ -274,40 +274,40 @@ namespace BobJeltes.NodeEditor
 
         private List<Int2> tempConnectionIndices;
 
-        public void OnBeforeSerialize()
-        {
-            // Create temporary storage of connection indices
-            if (connections == null) return;
-            if (tempConnectionIndices == null) tempConnectionIndices = new List<Int2>();
-            //Debug.Log("Connections found: " + connections.Count);
-            foreach (var connection in connections)
-            {
-                tempConnectionIndices.Add(new Int2(
-                    nodeViews.IndexOf(connection.outNode),
-                    nodeViews.IndexOf(connection.inNode)
-                    ));
-            }
-        }
+        //public void OnBeforeSerialize()
+        //{
+        //    // Create temporary storage of connection indices
+        //    if (connections == null) return;
+        //    if (tempConnectionIndices == null) tempConnectionIndices = new List<Int2>();
+        //    //Debug.Log("Connections found: " + connections.Count);
+        //    foreach (var connection in connections)
+        //    {
+        //        tempConnectionIndices.Add(new Int2(
+        //            nodeViews.IndexOf(connection.outNode),
+        //            nodeViews.IndexOf(connection.inNode)
+        //            ));
+        //    }
+        //}
 
-        public void OnAfterDeserialize()
-        {
-            // Re-apply connections from temporary connection index storage
-            connections.Clear();
-            if (nodeViews == null) Debug.Log("Nodes list is null");
-            else Debug.Log("Nodes found: " + nodeViews.Count);
-            if (tempConnectionIndices == null)
-                return;
-            Debug.Log("Node views: " + nodeViews.Count);
-            Debug.Log("Connection index sets: " + tempConnectionIndices.Count);
-            tempConnectionIndices.RemoveAll(c => c.a < 0 || c.b < 0);
-            foreach (var connectionData in tempConnectionIndices)
-            {
-                // Somewhere new connections are added and not removed. 9 connection indices and only 4 nodes is unlikely.
-                Debug.Log("Connection indices requested: " + connectionData.a + " & " + connectionData.b);
-                CreateConnection(nodeViews[connectionData.a], nodeViews[connectionData.b]);
-            }
-            tempConnectionIndices.Clear();
-        }
+        //public void OnAfterDeserialize()
+        //{
+        //    // Re-apply connections from temporary connection index storage
+        //    connections.Clear();
+        //    if (nodeViews == null) Debug.Log("Nodes list is null");
+        //    else Debug.Log("Nodes found: " + nodeViews.Count);
+        //    if (tempConnectionIndices == null)
+        //        return;
+        //    Debug.Log("Node views: " + nodeViews.Count);
+        //    Debug.Log("Connection index sets: " + tempConnectionIndices.Count);
+        //    tempConnectionIndices.RemoveAll(c => c.a < 0 || c.b < 0);
+        //    foreach (var connectionData in tempConnectionIndices)
+        //    {
+        //        // Somewhere new connections are added and not removed. 9 connection indices and only 4 nodes is unlikely.
+        //        Debug.Log("Connection indices requested: " + connectionData.a + " & " + connectionData.b);
+        //        CreateConnection(nodeViews[connectionData.a], nodeViews[connectionData.b]);
+        //    }
+        //    tempConnectionIndices.Clear();
+        //}
 
         internal virtual void PopulateView()
         {

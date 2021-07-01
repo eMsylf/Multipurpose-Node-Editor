@@ -63,9 +63,9 @@ namespace BobJeltes.AI.BehaviorTree
             }
             foreach (var node in nodes)
             {
-                string assetPath = AssetDatabase.GetAssetPath(node);
+                string nodeAssetPath = AssetDatabase.GetAssetPath(node);
                 // Check if the node is already added to the node. If so, do nothing.
-                if (string.IsNullOrWhiteSpace(assetPath) || !assetPath.Contains(ownAssetPath))
+                if (string.IsNullOrWhiteSpace(nodeAssetPath) || !nodeAssetPath.Contains(ownAssetPath))
                 {
                     // The node has not been added to the asset, so add it to the asset.
                     AssetDatabase.AddObjectToAsset(node, this);
