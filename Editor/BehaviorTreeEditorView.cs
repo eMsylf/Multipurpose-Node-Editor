@@ -78,7 +78,6 @@ namespace BobJeltes.NodeEditor
             // If there is no reference, assign it from the view's behavior tree
             if (reference == null) reference = behaviorTree;
             behaviorTree.nodes = new List<Node>();
-
             foreach (var nodeView in nodeViews)
             {
                 if (nodeView.node == null)
@@ -98,8 +97,8 @@ namespace BobJeltes.NodeEditor
                 }
                 // Bug: The root's child node is cloned just above. Then the next node is cloned right below here. This causes two node clones of the same node to be created.
                 // Solution: clone the entire list from the start and work with that list as a parallel to the node view's list
-                behaviorTree.nodes.Add(nodeView.node.Clone());
-
+                Node nodeClone = nodeView.node.Clone();
+                behaviorTree.nodes.Add(nodeClone);
                 // Add children to nodes that have them
                 Type nodeType = nodeView.node.GetType();
                 List<NodeView> childNodeViews = GetChildren(nodeView);
@@ -119,6 +118,7 @@ namespace BobJeltes.NodeEditor
                 }
             }
             UnityEngine.Debug.Log("Nodes saved: " + behaviorTree.nodes.Count);
+            behaviorTree.Save(fileName);
             base.SaveChanges();
         }
 

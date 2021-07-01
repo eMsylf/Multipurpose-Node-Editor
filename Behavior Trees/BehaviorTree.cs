@@ -51,13 +51,13 @@ namespace BobJeltes.AI.BehaviorTree
             nodes.Remove(node);
         }
 
-        public void Save()
+        public void Save(string name = "Behavior Tree")
         {
             string ownAssetPath = AssetDatabase.GetAssetPath(this);
             if (string.IsNullOrWhiteSpace(ownAssetPath))
             {
                 string folder = EnsureFolderIsInAssets("Resources", "Behavior Trees");
-                string uniquePath = AssetDatabase.GenerateUniqueAssetPath(folder + "Test asset" + ".asset");
+                string uniquePath = AssetDatabase.GenerateUniqueAssetPath(folder + name + ".asset");
                 AssetDatabase.CreateAsset(this, uniquePath);
                 UnityEngine.Debug.Log("File saved at " + uniquePath, this);
             }
@@ -65,14 +65,15 @@ namespace BobJeltes.AI.BehaviorTree
             {
                 string assetPath = AssetDatabase.GetAssetPath(node);
                 // Check if the node is already added to the node. If so, do nothing.
-                if (assetPath == null || assetPath.Contains(ownAssetPath))
-                {
-                    // Node already added to behavior tree. Do nothing.
-                }
-                else
+                if (string.IsNullOrWhiteSpace(assetPath) || !assetPath.Contains(ownAssetPath))
                 {
                     // The node has not been added to the asset, so add it to the asset.
                     AssetDatabase.AddObjectToAsset(node, this);
+                }
+                else
+                {
+                    // Node already added to behavior tree. Do nothing.
+                    UnityEngine.Debug.Log(node.name + " node already added to " + name);
                 }
             }
             AssetDatabase.SaveAssets();
@@ -88,11 +89,14 @@ namespace BobJeltes.AI.BehaviorTree
             string completeFolderPath = "Assets";
             for (int i = 0; i < folders.Length; i++)
             {
-                if (!AssetDatabase.IsValidFolder(completeFolderPath + "/" + folders[i])) 
+                if (!AssetDatabase.IsValidFolder(completeFolderPath + "/" + folders[i]))
+                {
                     AssetDatabase.CreateFolder(completeFolderPath, folders[i]);
+                    UnityEngine.Debug.Log("Folder created: " + completeFolderPath);
+                }
+
                 completeFolderPath += "/" + folders[i];
             }
-            UnityEngine.Debug.Log("Folder created: " + completeFolderPath);
             return completeFolderPath + "/";
         }
 
