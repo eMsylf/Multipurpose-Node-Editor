@@ -49,6 +49,7 @@ namespace BobJeltes.NodeEditor
         public NodeView(Rect rect, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Orientation orientation, Action<NodeView, ConnectionPointType> onClickConnectionPoint, Action<NodeView> onClickNode, Action<NodeView> OnClickRemoveNode, Action<NodeView> onDragNode, Action<NodeView> onClickUp, Node node)
         {
             this.node = node;
+            if (this.node != null) node.positionOnView = rect.position;
             this.rect = rect;
             Type nodeType = node.GetType();
             this.title = node.GetType().Name;
