@@ -29,7 +29,7 @@ namespace BobJeltes.NodeEditor
             if (behaviorTree == null) behaviorTree = CreateInstance<BehaviorTree>();
             nodeViews = new List<NodeView>();
 
-            CreateNodeView(behaviorTree.Root.Clone(), GetDefaultRootPosition());
+            CreateNodeView(behaviorTree.Root, GetDefaultRootPosition());
 
             for (int i = 0; i < behaviorTree.nodes.Count; i++)
             {
@@ -81,6 +81,12 @@ namespace BobJeltes.NodeEditor
             // First, add all the nodes to the beheavior tree reference
             foreach (var nodeView in nodeViews)
             {
+                RootNode root = nodeView.node as RootNode;
+                if (root != null)
+                {
+                    behaviorTree.Root = (RootNode)root.Clone();
+                    continue;
+                }
                 // If the node is already added to the behavior tree, copy the data to the node in the tree.
                 Node nodeInTree = reference.nodes.Find(n => n.guid == nodeView.node.guid);
                 if (nodeInTree != null)
@@ -152,10 +158,12 @@ namespace BobJeltes.NodeEditor
             connections = new List<Connection>();
             UnityEngine.Debug.Log("Found " + tree.nodes.Count + " nodes");
 
+            CreateNodeView(tree.Root.Clone(), GetDefaultRootPosition());
+
             // Create node views for every node
             foreach (var node in tree.nodes)
             {
-                CreateNodeView(node);
+                CreateNodeView(node.Clone());
             }
 
             // Connect the node views?

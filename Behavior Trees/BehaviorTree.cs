@@ -16,7 +16,7 @@ namespace BobJeltes.AI.BehaviorTree
             {
                 if (root == null) 
                 { 
-                    root = CreateInstance<RootNode>(); 
+                    root = (RootNode)CreateNode(typeof(RootNode)); 
                 } 
                 return root; 
             }
@@ -61,6 +61,12 @@ namespace BobJeltes.AI.BehaviorTree
                 string uniquePath = AssetDatabase.GenerateUniqueAssetPath(folder + name + ".asset");
                 AssetDatabase.CreateAsset(this, uniquePath);
                 UnityEngine.Debug.Log("File saved at " + uniquePath, this);
+            }
+
+            string rootNodeAssetPath = AssetDatabase.GetAssetPath(Root);
+            if (string.IsNullOrWhiteSpace(rootNodeAssetPath) || !rootNodeAssetPath.Contains(ownAssetPath)) 
+            {
+                AssetDatabase.AddObjectToAsset(Root, this);
             }
 
             // Go through all of the behavior tree's nodes
