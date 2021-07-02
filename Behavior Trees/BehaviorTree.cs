@@ -30,7 +30,7 @@ namespace BobJeltes.AI.BehaviorTree
             switch (result)
             {
                 case Result.Running:
-                    result = root.Update();
+                    result = Root.Update();
                     break;
             }
             return result;
@@ -54,6 +54,7 @@ namespace BobJeltes.AI.BehaviorTree
         public void Save(string name = "Behavior Tree")
         {
             string ownAssetPath = AssetDatabase.GetAssetPath(this);
+            // Create a behavior tree asset if not yet present
             if (string.IsNullOrWhiteSpace(ownAssetPath))
             {
                 string folder = EnsureFolderIsInAssets("Resources", "Behavior Trees");
@@ -61,6 +62,8 @@ namespace BobJeltes.AI.BehaviorTree
                 AssetDatabase.CreateAsset(this, uniquePath);
                 UnityEngine.Debug.Log("File saved at " + uniquePath, this);
             }
+
+            // Go through all of the behavior tree's nodes
             foreach (var node in nodes)
             {
                 string nodeAssetPath = AssetDatabase.GetAssetPath(node);
@@ -72,7 +75,7 @@ namespace BobJeltes.AI.BehaviorTree
                 }
                 else
                 {
-                    // Node already added to behavior tree. Do nothing.
+                    // Node already added to behavior tree. Update the node at this path with the data of this one
                     UnityEngine.Debug.Log(node.name + " node already added to " + name);
                 }
             }
@@ -84,7 +87,7 @@ namespace BobJeltes.AI.BehaviorTree
         /// </summary>
         /// <param name="folders">Cascading subfolders. For example: "Characters", "Materials"</param>
         /// <returns>The folder path including the last forward slash (/). For example: Assets/Characters/Materials/</returns>
-        public string EnsureFolderIsInAssets(params string[] folders)
+        public static string EnsureFolderIsInAssets(params string[] folders)
         {
             string completeFolderPath = "Assets";
             for (int i = 0; i < folders.Length; i++)
@@ -103,7 +106,7 @@ namespace BobJeltes.AI.BehaviorTree
         public BehaviorTree Clone()
         {
             BehaviorTree tree = Instantiate(this);
-            tree.root = (RootNode)tree.root.Clone();
+            tree.Root = (RootNode)tree.Root.Clone();
             return tree;
         }
     }

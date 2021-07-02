@@ -148,7 +148,14 @@ namespace BobJeltes.NodeEditor
                 {
                     case 0:
                         // Yes
-                        Save();
+                        if (this is BehaviorTreeEditorView)
+                        {
+                            (this as BehaviorTreeEditorView).Save(); // Vies//
+                        }
+                        else
+                        {
+                            Save(); // TODO: Does not call overridden method
+                        }
                         break;
                     case 1:
                         // Cancel
@@ -663,6 +670,11 @@ namespace BobJeltes.NodeEditor
             return nodeView;
         }
 
+        public NodeView CreateNodeView(Node node)
+        {
+            return CreateNodeView(node, node.positionOnView, false);
+        }
+
         /// <summary>
         /// Creates a node view and adds it to the nodeViews list
         /// </summary>
@@ -717,7 +729,7 @@ namespace BobJeltes.NodeEditor
 
                 for (int i = 0; i < connections.Count; i++)
                 {
-                    if (connections[i].inNode == node || connections[i].outNode == node)
+                    if (connections[i].inNodeView == node || connections[i].outNodeView == node)
                     {
                         connectionsToRemove.Add(connections[i]);
                     }
@@ -842,9 +854,9 @@ namespace BobJeltes.NodeEditor
             List<NodeView> children = new List<NodeView>();
             foreach (var connection in connections)
             {
-                if (connection.outNode == nodeView)
+                if (connection.outNodeView == nodeView)
                 {
-                    children.Add(connection.inNode);
+                    children.Add(connection.inNodeView);
                 }
             }
             return children;
@@ -878,7 +890,7 @@ namespace BobJeltes.NodeEditor
             }
             if (selectedNodeOut != selectedNodeIn)
             {
-                if (connections.Exists(c => c.inNode == selectedNodeIn && c.outNode == selectedNodeOut))
+                if (connections.Exists(c => c.inNodeView == selectedNodeIn && c.outNodeView == selectedNodeOut))
                     Debug.LogWarning("A connection has already been established between these two nodes.");
                 else
                     CreateConnection(selectedNodeOut, selectedNodeIn);
@@ -912,9 +924,9 @@ namespace BobJeltes.NodeEditor
             if (typeof(NodeInterfaces.ISingleConnection).IsAssignableFrom(nodeOutType))
             {
                 // Node has too many connections. Set back to single
-                if (connections.Where(c => nodeOut == c.outNode).ToList().Count >= 1)
+                if (connections.Where(c => nodeOut == c.outNodeView).ToList().Count >= 1)
                 {
-                    connectionsToRemove = connections.Where(c => c.outNode == nodeOut).ToList();
+                    connectionsToRemove = connections.Where(c => c.outNodeView == nodeOut).ToList();
                     connectionsToRemove.ForEach(c => connections.Remove(c));
                 }
                 connections.Add(new Connection(nodeOut, nodeIn, OnClickRemoveConnection));

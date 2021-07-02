@@ -10,8 +10,8 @@ namespace BobJeltes.NodeEditor
     [Serializable]
     public class Connection
     {
-        public NodeView inNode;
-        public NodeView outNode;
+        public NodeView inNodeView;
+        public NodeView outNodeView;
         public Action<Connection> OnClickRemoveConnection;
 
         private Dictionary<Orientation, Vector2> orientationToDirection = new Dictionary<Orientation, Vector2> {
@@ -26,14 +26,14 @@ namespace BobJeltes.NodeEditor
 
         public Connection(NodeView outNode, NodeView inNode, Action<Connection> OnClickRemoveConnection)
         {
-            this.inNode = inNode;
-            this.outNode = outNode;
+            this.inNodeView = inNode;
+            this.outNodeView = outNode;
             this.OnClickRemoveConnection = OnClickRemoveConnection;
         }
 
         public void Draw(Orientation orientation)
         {
-            Draw(inNode.inPoint.rect.center, outNode.outPoint.rect.center, orientation, true);
+            Draw(inNodeView.inPoint.rect.center, outNodeView.outPoint.rect.center, orientation, true);
         }
 
         public void Draw(Vector2 from, Vector2 to, Orientation orientation, bool hasRemoveButton)
@@ -49,7 +49,7 @@ namespace BobJeltes.NodeEditor
                 null,
                 2f);
 
-            if (hasRemoveButton && Handles.Button((inNode.rect.center + outNode.rect.center) * .5f, Quaternion.identity, 4, 8, Handles.RectangleHandleCap))
+            if (hasRemoveButton && Handles.Button((inNodeView.rect.center + outNodeView.rect.center) * .5f, Quaternion.identity, 4, 8, Handles.RectangleHandleCap))
             {
                 OnClickRemoveConnection?.Invoke(this);
             }

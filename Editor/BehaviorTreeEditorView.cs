@@ -78,51 +78,59 @@ namespace BobJeltes.NodeEditor
             // If there is no reference, assign it from the view's behavior tree
             if (reference == null) reference = behaviorTree;
 
+            // First, add all the nodes to the beheavior tree reference
             foreach (var nodeView in nodeViews)
             {
-                if (nodeView.node.GetType() == typeof(RootNode))
+                // If the node is already added to the behavior tree, copy the data to the node in the tree.
+                Node nodeInTree = reference.nodes.Find(n => n.guid == nodeView.node.guid);
+                if (nodeInTree != null)
                 {
-                    (reference as BehaviorTree).Root = (RootNode)nodeView.node.Clone();
+                    // WARNING: If this node has children, the children will be cloned a separate time causing copies of the same node
+                    nodeInTree = nodeView.node.Clone();
                     continue;
                 }
-                if ((reference as BehaviorTree).nodes.Exists(x => x.guid == nodeView.node.guid))
-                {
-                    continue;
-                }
-                (reference as BehaviorTree).nodes.Add(nodeView.node.Clone());
+                // If the node is not yet in the tree, add a clone of it to the tree.
+                nodeInTree = nodeView.node.Clone();
+                reference.nodes.Add(nodeInTree);
             }
 
+            // Secondly, add all the children from connections
             foreach (var nodeView in nodeViews)
             {
-                if (nodeView.node == null)
+                var multipleChildrenNode = nodeView.node as NodeInterfaces.IMultipleConnection;
+                if (multipleChildrenNode != null)
                 {
-                    UnityEngine.Debug.LogError("Node at index " + nodeViews.IndexOf(nodeView) + " is null");
+                    // Clear the child list to 0 to remove any dangling copies that are not assigned to the behavior tree
+                    multipleChildrenNode.SetChildren(new List<Node>());
+                    // Find all child node views connected through the out port
+                    List<Connection> outgoingConnections = connections.FindAll(c => c.outNodeView == nodeView);
+                    // Get all the child nodes from those connections
+                    List<NodeView> childNodes = outgoingConnections.ConvertAll(c => c.inNodeView);
+                    foreach (var childNode in childNodes)
+                    {
+                        Node childNodeInTree = reference.nodes.Find(n => n.guid == childNode.node.guid);
+                        if (childNodeInTree != null)
+                        {
+                            multipleChildrenNode.AddChild(childNodeInTree);
+                        }
+                    }
                     continue;
                 }
-
-                Type nodeType = nodeView.node.GetType();
-                List<NodeView> childNodeViews = GetChildren(nodeView);
-                if (typeof(NodeInterfaces.IMultipleConnection).IsAssignableFrom(nodeType))
+                var singleChildrenNode = nodeView.node as NodeInterfaces.ISingleConnection;
+                if (singleChildrenNode != null)
                 {
-                    List<Node> childNodes = new List<Node>();
-                    foreach (var childNodeView in childNodeViews)
+                    // Find all child node views connected through the out port
+                    List<Connection> outgoingConnections = connections.FindAll(c => c.outNodeView == nodeView);
+                    // Get all the child nodes from those connections
+                    if (outgoingConnections.Count != 0)
                     {
-                        Node childNode = (reference as BehaviorTree).nodes.Find(x => x.guid == childNodeView.node.guid);
-                        if (childNode != null)
-                            childNodes.Add(childNode);
+                        List<NodeView> childNodes = outgoingConnections.ConvertAll(c => c.inNodeView);
+                        singleChildrenNode.SetChild(reference.nodes.Find(n => n.guid == childNodes[0].node.guid));
                     }
-                    (nodeView.node as NodeInterfaces.IMultipleConnection).SetChildren(childNodes);
-                }
-                else if (typeof(NodeInterfaces.ISingleConnection).IsAssignableFrom(nodeType)) 
-                {
-                    if (childNodeViews.Count != 0)
-                    {
-                        Node childNode = (reference as BehaviorTree).nodes.Find(x => x.guid == childNodeViews[0].node.guid);
-                        if (childNode != null)
-                            (nodeView.node as NodeInterfaces.ISingleConnection).SetChild(childNodeViews[0].node);
-                    }
+                    continue;
                 }
             }
+
             UnityEngine.Debug.Log("Nodes saved: " + (reference as BehaviorTree).nodes.Count);
             (reference as BehaviorTree).Save(fileName);
             base.SaveChanges();
@@ -136,53 +144,46 @@ namespace BobJeltes.NodeEditor
                 NewFile();
                 return true;
             }
-            BehaviorTree tree = structure as BehaviorTree;
+
+            // Make a copy of the reference structure
+            BehaviorTree tree = (structure as BehaviorTree).Clone();
 
             nodeViews = new List<NodeView>();
             connections = new List<Connection>();
             UnityEngine.Debug.Log("Found " + tree.nodes.Count + " nodes");
-            // Create a root node view from a new root node
-            CreateNodeView(tree.Root.Clone(), GetDefaultRootPosition(), false);
-            // Look for connections by children in behavior tree
-            // Root node has a fixed position and so the position does not need to be saved
-            // ...probably
-            for (int i = 0; i < tree.nodes.Count; i++)
+
+            // Create node views for every node
+            foreach (var node in tree.nodes)
             {
-                Node node = tree.nodes[i];
-                CreateNodeView(node.Clone(), node.positionOnView, false);
+                CreateNodeView(node);
             }
-            // Iterate over nodes 
+
+            // Connect the node views?
             foreach (var nodeView in nodeViews)
             {
-                // Find connections
-                Type nodeType = nodeView.node.GetType();
-                if (!typeof(NodeInterfaces.IHasOutPort).IsAssignableFrom(nodeType))
+                var multipleConnectionsNode = nodeView.node as NodeInterfaces.IMultipleConnection;
+                if (multipleConnectionsNode != null)
                 {
-                    // Node has no outport. Continue to next one to find children to make connetions for.
+                    // For every child of the node, 
+                    foreach (var nodeChild in multipleConnectionsNode.GetChildren())
+                    {
+                        CreateConnection(nodeView, nodeViews.Find(x => x.node.guid == nodeChild.guid));
+                    }
                     continue;
                 }
-                if (typeof(NodeInterfaces.ISingleConnection).IsAssignableFrom(nodeType)) 
+                var singleConnectionNode = nodeView.node as NodeInterfaces.ISingleConnection;
+                if (singleConnectionNode != null)
                 {
-                    // Connect the single child
-                    Node childNode = (nodeView.node as NodeInterfaces.ISingleConnection).GetChild();
-                    if (childNode != null)
+                    Node nodeChild = singleConnectionNode.GetChild();
+                    if (nodeChild != null)
                     {
-                        // TODO: It can be that it goes wrong in this function.
-                        CreateConnection(nodeViews.Find(n => n.node.guid == nodeView.node.guid), nodeViews.Find(n => n.node.guid == childNode.guid));
-                        UnityEngine.Debug.Log("Create connection");
+                        CreateConnection(nodeView, nodeViews.Find(x => x.node.guid == nodeChild.guid));
                     }
-                }
-                if (typeof(NodeInterfaces.IMultipleConnection).IsAssignableFrom(nodeType))
-                {
-                    // Connect all children
-                    List<Node> children = (nodeView.node as NodeInterfaces.IMultipleConnection).GetChildren();
-                    foreach (var childNode in children)
-                    {
-                        CreateConnection(nodeViews.Find(n => n.node.guid == nodeView.node.guid), nodeViews.Find(n => n.node.guid == childNode.guid));
-                        UnityEngine.Debug.Log("Create connection");
-                    }
+                    continue;
                 }
             }
+
+            // Set the reference to the reference file
             reference = structure;
             hasUnsavedChanges = false;
             ClearConnectionSelection();

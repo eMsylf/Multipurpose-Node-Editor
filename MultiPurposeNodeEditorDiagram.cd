@@ -38,10 +38,9 @@
   <Class Name="BobJeltes.NodeEditor.NodeBasedEditorView" Collapsed="true">
     <Position X="4.25" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>sBCRgoSABGgFsAECI9gxABOY2ABASAAzJESQKRQASkA=</HashCode>
+      <HashCode>sBCRgoSABCgFsAECI9gxABOY2AAASAAzJESQKRQASkA=</HashCode>
       <FileName>Assets\Bob Jeltes\Multipurpose Node Editor\Editor\NodeBasedEditorView.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="BobJeltes.NodeEditor.NodeView" Collapsed="true">
     <Position X="10.5" Y="6.75" Width="1.5" />
