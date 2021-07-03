@@ -30,6 +30,8 @@ namespace BobJeltes.NodeEditor
             nodeViews = new List<NodeView>();
             
             CreateNodeView(behaviorTree.Root, GetDefaultRootPosition());
+            EditorUtility.SetDirty(behaviorTree);
+            AssetDatabase.SaveAssets();
 
             for (int i = 0; i < behaviorTree.nodes.Count; i++)
             {
