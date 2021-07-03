@@ -100,7 +100,7 @@ namespace BobJeltes.NodeEditor
                 if (nodeInTree == null)
                 {
                     // If the node is not yet in the tree, add a clone of it to the tree.
-                    reference.nodes.Add(nodeInTree);
+                    behaviorTree.nodes.Add(nodeInTree);
                 }
                 // WARNING: If this node has children, the children might be cloned a separate time causing copies of the same node
                 nodeInTree = nodeView.node.Clone();
@@ -120,7 +120,7 @@ namespace BobJeltes.NodeEditor
                     List<NodeView> childNodes = outgoingConnections.ConvertAll(c => c.inNodeView);
                     foreach (var childNode in childNodes)
                     {
-                        Node childNodeInTree = reference.nodes.Find(n => n.guid == childNode.node.guid);
+                        Node childNodeInTree = behaviorTree.nodes.Find(n => n.guid == childNode.node.guid);
                         if (childNodeInTree != null)
                         {
                             multipleChildrenNode.AddChild(childNodeInTree);
@@ -137,7 +137,7 @@ namespace BobJeltes.NodeEditor
                     if (outgoingConnections.Count != 0)
                     {
                         List<NodeView> childNodes = outgoingConnections.ConvertAll(c => c.inNodeView);
-                        singleChildrenNode.SetChild(reference.nodes.Find(n => n.guid == childNodes[0].node.guid));
+                        singleChildrenNode.SetChild(behaviorTree.nodes.Find(n => n.guid == childNodes[0].node.guid));
                     }
                     continue;
                 }
@@ -147,8 +147,8 @@ namespace BobJeltes.NodeEditor
             // Loop through the nodes that are added to the behavior tree asset.
             // If the node's GUID is not found in the behavior tree's nodes list, remove it from the asset
 
-            UnityEngine.Debug.Log("Nodes saved: " + (reference as BehaviorTree).nodes.Count);
-            (reference as BehaviorTree).Save(fileName);
+            UnityEngine.Debug.Log("Nodes saved: " + behaviorTree.nodes.Count);
+            behaviorTree.Save(fileName);
             base.SaveChanges();
         }
 

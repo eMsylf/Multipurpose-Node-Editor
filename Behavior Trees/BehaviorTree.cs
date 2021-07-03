@@ -102,7 +102,7 @@ namespace BobJeltes.AI.BehaviorTree
                 if (!string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(nodeAsset)))
                     AssetDatabase.RemoveObjectFromAsset(nodeAsset);
             }
-            deletedNodes.Clear();
+            deletedNodes = new List<Node>();
 
             AssetDatabase.SaveAssets();
         }
