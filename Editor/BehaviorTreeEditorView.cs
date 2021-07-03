@@ -28,7 +28,7 @@ namespace BobJeltes.NodeEditor
             behaviorTree = reference as BehaviorTree;
             if (behaviorTree == null) behaviorTree = CreateInstance<BehaviorTree>();
             nodeViews = new List<NodeView>();
-
+            
             CreateNodeView(behaviorTree.Root, GetDefaultRootPosition());
 
             for (int i = 0; i < behaviorTree.nodes.Count; i++)
@@ -84,7 +84,7 @@ namespace BobJeltes.NodeEditor
                 RootNode root = nodeView.node as RootNode;
                 if (root != null)
                 {
-                    behaviorTree.Root = (RootNode)root.Clone();
+                    behaviorTree.Root = root;
                     continue;
                 }
                 // If the node is already added to the behavior tree, copy the data to the node in the tree.

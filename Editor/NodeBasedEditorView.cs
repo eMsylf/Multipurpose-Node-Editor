@@ -831,6 +831,7 @@ namespace BobJeltes.NodeEditor
 
         protected virtual void OnClickBackground()
         {
+            DeselectAllNodes();
             if ((selectedNodeIn == null && selectedNodeOut != null) || (selectedNodeIn != null && selectedNodeOut == null))
             {
                 OnClickBackgroundWithConnection();
@@ -838,13 +839,11 @@ namespace BobJeltes.NodeEditor
             else
             {
                 ClearConnectionSelection();
-                DeselectAllNodes();
             }
         }
 
         protected virtual void OnClickBackgroundWithConnection()
         {
-            DeselectAllNodes();
             SelectNode(CreateNodeView(Event.current.mousePosition, centered: true));
         }
 
