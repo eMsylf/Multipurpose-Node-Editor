@@ -23,7 +23,9 @@ namespace BobJeltes.AI.BehaviorTree
             set => root = value;
         }
         public Result result = Result.Running;
-        public Blackboard blackboard;
+        public Blackboard blackboard = new Blackboard();
+        
+        public List<Node> deletedNodes = new List<Node>();
 
         public Result Update()
         {
@@ -55,6 +57,7 @@ namespace BobJeltes.AI.BehaviorTree
 
         public void DeleteNode(Node node)
         {
+            deletedNodes.Add(node);
             nodes.Remove(node);
         }
 
@@ -76,7 +79,7 @@ namespace BobJeltes.AI.BehaviorTree
                 AssetDatabase.AddObjectToAsset(Root, this);
             }
 
-            // Go through all of the behavior tree's nodes
+            // Go through all of the behavior tree's nodes and add them to the asset if they have not been added yet
             foreach (var node in nodes)
             {
                 string nodeAssetPath = AssetDatabase.GetAssetPath(node);
@@ -92,6 +95,15 @@ namespace BobJeltes.AI.BehaviorTree
                     UnityEngine.Debug.Log(node.name + " node already added to " + name);
                 }
             }
+
+            foreach (var nodeAsset in deletedNodes)
+            {
+                // If the node asset is present, remove it from the behavior tree asset
+                if (!string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(nodeAsset)))
+                    AssetDatabase.RemoveObjectFromAsset(nodeAsset);
+            }
+            deletedNodes.Clear();
+
             AssetDatabase.SaveAssets();
         }
 

@@ -68,6 +68,12 @@ namespace BobJeltes.NodeEditor
             return behaviorTree.CreateNode(type);
         }
 
+        internal override void OnClickRemoveNode(NodeView nodeView)
+        {
+            behaviorTree.DeleteNode(nodeView.node);
+            base.OnClickRemoveNode(nodeView);
+        }
+
         protected override void OnClickBackgroundWithConnection()
         {
             ProcessContextMenu(Event.current.mousePosition);
@@ -91,15 +97,13 @@ namespace BobJeltes.NodeEditor
                 }
                 // If the node is already added to the behavior tree, copy the data to the node in the tree.
                 Node nodeInTree = reference.nodes.Find(n => n.guid == nodeView.node.guid);
-                if (nodeInTree != null)
+                if (nodeInTree == null)
                 {
-                    // WARNING: If this node has children, the children will be cloned a separate time causing copies of the same node
-                    nodeInTree = nodeView.node.Clone();
-                    continue;
+                    // If the node is not yet in the tree, add a clone of it to the tree.
+                    reference.nodes.Add(nodeInTree);
                 }
-                // If the node is not yet in the tree, add a clone of it to the tree.
+                // WARNING: If this node has children, the children might be cloned a separate time causing copies of the same node
                 nodeInTree = nodeView.node.Clone();
-                reference.nodes.Add(nodeInTree);
             }
 
             // Secondly, add all the children from connections
@@ -138,6 +142,10 @@ namespace BobJeltes.NodeEditor
                     continue;
                 }
             }
+
+            // TODO: Clean up removed nodes
+            // Loop through the nodes that are added to the behavior tree asset.
+            // If the node's GUID is not found in the behavior tree's nodes list, remove it from the asset
 
             UnityEngine.Debug.Log("Nodes saved: " + (reference as BehaviorTree).nodes.Count);
             (reference as BehaviorTree).Save(fileName);
