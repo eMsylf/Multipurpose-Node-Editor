@@ -207,7 +207,7 @@ namespace BobJeltes.NodeEditor
             }
             foreach (var nodeView in nodeViews)
             {
-                nodeView.node.positionOnView = new Vector2(nodeView.rect.position.x, nodeView.rect.position.y);
+                nodeView.node.PositionOnView = new Vector2(nodeView.rect.position.x, nodeView.rect.position.y);
             }
             foreach (var connection in connections)
             {
@@ -340,7 +340,7 @@ namespace BobJeltes.NodeEditor
                 if (nodeViews == null) nodeViews = new List<NodeView>();
                 foreach (var node in reference.nodes)
                 {
-                    CreateNodeView(node, node.positionOnView);
+                    CreateNodeView(node, node.PositionOnView);
                 }
 
                 if (connections == null) connections = new List<Connection>();
@@ -672,7 +672,7 @@ namespace BobJeltes.NodeEditor
 
         public NodeView CreateNodeView(Node node)
         {
-            return CreateNodeView(node, node.positionOnView, false);
+            return CreateNodeView(node, node.PositionOnView, false);
         }
 
         /// <summary>

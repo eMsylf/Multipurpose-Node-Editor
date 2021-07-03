@@ -14,9 +14,9 @@ namespace BobJeltes.AI.BehaviorTree
 
         public override Result OnUpdate()
         {
-            for (; i < children.Count; i++)
+            for (; i < Children.Count; i++)
             {
-                Result result = children[i].Update();
+                Result result = Children[i].Update();
                 switch (result)
                 {
                     case Result.Success:

@@ -6,10 +6,14 @@ namespace BobJeltes.AI.BehaviorTree
     [System.Serializable]
     public abstract class Node : ScriptableObject
     {
-        public string guid;
-        public Vector2 positionOnView;
+        private string guid;
+        private Vector2 positionOnView;
         private bool started;
-        public Result result;
+        private Result result;
+
+        public Vector2 PositionOnView { get => positionOnView; set => positionOnView = value; }
+        public string Guid { get => guid; set => guid = value; }
+        public Result Result { get => result; set => result = value; }
 
         public abstract void OnStart();
         public abstract void OnStop();
@@ -22,14 +26,14 @@ namespace BobJeltes.AI.BehaviorTree
                 started = true;
             }
 
-            result = OnUpdate();
+            Result = OnUpdate();
 
-            if (result == Result.Failure || result == Result.Success)
+            if (Result == Result.Failure || Result == Result.Success)
             {
                 OnStop();
                 started = false;
             }
-            return result;
+            return Result;
         }
         public virtual Node Clone()
         {

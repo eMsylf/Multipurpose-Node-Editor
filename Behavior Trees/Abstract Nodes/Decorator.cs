@@ -6,23 +6,25 @@ namespace BobJeltes.AI.BehaviorTree
 {
     public abstract class Decorator : Node, NodeInterfaces.IHasInPort, NodeInterfaces.IHasOutPort, NodeInterfaces.ISingleConnection, NodeInterfaces.IInteractable
     {
-        public Node child;
+        private Node child;
+
+        public Node Child { get => child; set => child = value; }
 
         public override Node Clone()
         {
             Decorator node = Instantiate(this);
-            node.child = child?.Clone();
+            node.Child = Child?.Clone();
             return node;
         }
 
         public Node GetChild()
         {
-            return child;
+            return Child;
         }
 
         public void SetChild(Node node)
         {
-            child = node;
+            Child = node;
         }
     }
 }

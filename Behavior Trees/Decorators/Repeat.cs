@@ -18,7 +18,7 @@ namespace BobJeltes.AI.BehaviorTree
 
         public override Result OnUpdate()
         {
-            child.Update();
+            Child.Update();
             return Result.Running;
         }
     }

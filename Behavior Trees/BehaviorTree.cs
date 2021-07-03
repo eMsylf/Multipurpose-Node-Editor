@@ -42,7 +42,7 @@ namespace BobJeltes.AI.BehaviorTree
         {
             Node node = CreateInstance(type) as Node;
             node.name = type.Name;
-            node.guid = GUID.Generate().ToString();
+            node.Guid = GUID.Generate().ToString();
             if (type == typeof(RootNode))
             {
                 Root = (RootNode)node;

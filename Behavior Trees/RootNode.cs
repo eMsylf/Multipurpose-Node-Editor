@@ -6,22 +6,25 @@ namespace BobJeltes.AI.BehaviorTree
 {
     public class RootNode : Node, NodeInterfaces.IHasOutPort, NodeInterfaces.ISingleConnection
     {
-        public Node child;
+        private Node child;
+
+        public Node Child { get => child; set => child = value; }
+
         public void SetChild(Node node)
         {
-            child = node;
+            Child = node;
         }
 
         public override Node Clone()
         {
             RootNode node = Instantiate(this);
-            node.child = child?.Clone();
+            node.Child = Child?.Clone();
             return node;
         }
 
         public override Result OnUpdate()
         {
-            return child.Update();
+            return Child.Update();
         }
 
         public override void OnStart()
@@ -36,7 +39,7 @@ namespace BobJeltes.AI.BehaviorTree
 
         public Node GetChild()
         {
-            return child;
+            return Child;
         }
     }
 }

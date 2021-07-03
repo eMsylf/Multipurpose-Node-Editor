@@ -5,34 +5,36 @@ namespace BobJeltes.AI.BehaviorTree
 {
     public abstract class Composite : Node, NodeInterfaces.IHasInPort, NodeInterfaces.IHasOutPort, NodeInterfaces.IMultipleConnection, NodeInterfaces.IInteractable
     {
-        public List<Node> children = new List<Node>();
-        public int i = 0;
+        private List<Node> children = new List<Node>();
+        protected int i = 0;
+
+        public List<Node> Children { get => children; set => children = value; }
 
         public void AddChild(Node node)
         {
-            children.Add(node);
+            Children.Add(node);
         }
 
         public override Node Clone()
         {
             Composite node = Instantiate(this);
-            node.children = children.ConvertAll(c => c.Clone());
+            node.Children = Children.ConvertAll(c => c.Clone());
             return node;
         }
 
         public List<Node> GetChildren()
         {
-            return children;
+            return Children;
         }
 
         public void RemoveChild(Node node)
         {
-            children.Remove(node);
+            Children.Remove(node);
         }
 
         public void SetChildren(List<Node> nodes)
         {
-            children = nodes;
+            Children = nodes;
         }
     }
 }

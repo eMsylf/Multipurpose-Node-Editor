@@ -49,7 +49,7 @@ namespace BobJeltes.NodeEditor
         public NodeView(Rect rect, GUIStyle nodeStyle, GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, Orientation orientation, Action<NodeView, ConnectionPointType> onClickConnectionPoint, Action<NodeView> onClickNode, Action<NodeView> OnClickRemoveNode, Action<NodeView> onDragNode, Action<NodeView> onClickUp, Node node)
         {
             this.node = node;
-            if (this.node != null) node.positionOnView = rect.position;
+            if (this.node != null) node.PositionOnView = rect.position;
             this.rect = rect;
             Type nodeType = node.GetType();
             this.title = node.GetType().Name;
@@ -179,8 +179,7 @@ namespace BobJeltes.NodeEditor
         public void SetPosition(Vector2 position)
         {
             rect.position = position;
-            node.positionOnView.x = position.x;
-            node.positionOnView.y = position.y;
+            node.PositionOnView = new Vector2(position.x, position.y);
         }
     }
 }

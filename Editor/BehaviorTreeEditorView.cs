@@ -35,7 +35,7 @@ namespace BobJeltes.NodeEditor
 
             for (int i = 0; i < behaviorTree.nodes.Count; i++)
             {
-                CreateNodeView(behaviorTree.nodes[i].Clone(), behaviorTree.nodes[i].positionOnView, false);
+                CreateNodeView(behaviorTree.nodes[i].Clone(), behaviorTree.nodes[i].PositionOnView, false);
             }
         }
 
@@ -96,7 +96,7 @@ namespace BobJeltes.NodeEditor
                     continue;
                 }
                 // If the node is already added to the behavior tree, copy the data to the node in the tree.
-                Node nodeInTree = reference.nodes.Find(n => n.guid == nodeView.node.guid);
+                Node nodeInTree = reference.nodes.Find(n => n.Guid == nodeView.node.Guid);
                 if (nodeInTree == null)
                 {
                     // If the node is not yet in the tree, add a clone of it to the tree.
@@ -120,7 +120,7 @@ namespace BobJeltes.NodeEditor
                     List<NodeView> childNodes = outgoingConnections.ConvertAll(c => c.inNodeView);
                     foreach (var childNode in childNodes)
                     {
-                        Node childNodeInTree = behaviorTree.nodes.Find(n => n.guid == childNode.node.guid);
+                        Node childNodeInTree = behaviorTree.nodes.Find(n => n.Guid == childNode.node.Guid);
                         if (childNodeInTree != null)
                         {
                             multipleChildrenNode.AddChild(childNodeInTree);
@@ -137,7 +137,7 @@ namespace BobJeltes.NodeEditor
                     if (outgoingConnections.Count != 0)
                     {
                         List<NodeView> childNodes = outgoingConnections.ConvertAll(c => c.inNodeView);
-                        singleChildrenNode.SetChild(behaviorTree.nodes.Find(n => n.guid == childNodes[0].node.guid));
+                        singleChildrenNode.SetChild(behaviorTree.nodes.Find(n => n.Guid == childNodes[0].node.Guid));
                     }
                     continue;
                 }
@@ -185,7 +185,7 @@ namespace BobJeltes.NodeEditor
                     // For every child of the node, 
                     foreach (var nodeChild in multipleConnectionsNode.GetChildren())
                     {
-                        CreateConnection(nodeView, nodeViews.Find(x => x.node.guid == nodeChild.guid));
+                        CreateConnection(nodeView, nodeViews.Find(x => x.node.Guid == nodeChild.Guid));
                     }
                     continue;
                 }
@@ -195,7 +195,7 @@ namespace BobJeltes.NodeEditor
                     Node nodeChild = singleConnectionNode.GetChild();
                     if (nodeChild != null)
                     {
-                        CreateConnection(nodeView, nodeViews.Find(x => x.node.guid == nodeChild.guid));
+                        CreateConnection(nodeView, nodeViews.Find(x => x.node.Guid == nodeChild.Guid));
                     }
                     continue;
                 }
@@ -206,6 +206,15 @@ namespace BobJeltes.NodeEditor
             hasUnsavedChanges = false;
             ClearConnectionSelection();
             return true;
+        }
+
+        internal override void SelectNode(NodeView node)
+        {
+            base.SelectNode(node);
+            if (node.node != null)
+            {
+                Selection.activeObject = node.node;
+            }
         }
     }
 
