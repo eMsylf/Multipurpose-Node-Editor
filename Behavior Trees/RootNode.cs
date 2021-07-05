@@ -22,17 +22,17 @@ namespace BobJeltes.AI.BehaviorTree
             return node;
         }
 
-        public override Result OnUpdate()
+        protected override Result OnUpdate()
         {
             return Child.Update();
         }
 
-        public override void OnStart()
+        protected override void OnStart()
         {
 
         }
 
-        public override void OnStop()
+        protected override void OnStop()
         {
 
         }

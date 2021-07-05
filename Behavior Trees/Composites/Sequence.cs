@@ -6,17 +6,17 @@ namespace BobJeltes.AI.BehaviorTree
 {
     public class Sequence : Composite
     {
-        public override void OnStart()
+        protected override void OnStart()
         {
             i = 0;
         }
 
-        public override void OnStop()
+        protected override void OnStop()
         {
             
         }
 
-        public override Result OnUpdate()
+        protected override Result OnUpdate()
         {
             for (; i < Children.Count; i++)
             {

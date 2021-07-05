@@ -8,17 +8,17 @@ namespace BobJeltes.AI.BehaviorTree
     {
         public string message = "";
 
-        public override void OnStart()
+        protected override void OnStart()
         {
             UnityEngine.Debug.Log("Start: " + message);
         }
 
-        public override void OnStop()
+        protected override void OnStop()
         {
             UnityEngine.Debug.Log("Stop: " + message);
         }
 
-        public override Result OnUpdate()
+        protected override Result OnUpdate()
         {
             UnityEngine.Debug.Log("Update: " + message);
             return Result.Success;

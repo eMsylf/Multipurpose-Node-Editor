@@ -6,17 +6,17 @@ namespace BobJeltes.AI.BehaviorTree
 {
     public class Repeat : Decorator
     {
-        public override void OnStart()
+        protected override void OnStart()
         {
             
         }
 
-        public override void OnStop()
+        protected override void OnStop()
         {
             
         }
 
-        public override Result OnUpdate()
+        protected override Result OnUpdate()
         {
             Child.Update();
             return Result.Running;

@@ -10,17 +10,17 @@ namespace BobJeltes.AI.BehaviorTree
         public float duration = 1f;
         private float startTime = 0f;
 
-        public override void OnStart()
+        protected override void OnStart()
         {
             startTime = Time.time;
         }
 
-        public override void OnStop()
+        protected override void OnStop()
         {
 
         }
 
-        public override Result OnUpdate()
+        protected override Result OnUpdate()
         {
             if (Time.time - startTime > duration)
                 return Result.Success;

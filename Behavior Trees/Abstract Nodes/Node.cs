@@ -15,9 +15,9 @@ namespace BobJeltes.AI.BehaviorTree
         public string Guid { get => guid; set => guid = value; }
         public Result Result { get => result; set => result = value; }
 
-        public abstract void OnStart();
-        public abstract void OnStop();
-        public abstract Result OnUpdate();
+        protected abstract void OnStart();
+        protected abstract void OnStop();
+        protected abstract Result OnUpdate();
         public Result Update()
         {
             if (!started)

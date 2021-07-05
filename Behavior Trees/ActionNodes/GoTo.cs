@@ -5,17 +5,17 @@ using UnityEngine;
 
 public class GoTo : ActionNode
 {
-    public override void OnStart()
+    protected override void OnStart()
     {
 
     }
 
-    public override void OnStop()
+    protected override void OnStop()
     {
         
     }
 
-    public override Result OnUpdate()
+    protected override Result OnUpdate()
     {
         return Result.Success;
     }
