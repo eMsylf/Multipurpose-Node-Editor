@@ -92,7 +92,7 @@ namespace BobJeltes.NodeEditor
                 RootNode root = nodeView.node as RootNode;
                 if (root != null)
                 {
-                    behaviorTree.Root = root;
+                    behaviorTree.Root = root.Clone() as RootNode;
                     continue;
                 }
                 // If the node is already added to the behavior tree, copy the data to the node in the tree.
@@ -100,10 +100,12 @@ namespace BobJeltes.NodeEditor
                 if (nodeInTree == null)
                 {
                     // If the node is not yet in the tree, add a clone of it to the tree.
-                    behaviorTree.nodes.Add(nodeInTree);
+                    behaviorTree.nodes.Add(nodeView.node.Clone());
                 }
-                // WARNING: If this node has children, the children might be cloned a separate time causing copies of the same node
-                nodeInTree = nodeView.node.Clone();
+                else
+                {
+                    nodeInTree = nodeView.node;
+                }
             }
 
             // Secondly, add all the children from connections
@@ -148,7 +150,7 @@ namespace BobJeltes.NodeEditor
             // If the node's GUID is not found in the behavior tree's nodes list, remove it from the asset
 
             UnityEngine.Debug.Log("Nodes saved: " + behaviorTree.nodes.Count);
-            behaviorTree.Save(fileName);
+            behaviorTree.Save(behaviorTree.name);
             base.SaveChanges();
         }
 
@@ -166,17 +168,18 @@ namespace BobJeltes.NodeEditor
 
             nodeViews = new List<NodeView>();
             connections = new List<Connection>();
-            UnityEngine.Debug.Log("Found " + tree.nodes.Count + " nodes");
+            UnityEngine.Debug.Log("Found a root node and " + tree.nodes.Count + " nodes");
 
+            // Create a view for the root node
             CreateNodeView(tree.Root.Clone(), GetDefaultRootPosition());
 
-            // Create node views for every node
+            // Create node views for every other node
             foreach (var node in tree.nodes)
             {
                 CreateNodeView(node.Clone());
             }
 
-            // Connect the node views?
+            // Connect the node views
             foreach (var nodeView in nodeViews)
             {
                 var multipleConnectionsNode = nodeView.node as NodeInterfaces.IMultipleConnection;
