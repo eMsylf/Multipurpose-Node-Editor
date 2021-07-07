@@ -73,6 +73,8 @@ namespace BobJeltes.AI.BehaviorTree
                 UnityEngine.Debug.Log("File saved at " + uniquePath, this);
             }
 
+            if (root == null) root = (RootNode)CreateNode(typeof(RootNode));
+
             string rootNodeAssetPath = AssetDatabase.GetAssetPath(Root);
             if (string.IsNullOrWhiteSpace(rootNodeAssetPath) || !rootNodeAssetPath.Contains(ownAssetPath)) 
             {

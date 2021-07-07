@@ -24,10 +24,10 @@ namespace BobJeltes.NodeEditor
 
         }
 
-        public Connection(NodeView outNode, NodeView inNode, Action<Connection> OnClickRemoveConnection)
+        public Connection(NodeView outNodeView, NodeView inNodeView, Action<Connection> OnClickRemoveConnection)
         {
-            this.inNodeView = inNode;
-            this.outNodeView = outNode;
+            this.inNodeView = inNodeView;
+            this.outNodeView = outNodeView;
             this.OnClickRemoveConnection = OnClickRemoveConnection;
         }
 
