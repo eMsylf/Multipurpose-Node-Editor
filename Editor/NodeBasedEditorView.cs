@@ -27,7 +27,7 @@ namespace BobJeltes.NodeEditor
         private float toolbarSettingsWidth = 200;
         private GUIStyle toolbarSettingsStyle = new GUIStyle();
 
-        public NodeStructure reference;
+        public NodeStructure file;
         public string fileName = "New file";
 
         public List<NodeView> nodeViews = new List<NodeView>();
@@ -181,7 +181,7 @@ namespace BobJeltes.NodeEditor
         {
             if (!UnsavedChangesCheck()) return;
             fileName = $"New {"Node Structure"}";
-            reference = default;
+            file = default;
             nodeViews = new List<NodeView>();
             connections = new List<Connection>();
             tempConnectionIndices?.Clear();
@@ -201,9 +201,9 @@ namespace BobJeltes.NodeEditor
         public virtual void Save()
         {
             if (!hasUnsavedChanges) return;
-            if (reference == null)
+            if (file == null)
             {
-                reference = CreateInstance<NodeStructure>();
+                file = CreateInstance<NodeStructure>();
             }
             foreach (var nodeView in nodeViews)
             {
@@ -212,18 +212,6 @@ namespace BobJeltes.NodeEditor
             foreach (var connection in connections)
             {
                 // Add children to connected nodes in the CreateConnection function
-            }
-            SaveChanges();
-        }
-
-        public override void SaveChanges()
-        {
-            EditorUtility.SetDirty(reference);
-
-            if (string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(reference)))
-            {
-                string assetPath = AssetDatabase.GenerateUniqueAssetPath($"Assets/Resources/Nodes/{fileName}.asset");
-                AssetDatabase.CreateAsset(reference, assetPath);
             }
 
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))
@@ -234,20 +222,26 @@ namespace BobJeltes.NodeEditor
             {
                 AssetDatabase.CreateFolder("Assets/Resources", "Nodes");
             }
-            if (string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(reference)))
+            if (string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(file)))
             {
                 string assetPath = AssetDatabase.GenerateUniqueAssetPath($"Assets/Resources/Nodes/{fileName}.asset");
-                AssetDatabase.CreateAsset(reference, assetPath);
+                AssetDatabase.CreateAsset(file, assetPath);
             }
+            SaveChanges();
+        }
+
+        public override void SaveChanges()
+        {
+            EditorUtility.SetDirty(file);
 
             AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
             EditorUtility.FocusProjectWindow();
-            Selection.activeObject = reference;
+            Selection.activeObject = file;
             EditorGUIUtility.PingObject(Selection.activeObject);
             // TODO: test if assetdatabase refresh is needed & if it has great performance impact in large projects
-            //AssetDatabase.Refresh();
 
-            Debug.Log("Nodes saved successfully to file " + reference.name, reference);
+            Debug.Log("Nodes saved successfully to file " + file.name, file);
             base.SaveChanges();
         }
 
@@ -273,7 +267,7 @@ namespace BobJeltes.NodeEditor
             //{
             //    CreateConnection(nodeViews[connection.a], nodeViews[connection.b]);
             //}
-            reference = structure;
+            file = structure;
             hasUnsavedChanges = false;
             ClearConnectionSelection();
             return true;
@@ -318,7 +312,7 @@ namespace BobJeltes.NodeEditor
 
         internal virtual void PopulateView()
         {
-            if (reference == null)
+            if (file == null)
             {
                 if (nodeViews == null) nodeViews = new List<NodeView>();
                 foreach (var nodeView in nodeViews)
@@ -338,7 +332,7 @@ namespace BobJeltes.NodeEditor
             else
             {
                 if (nodeViews == null) nodeViews = new List<NodeView>();
-                foreach (var node in reference.nodes)
+                foreach (var node in file.nodes)
                 {
                     CreateNodeView(node, node.positionOnView);
                 }
@@ -409,21 +403,21 @@ namespace BobJeltes.NodeEditor
             GUILayout.BeginArea(menuBarRect, EditorStyles.toolbar);
             GUILayout.BeginHorizontal();
 
-            if (reference == null)
+            if (file == null)
                 fileName = EditorGUILayout.TextField(fileName, GUILayout.MinWidth(50), GUILayout.MaxWidth(150));
-            NodeStructure oldReference = reference;
+            NodeStructure oldReference = file;
             EditorGUI.BeginChangeCheck();
-            NodeStructure newReference = (NodeStructure)EditorGUILayout.ObjectField(reference, typeof(NodeStructure), false, GUILayout.MinWidth(50), GUILayout.MaxWidth(150));
+            NodeStructure newReference = (NodeStructure)EditorGUILayout.ObjectField(file, typeof(NodeStructure), false, GUILayout.MinWidth(50), GUILayout.MaxWidth(150));
             if (EditorGUI.EndChangeCheck())
             {
                 Debug.Log("New file selected");
                 if (Load(newReference))
                 {
-                    reference = newReference;
+                    file = newReference;
                 }
                 else
                 {
-                    reference = oldReference;
+                    file = oldReference;
                 }
             }
 
@@ -434,7 +428,7 @@ namespace BobJeltes.NodeEditor
                 Save();
             }
             GUI.enabled = true;
-            if (reference == null && !hasUnsavedChanges)
+            if (file == null && !hasUnsavedChanges)
             {
                 GUI.enabled = false;
             }

@@ -61,26 +61,18 @@ namespace BobJeltes.AI.BehaviorTree
             nodes.Remove(node);
         }
 
-        public void Save(string name = "Behavior Tree")
+        public void Save()
         {
-            string ownAssetPath = AssetDatabase.GetAssetPath(this);
-            // Create a behavior tree asset if not yet present
-            if (string.IsNullOrWhiteSpace(ownAssetPath))
-            {
-                string folder = EnsureFolderIsInAssets("Resources", "Behavior Trees");
-                string uniquePath = AssetDatabase.GenerateUniqueAssetPath(folder + name + ".asset");
-                AssetDatabase.CreateAsset(this, uniquePath);
-                UnityEngine.Debug.Log("File saved at " + uniquePath, this);
-            }
-
-            if (root == null) root = (RootNode)CreateNode(typeof(RootNode));
-
-            string rootNodeAssetPath = AssetDatabase.GetAssetPath(Root);
-            if (string.IsNullOrWhiteSpace(rootNodeAssetPath) || !rootNodeAssetPath.Contains(ownAssetPath)) 
-            {
+            string rootPath = AssetDatabase.GetAssetPath(Root);
+            if (rootPath == null)
                 AssetDatabase.AddObjectToAsset(Root, this);
+            else
+            {
+                // TODO: Apply changes to the existing root node?
+                // OR: Delete old root node and replace?
             }
 
+            string ownAssetPath = AssetDatabase.GetAssetPath(this);
             // Go through all of the behavior tree's nodes and add them to the asset if they have not been added yet
             foreach (var node in nodes)
             {
@@ -93,8 +85,11 @@ namespace BobJeltes.AI.BehaviorTree
                 }
                 else
                 {
-                    // Node already added to behavior tree. Update the node at this path with the data of this one
                     UnityEngine.Debug.Log(node.name + " node already added to " + name);
+                    // Node already added to behavior tree.
+
+                    // TODO: Update the node at this path with the data of this one
+
                 }
             }
 
@@ -105,29 +100,7 @@ namespace BobJeltes.AI.BehaviorTree
                     AssetDatabase.RemoveObjectFromAsset(nodeAsset);
             }
             deletedNodes = new List<Node>();
-
             AssetDatabase.SaveAssets();
-        }
-
-        /// <summary>
-        /// Creates a folder in the Assets folder
-        /// </summary>
-        /// <param name="folders">Cascading subfolders. For example: "Characters", "Materials"</param>
-        /// <returns>The folder path including the last forward slash (/). For example: Assets/Characters/Materials/</returns>
-        public static string EnsureFolderIsInAssets(params string[] folders)
-        {
-            string completeFolderPath = "Assets";
-            for (int i = 0; i < folders.Length; i++)
-            {
-                if (!AssetDatabase.IsValidFolder(completeFolderPath + "/" + folders[i]))
-                {
-                    AssetDatabase.CreateFolder(completeFolderPath, folders[i]);
-                    UnityEngine.Debug.Log("Folder created: " + completeFolderPath);
-                }
-
-                completeFolderPath += "/" + folders[i];
-            }
-            return completeFolderPath + "/";
         }
 
         public BehaviorTree Clone()

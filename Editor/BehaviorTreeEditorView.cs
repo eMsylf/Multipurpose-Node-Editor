@@ -23,9 +23,9 @@ namespace BobJeltes.NodeEditor
 
         internal override void PopulateView()
         {
-            if (reference == null) behaviorTree = CreateInstance<BehaviorTree>();
-            else behaviorTree = (reference as BehaviorTree).Clone();
-            behaviorTree = reference as BehaviorTree;
+            if (file == null) behaviorTree = CreateInstance<BehaviorTree>();
+            else behaviorTree = (file as BehaviorTree).Clone();
+            behaviorTree = file as BehaviorTree;
             if (behaviorTree == null) behaviorTree = CreateInstance<BehaviorTree>();
             nodeViews = new List<NodeView>();
             
@@ -83,10 +83,8 @@ namespace BobJeltes.NodeEditor
         {
             // Check for unsaved changes
             if (!hasUnsavedChanges) return;
-            // If there is no reference, assign it from the view's behavior tree
-            if (reference == null) reference = behaviorTree;
 
-            // First, add all the nodes to the beheavior tree reference
+            // First, add all the nodes to the working copy behavior tree
             foreach (var nodeView in nodeViews)
             {
                 RootNode root = nodeView.node as RootNode;
@@ -96,15 +94,15 @@ namespace BobJeltes.NodeEditor
                     continue;
                 }
                 // If the node is already added to the behavior tree, copy the data to the node in the tree.
-                Node nodeInTree = reference.nodes.Find(n => n.guid == nodeView.node.guid);
-                if (nodeInTree == null)
+                Node nodeInTreeFile = behaviorTree.nodes.Find(n => n.guid == nodeView.node.guid);
+                if (nodeInTreeFile == null)
                 {
                     // If the node is not yet in the tree, add a clone of it to the tree.
                     behaviorTree.nodes.Add(nodeView.node.Clone());
                 }
                 else
                 {
-                    nodeInTree = nodeView.node;
+                    nodeInTreeFile = nodeView.node;
                 }
             }
 
@@ -145,13 +143,22 @@ namespace BobJeltes.NodeEditor
                 }
             }
 
-            // TODO: Clean up removed nodes
-            // Loop through the nodes that are added to the behavior tree asset.
-            // If the node's GUID is not found in the behavior tree's nodes list, remove it from the asset
-
             UnityEngine.Debug.Log("Nodes saved: " + behaviorTree.nodes.Count);
-            behaviorTree.Save(behaviorTree.name);
+            if (file == null)
+            {
+                string destinationFolder = FileUtility.EnsureFolderIsInAssets("Resources", "Behavior Trees");
+                AssetDatabase.CreateAsset(behaviorTree, destinationFolder + fileName + ".asset");
+            }
+            if (behaviorTree.name.Contains("(Clone)"))
+            {
+                behaviorTree.name = behaviorTree.name.Substring(0, behaviorTree.name.Length - 7);
+            }
+            behaviorTree.Save();
+            file = behaviorTree;
+            
             base.SaveChanges();
+            // Load the behavior tree to prevent working on the file directly.
+            Load(file);
         }
 
         public override bool Load(NodeStructure structure)
@@ -164,19 +171,19 @@ namespace BobJeltes.NodeEditor
             }
 
             // Make a copy of the reference structure
-            BehaviorTree tree = (structure as BehaviorTree).Clone();
+            behaviorTree = (structure as BehaviorTree).Clone();
 
             nodeViews = new List<NodeView>();
             connections = new List<Connection>();
-            UnityEngine.Debug.Log("Found a root node and " + tree.nodes.Count + " nodes");
+            UnityEngine.Debug.Log("Found a root node and " + behaviorTree.nodes.Count + " nodes");
 
             // Create a view for the root node
-            CreateNodeView(tree.Root.Clone(), GetDefaultRootPosition());
+            CreateNodeView(behaviorTree.Root, GetDefaultRootPosition());
 
             // Create node views for every other node
-            foreach (var node in tree.nodes)
+            foreach (var node in behaviorTree.nodes)
             {
-                CreateNodeView(node.Clone());
+                CreateNodeView(node);
             }
 
             // Connect the node views
@@ -205,7 +212,7 @@ namespace BobJeltes.NodeEditor
             }
 
             // Set the reference to the reference file
-            reference = structure;
+            file = structure;
             hasUnsavedChanges = false;
             ClearConnectionSelection();
             return true;
