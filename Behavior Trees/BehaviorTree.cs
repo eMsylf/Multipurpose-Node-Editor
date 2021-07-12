@@ -122,7 +122,7 @@ namespace BobJeltes.AI.BehaviorTree
             }
             else
             {
-                if (string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(root)))
+                if (string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(treeFile.root)))
                 {
                     if (treeFile.root != null)
                     {
@@ -130,6 +130,7 @@ namespace BobJeltes.AI.BehaviorTree
                     }
                     else
                     {
+                        treeFile.root = root;
                         AssetDatabase.AddObjectToAsset(root, treeFile);
                     }
                 }
