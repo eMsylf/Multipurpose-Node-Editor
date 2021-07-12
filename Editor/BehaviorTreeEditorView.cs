@@ -212,6 +212,12 @@ namespace BobJeltes.NodeEditor
             ClearConnectionSelection();
             return true;
         }
+
+        internal override void SelectNode(NodeView nodeView)
+        {
+            base.SelectNode(nodeView);
+            Selection.activeObject = nodeView.node;
+        }
     }
 
     public class NodeViewStyle
