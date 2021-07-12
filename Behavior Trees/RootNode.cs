@@ -14,6 +14,7 @@ namespace BobJeltes.AI.BehaviorTree
 
         public override Node Clone()
         {
+            UnityEngine.Debug.Log("Clone root");
             RootNode node = Instantiate(this);
             node.child = child?.Clone();
             return node;

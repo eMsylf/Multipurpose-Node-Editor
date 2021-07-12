@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,19 +10,7 @@ namespace BobJeltes.AI.BehaviorTree
     public class BehaviorTree : NodeStructure
     {
         public static readonly string baseFolder = "Assets/Resources/Behavior Trees";
-        [SerializeField]
-        private RootNode root;
-        public RootNode Root { 
-            get 
-            {
-                if (root == null) 
-                { 
-                    root = (RootNode)CreateNode(typeof(RootNode)); 
-                } 
-                return root; 
-            }
-            set => root = value;
-        }
+        public RootNode root;
         public Result result = Result.Running;
         public Blackboard blackboard = new Blackboard();
         
@@ -32,7 +21,7 @@ namespace BobJeltes.AI.BehaviorTree
             switch (result)
             {
                 case Result.Running:
-                    result = Root.Update();
+                    result = root.Update();
                     break;
             }
             return result;
@@ -43,14 +32,17 @@ namespace BobJeltes.AI.BehaviorTree
             Node node = CreateInstance(type) as Node;
             node.name = type.Name;
             node.guid = GUID.Generate().ToString();
-            if (type == typeof(RootNode))
-            {
-                Root = (RootNode)node;
-            }
-            else
+            if (type != typeof(RootNode))
             {
                 nodes.Add(node);
             }
+            else
+            {
+                UnityEngine.Debug.Log("Create root node");
+                root = node as RootNode;
+            }
+            EditorUtility.SetDirty(this);
+            AssetDatabase.SaveAssets();
 
             return node;
         }
@@ -61,52 +53,173 @@ namespace BobJeltes.AI.BehaviorTree
             nodes.Remove(node);
         }
 
-        public void Save()
+        public void SaveTo(BehaviorTree treeFile, string name)
         {
-            string rootPath = AssetDatabase.GetAssetPath(Root);
-            if (rootPath == null)
-                AssetDatabase.AddObjectToAsset(Root, this);
+            bool newFile = false;
+            if (treeFile == null)
+            {
+                // Create a new file with a unique asset path
+                if (string.IsNullOrWhiteSpace(name)) name = "New Behavior Tree";
+                string folderPath = FileUtility.EnsureFolderIsInAssets("Resources", "Behavior Trees");
+                string completePath = folderPath + name + ".asset";
+                string uniquePath = AssetDatabase.GenerateUniqueAssetPath(completePath);
+                AssetDatabase.CreateAsset(this, uniquePath);
+                treeFile = this;
+                if (root == null)
+                {
+                    UnityEngine.Debug.LogError("Root is null");
+                }
+                AssetDatabase.AddObjectToAsset(root, treeFile);
+                newFile = true;
+            }
             else
             {
-                // TODO: Apply changes to the existing root node?
-                // OR: Delete old root node and replace?
+                //if (treeFile.root == null)
+                //{
+                //    // TODO: This does not belong here. Move elsewhere
+                //    treeFile.root = (RootNode)CreateNode(typeof(RootNode));
+                //    AssetDatabase.AddObjectToAsset(treeFile.root, treeFile);
+                //}
+                UnityEngine.Debug.Log("Saving to existing file");
             }
 
-            string ownAssetPath = AssetDatabase.GetAssetPath(this);
-            // Go through all of the behavior tree's nodes and add them to the asset if they have not been added yet
-            foreach (var node in nodes)
+            // Clean deleted nodes list
+            for (int i = 0; i < treeFile.deletedNodes.Count; i++)
             {
-                string nodeAssetPath = AssetDatabase.GetAssetPath(node);
-                // Check if the node is already added to the node. If so, do nothing.
-                if (string.IsNullOrWhiteSpace(nodeAssetPath) || !nodeAssetPath.Contains(ownAssetPath))
+                if (treeFile.deletedNodes[i] == null)
                 {
-                    // The node has not been added to the asset, so add it to the asset.
-                    AssetDatabase.AddObjectToAsset(node, this);
-                }
-                else
-                {
-                    UnityEngine.Debug.Log(node.name + " node already added to " + name);
-                    // Node already added to behavior tree.
-
-                    // TODO: Update the node at this path with the data of this one
-
+                    UnityEngine.Debug.LogError("Delete null node at " + i);
+                    treeFile.deletedNodes.RemoveAt(i);
+                    i--;
                 }
             }
 
-            foreach (var nodeAsset in deletedNodes)
+            // Delete node subassets that match deleted nodes
+            foreach (var node in deletedNodes)
             {
-                // If the node asset is present, remove it from the behavior tree asset
-                if (!string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(nodeAsset)))
-                    AssetDatabase.RemoveObjectFromAsset(nodeAsset);
+                // Find the node's GUID among the tree file's nodes
+                Node nodeInFile = treeFile.nodes.Find(n => n.guid == node.guid);
+                if (nodeInFile != null)
+                {
+                    treeFile.DeleteNode(nodeInFile);
+                    // If the tree file has the node object in its asset, remove it
+                    if (AssetDatabase.GetAssetPath(node).Contains(AssetDatabase.GetAssetPath(treeFile)))
+                    {
+                        AssetDatabase.RemoveObjectFromAsset(nodeInFile);
+                    }
+                }
             }
             deletedNodes = new List<Node>();
+            treeFile.deletedNodes = new List<Node>();
+
+            if (newFile)
+            {
+                foreach (var node in nodes)
+                {
+                    AssetDatabase.AddObjectToAsset(node, treeFile);
+                    continue;
+                }
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(root)))
+                {
+                    if (treeFile.root != null)
+                    {
+                        AssetDatabase.AddObjectToAsset(treeFile.root, treeFile);
+                    }
+                    else
+                    {
+                        AssetDatabase.AddObjectToAsset(root, treeFile);
+                    }
+                }
+
+                // Go through all of the behavior tree's nodes and add them to the asset if they have not been added yet
+                foreach (var node in nodes)
+                {
+                    // Try and find a node with the same GUID in the tree file
+                    Node nodeAsset = treeFile.nodes.Find(n => n.guid == node.guid);
+                    if (nodeAsset == null)
+                    {
+                        // If not present, add it to the tree file
+                        treeFile.nodes.Add(node);
+                        AssetDatabase.AddObjectToAsset(node, treeFile);
+                    }
+                }
+            }
+
+            // Match all the nodes with children with the children in the file
+            // First, the root node
+            if (root.GetChild() == null)
+            {
+                treeFile.root.SetChild(null);
+            }
+            else
+            {
+                treeFile.root.SetChild(nodes.Find(n => n.guid == root.GetChild().guid));
+            }
+
+            // Then every other node
+            foreach (Node nodeAsset in treeFile.nodes)
+            {
+                if (nodeAsset.GetType().IsAssignableFrom(typeof(NodeInterfaces.IHasOutPort)))
+                {
+                    // Does not have out port, so has no children.
+                    continue;
+                }
+
+                if (nodeAsset.GetType().IsAssignableFrom(typeof(NodeInterfaces.IMultipleConnection)))
+                {
+                    var multipleChildrenNode = (nodeAsset as NodeInterfaces.IMultipleConnection);
+                    List<Node> childNodes = multipleChildrenNode.GetChildren();
+                    for (int i = 0; i < childNodes.Count; i++)
+                    {
+                        Node childNode = childNodes[i];
+                        Node childNodeInFile = treeFile.nodes.Find(n => n.guid == childNode.guid);
+                        if (childNodeInFile != null)
+                        {
+                            // Override the node reference
+                            childNodes[i] = childNodeInFile;
+                        }
+                        else
+                        {
+                            AssetDatabase.AddObjectToAsset(childNode, treeFile);
+                        }
+                    }
+                    // Order the children by the position on the x axis to enforce left-to-right execution
+                    // TODO: Implement different ordering criterium for left-to-right-oriented trees?
+                    childNodes.OrderBy(n => n.positionOnView.x);
+                }
+                else if (nodeAsset.GetType().IsAssignableFrom(typeof(NodeInterfaces.ISingleConnection)))
+                {
+                    var singleChildNode = (nodeAsset as NodeInterfaces.ISingleConnection);
+                    Node childNode = singleChildNode.GetChild();
+                    Node childNodeInFile = treeFile.nodes.Find(n => n.guid == childNode.guid);
+                    if (childNodeInFile != null)
+                    {
+                        // Override the node reference
+                        singleChildNode.SetChild(childNodeInFile);
+                    }
+                    else
+                    {
+                        AssetDatabase.AddObjectToAsset(childNode, treeFile);
+                    }
+                }
+            }
+
             AssetDatabase.SaveAssets();
+        }
+
+        public void CleanDeletedNodes()
+        {
+
         }
 
         public BehaviorTree Clone()
         {
             BehaviorTree tree = Instantiate(this);
-            tree.Root = (RootNode)tree.Root.Clone();
+            if (tree.root == null) tree.root = (RootNode)CreateNode(typeof(RootNode));
+            tree.root = (RootNode)tree.root.Clone();
             return tree;
         }
     }

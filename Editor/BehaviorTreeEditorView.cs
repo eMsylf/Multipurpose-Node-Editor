@@ -25,13 +25,15 @@ namespace BobJeltes.NodeEditor
         {
             if (file == null) behaviorTree = CreateInstance<BehaviorTree>();
             else behaviorTree = (file as BehaviorTree).Clone();
+
             behaviorTree = file as BehaviorTree;
+
             if (behaviorTree == null) behaviorTree = CreateInstance<BehaviorTree>();
-            nodeViews = new List<NodeView>();
             
-            CreateNodeView(behaviorTree.Root, GetDefaultRootPosition());
-            EditorUtility.SetDirty(behaviorTree);
-            AssetDatabase.SaveAssets();
+            nodeViews = new List<NodeView>();
+
+            if (behaviorTree.root == null) behaviorTree.root = (RootNode)behaviorTree.CreateNode(typeof(RootNode));
+            CreateNodeView(behaviorTree.root, GetDefaultRootPosition());
 
             for (int i = 0; i < behaviorTree.nodes.Count; i++)
             {
@@ -84,28 +86,6 @@ namespace BobJeltes.NodeEditor
             // Check for unsaved changes
             if (!hasUnsavedChanges) return;
 
-            // First, add all the nodes to the working copy behavior tree
-            foreach (var nodeView in nodeViews)
-            {
-                RootNode root = nodeView.node as RootNode;
-                if (root != null)
-                {
-                    behaviorTree.Root = root.Clone() as RootNode;
-                    continue;
-                }
-                // If the node is already added to the behavior tree, copy the data to the node in the tree.
-                Node nodeInTreeFile = behaviorTree.nodes.Find(n => n.guid == nodeView.node.guid);
-                if (nodeInTreeFile == null)
-                {
-                    // If the node is not yet in the tree, add a clone of it to the tree.
-                    behaviorTree.nodes.Add(nodeView.node.Clone());
-                }
-                else
-                {
-                    nodeInTreeFile = nodeView.node;
-                }
-            }
-
             // Secondly, add all the children from connections
             foreach (var nodeView in nodeViews)
             {
@@ -133,8 +113,13 @@ namespace BobJeltes.NodeEditor
                 {
                     // Find all child node views connected through the out port
                     List<Connection> outgoingConnections = connections.FindAll(c => c.outNodeView == nodeView);
+                    UnityEngine.Debug.Log(nodeView.node.name + " has " + outgoingConnections.Count + " outgoing connections");
                     // Get all the child nodes from those connections
-                    if (outgoingConnections.Count != 0)
+                    if (outgoingConnections.Count == 0)
+                    {
+                        singleChildrenNode.SetChild(null);
+                    }
+                    else
                     {
                         List<NodeView> childNodes = outgoingConnections.ConvertAll(c => c.inNodeView);
                         singleChildrenNode.SetChild(behaviorTree.nodes.Find(n => n.guid == childNodes[0].node.guid));
@@ -144,41 +129,53 @@ namespace BobJeltes.NodeEditor
             }
 
             UnityEngine.Debug.Log("Nodes saved: " + behaviorTree.nodes.Count);
-            if (file == null)
+            BehaviorTree btFile = file as BehaviorTree;
+            if (btFile == null)
             {
-                string destinationFolder = FileUtility.EnsureFolderIsInAssets("Resources", "Behavior Trees");
-                AssetDatabase.CreateAsset(behaviorTree, destinationFolder + fileName + ".asset");
+                behaviorTree.SaveTo(btFile, fileName);
+                file = behaviorTree;
             }
+            else
+                behaviorTree.SaveTo(btFile, btFile.name);
+
+
+            // Remove "(Clone)" from name
             if (behaviorTree.name.Contains("(Clone)"))
             {
                 behaviorTree.name = behaviorTree.name.Substring(0, behaviorTree.name.Length - 7);
             }
-            behaviorTree.Save();
-            file = behaviorTree;
+            
             
             base.SaveChanges();
-            // Load the behavior tree to prevent working on the file directly.
-            Load(file);
+            // Load the behavior tree to load a clone of the saved tree, and prevent working on the file directly.
+            Load(btFile);
         }
 
-        public override bool Load(NodeStructure structure)
+        public bool Load(BehaviorTree tree)
         {
             if (!UnsavedChangesCheck()) return false;
-            if (structure == null)
+            if (tree == null)
             {
                 NewFile();
                 return true;
             }
 
+
+            //if (tree.root == null)
+            //{
+            //    tree.root = (RootNode)tree.CreateNode(typeof(RootNode));
+            //    UnityEngine.Debug.Log("Create new root node from load");
+            //}
+
             // Make a copy of the reference structure
-            behaviorTree = (structure as BehaviorTree).Clone();
+            behaviorTree = tree.Clone();
 
             nodeViews = new List<NodeView>();
             connections = new List<Connection>();
             UnityEngine.Debug.Log("Found a root node and " + behaviorTree.nodes.Count + " nodes");
 
             // Create a view for the root node
-            CreateNodeView(behaviorTree.Root, GetDefaultRootPosition());
+            CreateNodeView(behaviorTree.root, GetDefaultRootPosition());
 
             // Create node views for every other node
             foreach (var node in behaviorTree.nodes)
@@ -205,14 +202,19 @@ namespace BobJeltes.NodeEditor
                     Node nodeChild = singleConnectionNode.GetChild();
                     if (nodeChild != null)
                     {
+                        UnityEngine.Debug.Log(nodeView.node + " has a child");
                         CreateConnection(nodeView, nodeViews.Find(x => x.node.guid == nodeChild.guid));
+                    }
+                    else
+                    {
+                        UnityEngine.Debug.Log(nodeView.node + " has no child");
                     }
                     continue;
                 }
             }
 
             // Set the reference to the reference file
-            file = structure;
+            file = tree;
             hasUnsavedChanges = false;
             ClearConnectionSelection();
             return true;

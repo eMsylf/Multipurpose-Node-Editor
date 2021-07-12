@@ -700,7 +700,7 @@ namespace BobJeltes.NodeEditor
         {
             if (nodeViews == null) nodeViews = new List<NodeView>();
             nodeViews.Add(nodeView);
-            Debug.Log("Add node view");
+            //Debug.Log("Add node view");
             if (selectedNodeIn != null &&selectedNodeOut == null)
             {
                 Debug.Log("Has node in selected");
