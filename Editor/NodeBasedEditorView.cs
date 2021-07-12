@@ -947,6 +947,19 @@ namespace BobJeltes.NodeEditor
             selectedNodeIn = null;
             selectedNodeOut = null;
         }
+
+        //public virtual void DrawCustomInspector()
+        //{
+        //    if (SelectedNodes.Count == 0) return;
+        //    Vector2 inspectorSize = new Vector2(400f, this.position.height);
+        //    Vector2 inspectorPosition = new Vector2(this.position.width - inspectorSize.x * .5f, 0f);
+        //    Rect inspectorRect = new Rect(inspectorPosition, inspectorSize);
+        //    GUI.Box(inspectorRect, GUIContent.none);
+        //    foreach (NodeView nodeView in SelectedNodes)
+        //    {
+                
+        //    }
+        //}
         #endregion
     }
 }

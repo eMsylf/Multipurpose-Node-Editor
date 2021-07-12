@@ -151,7 +151,7 @@ namespace BobJeltes.NodeEditor
             Load(btFile);
         }
 
-        public bool Load(BehaviorTree tree)
+        public override bool Load(NodeStructure tree)
         {
             if (!UnsavedChangesCheck()) return false;
             if (tree == null)
@@ -160,15 +160,8 @@ namespace BobJeltes.NodeEditor
                 return true;
             }
 
-
-            //if (tree.root == null)
-            //{
-            //    tree.root = (RootNode)tree.CreateNode(typeof(RootNode));
-            //    UnityEngine.Debug.Log("Create new root node from load");
-            //}
-
             // Make a copy of the reference structure
-            behaviorTree = tree.Clone();
+            behaviorTree = (tree as BehaviorTree).Clone();
 
             nodeViews = new List<NodeView>();
             connections = new List<Connection>();
