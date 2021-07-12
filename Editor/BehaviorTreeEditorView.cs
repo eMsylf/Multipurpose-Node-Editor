@@ -132,11 +132,13 @@ namespace BobJeltes.NodeEditor
             BehaviorTree btFile = file as BehaviorTree;
             if (btFile == null)
             {
-                behaviorTree.SaveTo(btFile, fileName);
-                file = behaviorTree;
+                btFile = behaviorTree.SaveToNew(fileName);
             }
             else
-                behaviorTree.SaveTo(btFile, btFile.name);
+            {
+                behaviorTree.SaveTo(ref btFile);    
+            }
+            file = btFile;
 
 
             // Remove "(Clone)" from name
@@ -148,7 +150,7 @@ namespace BobJeltes.NodeEditor
             
             base.SaveChanges();
             // Load the behavior tree to load a clone of the saved tree, and prevent working on the file directly.
-            Load(btFile);
+            Load(file);
         }
 
         public override bool Load(NodeStructure tree)
@@ -161,7 +163,8 @@ namespace BobJeltes.NodeEditor
             }
 
             // Make a copy of the reference structure
-            behaviorTree = (tree as BehaviorTree).Clone();
+            //behaviorTree = (tree as BehaviorTree).Clone();
+            behaviorTree = ((BehaviorTree)tree).DeepCopy();
 
             nodeViews = new List<NodeView>();
             connections = new List<Connection>();

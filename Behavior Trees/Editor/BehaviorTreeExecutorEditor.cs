@@ -18,7 +18,7 @@ namespace BobJeltes.NodeEditor
                 if (treeExecutor.tree == null)
                 {
                     treeExecutor.tree = CreateInstance<BehaviorTree>();
-                    treeExecutor.tree.SaveTo(null, "Behavior Tree");
+                    treeExecutor.tree.SaveToNew("Behavior Tree");
                 }
                 BehaviorTreeEditorView.OpenBehaviorTreeWindow().Load(treeExecutor.tree);
             }

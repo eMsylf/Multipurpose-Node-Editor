@@ -53,36 +53,36 @@ namespace BobJeltes.AI.BehaviorTree
             nodes.Remove(node);
         }
 
-        public void SaveTo(BehaviorTree treeFile, string name)
+        public BehaviorTree SaveToNew(string name)
         {
-            bool newFile = false;
-            if (treeFile == null)
+            BehaviorTree treeFile;
+
+            // Create a new file with a unique asset path
+            if (string.IsNullOrWhiteSpace(name)) name = "New Behavior Tree";
+            string folderPath = FileUtility.EnsureFolderIsInAssets("Resources", "Behavior Trees");
+            string completePath = folderPath + name + ".asset";
+            string uniquePath = AssetDatabase.GenerateUniqueAssetPath(completePath);
+            AssetDatabase.CreateAsset(this, uniquePath);
+            EditorUtility.SetDirty(this);
+            treeFile = this;
+            if (root == null)
             {
-                // Create a new file with a unique asset path
-                if (string.IsNullOrWhiteSpace(name)) name = "New Behavior Tree";
-                string folderPath = FileUtility.EnsureFolderIsInAssets("Resources", "Behavior Trees");
-                string completePath = folderPath + name + ".asset";
-                string uniquePath = AssetDatabase.GenerateUniqueAssetPath(completePath);
-                AssetDatabase.CreateAsset(this, uniquePath);
-                treeFile = this;
-                if (root == null)
-                {
-                    UnityEngine.Debug.LogError("Root is null");
-                }
-                AssetDatabase.AddObjectToAsset(root, treeFile);
-                newFile = true;
+                UnityEngine.Debug.LogError("Root is null");
             }
-            else
+            AssetDatabase.AddObjectToAsset(root, treeFile);
+
+            foreach (var node in nodes)
             {
-                //if (treeFile.root == null)
-                //{
-                //    // TODO: This does not belong here. Move elsewhere
-                //    treeFile.root = (RootNode)CreateNode(typeof(RootNode));
-                //    AssetDatabase.AddObjectToAsset(treeFile.root, treeFile);
-                //}
-                UnityEngine.Debug.Log("Saving to existing file");
+                AssetDatabase.AddObjectToAsset(node, treeFile);
+                continue;
             }
 
+            SaveTo(ref treeFile);
+            return treeFile;
+        }
+
+        public void SaveTo(ref BehaviorTree treeFile)
+        {
             // Clean deleted nodes list
             for (int i = 0; i < treeFile.deletedNodes.Count; i++)
             {
@@ -112,40 +112,34 @@ namespace BobJeltes.AI.BehaviorTree
             deletedNodes = new List<Node>();
             treeFile.deletedNodes = new List<Node>();
 
-            if (newFile)
+            if (string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(treeFile.root)))
             {
-                foreach (var node in nodes)
+                if (treeFile.root != null)
                 {
-                    AssetDatabase.AddObjectToAsset(node, treeFile);
-                    continue;
+                    AssetDatabase.AddObjectToAsset(treeFile.root, treeFile);
+                }
+                else
+                {
+                    treeFile.root = root;
+                    AssetDatabase.AddObjectToAsset(root, treeFile);
                 }
             }
-            else
-            {
-                if (string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(treeFile.root)))
-                {
-                    if (treeFile.root != null)
-                    {
-                        AssetDatabase.AddObjectToAsset(treeFile.root, treeFile);
-                    }
-                    else
-                    {
-                        treeFile.root = root;
-                        AssetDatabase.AddObjectToAsset(root, treeFile);
-                    }
-                }
 
-                // Go through all of the behavior tree's nodes and add them to the asset if they have not been added yet
-                foreach (var node in nodes)
+            // Go through all of the behavior tree's nodes and add them to the asset if they have not been added yet
+            foreach (var node in nodes)
+            {
+                // Try and find a node with the same GUID in the tree file
+                Node nodeAsset = treeFile.nodes.Find(n => n.guid == node.guid);
+                if (nodeAsset == null)
                 {
-                    // Try and find a node with the same GUID in the tree file
-                    Node nodeAsset = treeFile.nodes.Find(n => n.guid == node.guid);
-                    if (nodeAsset == null)
-                    {
-                        // If not present, add it to the tree file
-                        treeFile.nodes.Add(node);
-                        AssetDatabase.AddObjectToAsset(node, treeFile);
-                    }
+                    // If not present, add it to the tree file
+                    treeFile.nodes.Add(node);
+                    AssetDatabase.AddObjectToAsset(node, treeFile);
+                }
+                else
+                {
+                    // If present, update
+                    nodeAsset = node.Clone();
                 }
             }
 
@@ -221,6 +215,14 @@ namespace BobJeltes.AI.BehaviorTree
             BehaviorTree tree = Instantiate(this);
             if (tree.root == null) tree.root = (RootNode)CreateNode(typeof(RootNode));
             tree.root = (RootNode)tree.root.Clone();
+            return tree;
+        }
+
+        public BehaviorTree DeepCopy()
+        {
+            BehaviorTree tree = Instantiate(this);
+            tree.root = (RootNode)tree.root.Clone();
+            tree.nodes = tree.nodes.ConvertAll(n => n.Clone());
             return tree;
         }
     }
