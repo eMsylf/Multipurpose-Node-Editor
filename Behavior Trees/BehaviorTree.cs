@@ -112,6 +112,7 @@ namespace BobJeltes.AI.BehaviorTree
             deletedNodes = new List<Node>();
             treeFile.deletedNodes = new List<Node>();
 
+            // Create a root node if not yet present. Update it if there is
             if (string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(treeFile.root)))
             {
                 if (treeFile.root != null)
@@ -120,17 +121,18 @@ namespace BobJeltes.AI.BehaviorTree
                 }
                 else
                 {
-                    treeFile.root = root;
                     AssetDatabase.AddObjectToAsset(root, treeFile);
                 }
             }
+
+            treeFile.root.CopyData(root);
 
             // Go through all of the behavior tree's nodes and add them to the asset if they have not been added yet
             foreach (var node in nodes)
             {
                 // Try and find a node with the same GUID in the tree file
-                Node nodeAsset = treeFile.nodes.Find(n => n.guid == node.guid);
-                if (nodeAsset == null)
+                int nodeIndex = treeFile.nodes.FindIndex(n => n.guid == node.guid);
+                if (nodeIndex == -1)
                 {
                     // If not present, add it to the tree file
                     treeFile.nodes.Add(node);
@@ -139,33 +141,21 @@ namespace BobJeltes.AI.BehaviorTree
                 else
                 {
                     // If present, update
-                    nodeAsset = node.Clone();
+                    treeFile.nodes[nodeIndex].CopyData(node);
                 }
             }
 
             // Match all the nodes with children with the children in the file
             // First, the root node
-            if (root.GetChild() == null)
-            {
-                treeFile.root.SetChild(null);
-            }
-            else
-            {
-                treeFile.root.SetChild(nodes.Find(n => n.guid == root.GetChild().guid));
-            }
+            if (root.GetChild() == null) treeFile.root.SetChild(null);
+            else treeFile.root.SetChild(treeFile.nodes.Find(n => n.guid == root.GetChild().guid));
 
             // Then every other node
             foreach (Node nodeAsset in treeFile.nodes)
             {
-                if (nodeAsset.GetType().IsAssignableFrom(typeof(NodeInterfaces.IHasOutPort)))
+                var multipleChildrenNode = nodeAsset as NodeInterfaces.IMultipleConnection;
+                if (multipleChildrenNode != null)
                 {
-                    // Does not have out port, so has no children.
-                    continue;
-                }
-
-                if (nodeAsset.GetType().IsAssignableFrom(typeof(NodeInterfaces.IMultipleConnection)))
-                {
-                    var multipleChildrenNode = (nodeAsset as NodeInterfaces.IMultipleConnection);
                     List<Node> childNodes = multipleChildrenNode.GetChildren();
                     for (int i = 0; i < childNodes.Count; i++)
                     {
@@ -184,11 +174,13 @@ namespace BobJeltes.AI.BehaviorTree
                     // Order the children by the position on the x axis to enforce left-to-right execution
                     // TODO: Implement different ordering criterium for left-to-right-oriented trees?
                     childNodes.OrderBy(n => n.positionOnView.x);
+                    continue;
                 }
-                else if (nodeAsset.GetType().IsAssignableFrom(typeof(NodeInterfaces.ISingleConnection)))
+                var singleChildNode = nodeAsset as NodeInterfaces.ISingleConnection;
+                if (singleChildNode != null)
                 {
-                    var singleChildNode = (nodeAsset as NodeInterfaces.ISingleConnection);
                     Node childNode = singleChildNode.GetChild();
+                    if (childNode == null) continue;
                     Node childNodeInFile = treeFile.nodes.Find(n => n.guid == childNode.guid);
                     if (childNodeInFile != null)
                     {
@@ -205,24 +197,15 @@ namespace BobJeltes.AI.BehaviorTree
             AssetDatabase.SaveAssets();
         }
 
-        public void CleanDeletedNodes()
-        {
-
-        }
-
         public BehaviorTree Clone()
         {
             BehaviorTree tree = Instantiate(this);
+            for (int i = 0; i < tree.nodes.Count; i++)
+            {
+                tree.nodes[i] = tree.nodes[i].Clone();
+            }
             if (tree.root == null) tree.root = (RootNode)CreateNode(typeof(RootNode));
             tree.root = (RootNode)tree.root.Clone();
-            return tree;
-        }
-
-        public BehaviorTree DeepCopy()
-        {
-            BehaviorTree tree = Instantiate(this);
-            tree.root = (RootNode)tree.root.Clone();
-            tree.nodes = tree.nodes.ConvertAll(n => n.Clone());
             return tree;
         }
     }

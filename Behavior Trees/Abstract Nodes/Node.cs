@@ -31,9 +31,15 @@ namespace BobJeltes.AI.BehaviorTree
             }
             return result;
         }
+        
         public virtual Node Clone()
         {
             return Instantiate(this);
+        }
+
+        public virtual void CopyData(Node source)
+        {
+            positionOnView = source.positionOnView;
         }
     }
 

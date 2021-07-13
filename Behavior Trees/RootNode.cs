@@ -39,5 +39,11 @@ namespace BobJeltes.AI.BehaviorTree
         {
             return child;
         }
+
+        public override void CopyData(Node source)
+        {
+            child = ((RootNode)source).child;
+            base.CopyData(source);
+        }
     }
 }

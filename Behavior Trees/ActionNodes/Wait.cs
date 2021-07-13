@@ -26,5 +26,11 @@ namespace BobJeltes.AI.BehaviorTree
                 return Result.Success;
             return Result.Running;
         }
+
+        public override void CopyData(Node source)
+        {
+            duration = ((Wait)source).duration;
+            base.CopyData(source);
+        }
     }
 }
