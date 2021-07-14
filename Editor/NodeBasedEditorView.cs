@@ -22,9 +22,9 @@ namespace BobJeltes.NodeEditor
         private const int toolbarButtonWidth = 40;
         private Rect toolbarToggle = new Rect(0, 0, 20, 20);
         private Rect toolbarToggleActive = new Rect(0, 20, 20, 20);
-        private bool showSettings;
-        private float toolbarSettingsHeight = EditorGUIUtility.singleLineHeight;
-        private float toolbarSettingsWidth = 200;
+        //private bool showSettings;
+        //private float toolbarSettingsHeight = EditorGUIUtility.singleLineHeight;
+        //private float toolbarSettingsWidth = 200;
         private GUIStyle toolbarSettingsStyle = new GUIStyle();
 
         public NodeStructure file;
@@ -48,11 +48,11 @@ namespace BobJeltes.NodeEditor
         private Vector2 drag;
 
         private float zoom = 1f;
-        private float zoomMin = .5f;
-        private float zoomMax = 2f;
+        //private float zoomMin = .5f;
+        //private float zoomMax = 2f;
 
-        private bool drawingSelectionRect = false;
-        private Rect selectionRect;
+        //private bool drawingSelectionRect = false;
+        //private Rect selectionRect;
         private GUIStyle selectionRectStyle;
 
         private Color gridSmallColor = new Color(.5f, .5f, .5f, .2f);
@@ -513,7 +513,7 @@ namespace BobJeltes.NodeEditor
                     }
                     break;
                 case EventType.MouseUp:
-                    drawingSelectionRect = false;
+                    //drawingSelectionRect = false;
                     break;
                 // TODO: make zoom affect nodes
                 //case EventType.ScrollWheel:
