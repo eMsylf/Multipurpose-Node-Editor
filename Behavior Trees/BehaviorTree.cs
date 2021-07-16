@@ -12,9 +12,19 @@ namespace BobJeltes.AI.BehaviorTree
         public static readonly string baseFolder = "Assets/Resources/Behavior Trees";
         public RootNode root;
         public Result result = Result.Running;
+        [Tooltip("Use this to manually edit your blackboard variables")]
         public Blackboard blackboard = new Blackboard();
-        
-        public List<Node> deletedNodes = new List<Node>();
+        public void AddVariable(Type type)
+        {
+            blackboard.AddVariable(type);
+            EditorUtility.SetDirty(this);
+        }
+        public void RemoveVariable<T>(TypedVariable<T> variable)
+        {
+            EditorUtility.SetDirty(this);
+        }
+
+        private List<Node> deletedNodes = new List<Node>();
 
         public Result Update()
         {

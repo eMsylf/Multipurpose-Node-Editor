@@ -1,34 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Reflection;
+using System.Reflection.Emit;
 
 namespace BobJeltes.AI.BehaviorTree
 {
     [Serializable]
-    public class Variable
+    public abstract class Variable
     {
         public string name = "New property";
-        [Variable]
-        public UnityEngine.Object value;
-        public Type variableType;
         public Variable()
         {
 
         }
 
-        public static Variable Create(Type type)
-        {
-            Variable variable = new Variable();
-            variable.variableType = type;
-            return variable;
-        }
+        //public static Variable Create(Type type)
+        //{
+        //    Variable variable = new Variable();
+        //    TypeCode typeCode = System.Type.GetTypeCode(type);
+        //    //Create<typeCode>();
+        //    return variable;
+        //}
 
-        public static T Create<T>() where T: UnityEngine.Object
+        public static TypedVariable<T> Create<T>()
         {
-            Variable variable = new Variable();
-            variable.variableType = typeof(T);
-            return variable as T;
+            TypedVariable<T> variable = new TypedVariable<T>();
+            return variable;
         }
     }
 }
