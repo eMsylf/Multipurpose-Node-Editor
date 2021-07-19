@@ -16,6 +16,7 @@ namespace BobJeltes.AI.BehaviorTree
         public Blackboard blackboard = new Blackboard();
         public void AddVariable(Type type)
         {
+            Undo.RecordObject(this, "Add variable");
             blackboard.AddVariable(type);
             EditorUtility.SetDirty(this);
         }

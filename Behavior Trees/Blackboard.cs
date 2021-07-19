@@ -7,7 +7,6 @@ namespace BobJeltes.AI.BehaviorTree
     [Serializable]
     public class Blackboard
     {
-        [Header("Use this to manually edit your variables")]
         public List<TypedVariable<bool>> bools = new List<TypedVariable<bool>>();
         public List<TypedVariable<int>> ints = new List<TypedVariable<int>>();
         public List<TypedVariable<float>> floats = new List<TypedVariable<float>>();
@@ -20,7 +19,8 @@ namespace BobJeltes.AI.BehaviorTree
         public List<TypedVariable<Vector3Int>> Vector3Ints = new List<TypedVariable<Vector3Int>>();
         public List<TypedVariable<GameObject>> GameObjects = new List<TypedVariable<GameObject>>();
 
-        public List<Variable> masterList = new List<Variable>();
+        //[Header("Use this to manually edit and reorder your variables")]
+        public List<Variable> masterList;
 
         public void AddVariable(Type type)
         {
@@ -82,12 +82,22 @@ namespace BobJeltes.AI.BehaviorTree
             }
 
             if (createdVariable != null)
+            {
+                if (masterList == null) masterList = new List<Variable>();
                 masterList.Add(createdVariable);
+            }
         }
 
         public void RemoveVariable<T>(TypedVariable<T> variable)
         {
-            throw new System.NotImplementedException();
+            switch (variable)
+            {
+                case TypedVariable<bool> boolVar:
+                    bools.Remove(boolVar);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

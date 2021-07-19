@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 namespace BobJeltes.AI.BehaviorTree
 {
     [Serializable]
-    public abstract class Variable
+    public class Variable
     {
         public string name = "New property";
         public Variable()
