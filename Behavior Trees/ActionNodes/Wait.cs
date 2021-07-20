@@ -20,7 +20,7 @@ namespace BobJeltes.AI.BehaviorTree
 
         }
 
-        public override Result OnUpdate()
+        public override Result OnUpdate(BehaviorTreeExecutor behaviorTreeExecutor)
         {
             if (Time.time - startTime > duration)
                 return Result.Success;

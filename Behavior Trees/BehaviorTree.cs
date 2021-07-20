@@ -27,12 +27,12 @@ namespace BobJeltes.AI.BehaviorTree
 
         private List<Node> deletedNodes = new List<Node>();
 
-        public Result Update()
+        public Result BTUpdate(BehaviorTreeExecutor behaviorTreeExecutor)
         {
             switch (result)
             {
                 case Result.Running:
-                    result = root.Update();
+                    result = root.BTUpdate(behaviorTreeExecutor);
                     break;
             }
             return result;

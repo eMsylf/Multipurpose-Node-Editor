@@ -23,7 +23,7 @@ namespace BobJeltes.AI.BehaviorTree
 
         void Update()
         {
-            tree?.Update();
+            tree?.BTUpdate(this);
         }
 
         [ContextMenu("Open behavior tree editor")]

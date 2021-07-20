@@ -13,8 +13,8 @@ namespace BobJeltes.AI.BehaviorTree
 
         public abstract void OnStart();
         public abstract void OnStop();
-        public abstract Result OnUpdate();
-        public Result Update()
+        public abstract Result OnUpdate(BehaviorTreeExecutor behaviorTreeExecutor);
+        public Result BTUpdate(BehaviorTreeExecutor behaviorTreeExecutor)
         {
             if (!started)
             {
@@ -22,7 +22,7 @@ namespace BobJeltes.AI.BehaviorTree
                 started = true;
             }
 
-            result = OnUpdate();
+            result = OnUpdate(behaviorTreeExecutor);
 
             if (result == Result.Failure || result == Result.Success)
             {

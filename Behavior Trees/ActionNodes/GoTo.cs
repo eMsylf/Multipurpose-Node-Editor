@@ -15,7 +15,7 @@ public class GoTo : ActionNode
         
     }
 
-    public override Result OnUpdate()
+    public override Result OnUpdate(BehaviorTreeExecutor behaviorTreeExecutor)
     {
         return Result.Success;
     }

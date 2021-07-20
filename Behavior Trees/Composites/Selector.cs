@@ -12,11 +12,11 @@ namespace BobJeltes.AI.BehaviorTree
 
         }
 
-        public override Result OnUpdate()
+        public override Result OnUpdate(BehaviorTreeExecutor behaviorTreeExecutor)
         {
             for (; i < children.Count; i++)
             {
-                Result result = children[i].Update();
+                Result result = children[i].BTUpdate(behaviorTreeExecutor);
                 switch (result)
                 {
                     case Result.Success:

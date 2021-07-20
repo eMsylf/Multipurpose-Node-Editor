@@ -4,8 +4,10 @@ using UnityEngine;
 
 namespace BobJeltes.AI.BehaviorTree
 {
-    public class Invertor : Decorator
+    public class ObjectInRange : ActionNode
     {
+        public GameObject Object;
+        public float range;
         public override void OnStart()
         {
         }
@@ -16,16 +18,13 @@ namespace BobJeltes.AI.BehaviorTree
 
         public override Result OnUpdate(BehaviorTreeExecutor behaviorTreeExecutor)
         {
-            switch (child.result)
+            float distance = Vector3.Distance(behaviorTreeExecutor.transform.position, Object.transform.position);
+            UnityEngine.Debug.Log(distance);
+            if (range <= distance)
             {
-                case Result.Success:
-                    return Result.Failure;
-                case Result.Failure:
-                    return Result.Success;
-                case Result.Running:
-                    break;
+                return Result.Success;
             }
-            return Result.Running;
+            return Result.Failure;
         }
     }
 }

@@ -18,7 +18,7 @@ namespace BobJeltes.AI.BehaviorTree
             UnityEngine.Debug.Log("Stop: " + message);
         }
 
-        public override Result OnUpdate()
+        public override Result OnUpdate(BehaviorTreeExecutor behaviorTreeExecutor)
         {
             UnityEngine.Debug.Log("Update: " + message);
             return Result.Success;
