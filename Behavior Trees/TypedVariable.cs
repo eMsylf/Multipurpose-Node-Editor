@@ -11,9 +11,10 @@ namespace BobJeltes.AI.BehaviorTree
     {
         public T value;
 
-        public TypedVariable()
+        public TypedVariable(int id)
         {
             name = "New " + typeof(T).Name;
+            this.id = id;
         }
     }
 }

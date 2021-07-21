@@ -12,8 +12,8 @@ namespace BobJeltes.AI.BehaviorTree
         private void OnValidate()
         {
             if (tree == null) blackboard = new Blackboard();
-            else blackboard = tree.blackboard;
-            UnityEngine.Debug.Log("Validate");
+            if (blackboard != tree.blackboard)
+                blackboard = tree.blackboard;
         }
 
         void Start()

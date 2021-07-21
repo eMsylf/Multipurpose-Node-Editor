@@ -129,7 +129,7 @@ public class BehaviorTreeInspector : Editor
             if (GUILayout.Button("-", GUILayout.Width(17f)))
             {
                 Undo.RecordObject(target, "Remove variable");
-                typedVariables.RemoveAt(i);
+                (target as BehaviorTree).RemoveVariable(typedVariables[i]);
                 i--;
             }
             else

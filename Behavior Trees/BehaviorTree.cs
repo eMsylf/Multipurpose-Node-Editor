@@ -22,6 +22,8 @@ namespace BobJeltes.AI.BehaviorTree
         }
         public void RemoveVariable<T>(TypedVariable<T> variable)
         {
+            Undo.RecordObject(this, "Remove variable");
+            blackboard.RemoveVariable(variable);
             EditorUtility.SetDirty(this);
         }
 
