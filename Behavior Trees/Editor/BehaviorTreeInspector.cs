@@ -57,7 +57,22 @@ public class BehaviorTreeInspector : Editor
     public void DrawVariables()
     {
         BehaviorTree tree = (target as BehaviorTree);
-        editNames = EditorGUILayout.ToggleLeft("Edit names", editNames);
+        if (editNames)
+        {
+            if (GUILayout.Button("Save names"))
+            {
+                editNames = false;
+                EditorUtility.SetDirty(target);
+                AssetDatabase.SaveAssets();
+            }
+        }
+        else
+        {
+            if (GUILayout.Button("Edit names"))
+            {
+                editNames = true;
+            }
+        }
         //DrawPropertiesForEach(tree.blackboard.masterList);
         DrawPropertiesForEach(tree.blackboard.bools);
         DrawPropertiesForEach(tree.blackboard.ints);
