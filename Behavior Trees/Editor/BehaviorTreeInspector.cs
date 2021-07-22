@@ -163,41 +163,41 @@ public class BehaviorTreeInspector : Editor
             label = variable.name;
             if (string.IsNullOrEmpty(label)) label = " ";
         }
-        EditorGUILayout.PrefixLabel(label);
+        //EditorGUILayout.PrefixLabel(label);
         switch (variable)
         {
             case TypedVariable<int> intVar:
-                intVar.value = EditorGUILayout.IntField(intVar.value);
+                intVar.value = EditorGUILayout.IntField(label, intVar.value);
                 break;
             case TypedVariable<bool> boolVar:
-                boolVar.value = EditorGUILayout.Toggle(boolVar.value);
+                boolVar.value = EditorGUILayout.Toggle(label, boolVar.value);
                 break;
             case TypedVariable<float> floatVar:
-                floatVar.value = EditorGUILayout.FloatField(floatVar.value);
+                floatVar.value = EditorGUILayout.FloatField(label, floatVar.value);
                 break;
             case TypedVariable<string> stringVar:
-                stringVar.value = EditorGUILayout.TextField(stringVar.value);
+                stringVar.value = EditorGUILayout.TextField(label, stringVar.value);
                 break;
             case TypedVariable<Color> colorVar:
-                colorVar.value = EditorGUILayout.ColorField(colorVar.value);
+                colorVar.value = EditorGUILayout.ColorField(label, colorVar.value);
                 break;
             case TypedVariable<Vector2> vector2Var:
-                vector2Var.value = EditorGUILayout.Vector2Field("", vector2Var.value);
+                vector2Var.value = EditorGUILayout.Vector2Field(label, vector2Var.value);
                 break;
             case TypedVariable<Vector3> vector3Var:
-                vector3Var.value = EditorGUILayout.Vector3Field("", vector3Var.value);
+                vector3Var.value = EditorGUILayout.Vector3Field(label, vector3Var.value);
                 break;
             case TypedVariable<Vector4> vector4Var:
-                vector4Var.value = EditorGUILayout.Vector4Field("", vector4Var.value);
+                vector4Var.value = EditorGUILayout.Vector4Field(label, vector4Var.value);
                 break;
             case TypedVariable<Vector2Int> vectorInt2Var:
-                vectorInt2Var.value = EditorGUILayout.Vector2IntField("", vectorInt2Var.value);
+                vectorInt2Var.value = EditorGUILayout.Vector2IntField(label, vectorInt2Var.value);
                 break;
             case TypedVariable<Vector3Int> vectorInt3Var:
-                vectorInt3Var.value = EditorGUILayout.Vector3IntField("", vectorInt3Var.value);
+                vectorInt3Var.value = EditorGUILayout.Vector3IntField(label, vectorInt3Var.value);
                 break;
             case TypedVariable<GameObject> gameObjectVar:
-                gameObjectVar.value = (GameObject)EditorGUILayout.ObjectField(gameObjectVar.value, typeof(GameObject), true);
+                gameObjectVar.value = (GameObject)EditorGUILayout.ObjectField(label, gameObjectVar.value, typeof(GameObject), true);
                 break;
         }
     }

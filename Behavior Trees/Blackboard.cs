@@ -99,7 +99,14 @@ namespace BobJeltes.AI.BehaviorTree
 
         public Variable GetVariable(int id)
         {
-            return masterList.Find(x => x.id == id);
+            return masterList.Find(x => x.ID == id);
+        }
+
+        public GameObject GetGameObjectVariable(int id)
+        {
+            var variable = GameObjects.Find(x => x.ID == id);
+            if (variable == null) return null;
+            return variable.value;
         }
 
         public void RemoveVariable<T>(TypedVariable<T> variable)

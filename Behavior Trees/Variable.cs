@@ -7,19 +7,12 @@ namespace BobJeltes.AI.BehaviorTree
     public class Variable
     {
         public string name = "New property";
-        public int id;
+        private int id;
+        public int ID { get => id; set => id = value; }
         public Variable()
         {
 
         }
-
-        //public static Variable Create(Type type)
-        //{
-        //    Variable variable = new Variable();
-        //    TypeCode typeCode = System.Type.GetTypeCode(type);
-        //    //Create<typeCode>();
-        //    return variable;
-        //}
 
         public static TypedVariable<T> Create<T>(int id)
         {

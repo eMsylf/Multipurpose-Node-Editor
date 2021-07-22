@@ -7,7 +7,7 @@ namespace BobJeltes.AI.BehaviorTree
     public class ObjectInRange : ActionNode
     {
         public int objectID;
-        public float range;
+        public float range = 1f;
         public override void OnStart()
         {
         }
@@ -18,10 +18,9 @@ namespace BobJeltes.AI.BehaviorTree
 
         public override Result OnUpdate(BehaviorTreeExecutor behaviorTreeExecutor)
         {
-            TypedVariable<GameObject> obj = (TypedVariable<GameObject>)behaviorTreeExecutor.blackboard.GetVariable(objectID);
-            float distance = Vector3.Distance(behaviorTreeExecutor.transform.position, obj.value.transform.position);
-            UnityEngine.Debug.Log(distance);
-            if (range <= distance)
+            GameObject obj = behaviorTreeExecutor.tree.blackboard.GetGameObjectVariable(objectID);
+            float distance = Vector3.Distance(behaviorTreeExecutor.transform.position, obj.transform.position);
+            if (distance <= range)
             {
                 return Result.Success;
             }
