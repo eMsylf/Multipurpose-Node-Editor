@@ -31,6 +31,28 @@ namespace BobJeltes.AI.BehaviorTree
             return value;
         }
 
+        public Blackboard()
+        {
+
+        }
+
+        public Blackboard(Blackboard original)
+        {
+            Blackboard clone = (Blackboard)original.MemberwiseClone();
+            bools = clone.bools;
+            ints = clone.ints;
+            floats = clone.floats;
+            strings = clone.strings;
+            Colors = clone.Colors;
+            Vector2s = clone.Vector2s;
+            Vector3s = clone.Vector3s;
+            Vector4s = clone.Vector4s;
+            Vector2Ints = clone.Vector2Ints;
+            Vector3Ints = clone.Vector3Ints;
+            GameObjects = clone.GameObjects;
+            masterList = clone.masterList;
+        }
+
         public void AddVariable(Type type)
         {
             Variable createdVariable = null;

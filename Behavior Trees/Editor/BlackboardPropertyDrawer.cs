@@ -5,7 +5,7 @@ using UnityEditor;
 
 namespace BobJeltes.AI.BehaviorTree
 {
-    [CustomPropertyDrawer(typeof(Blackboard))]
+    //[CustomPropertyDrawer(typeof(Blackboard))]
     public class BlackboardPropertyDrawer : PropertyDrawer
     {
         bool fold = false;

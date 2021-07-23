@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace BobJeltes.AI.BehaviorTree
 {
-    public class ObjectInRange : ActionNode
+    public class CanSeeObject : ActionNode
     {
         public int objectID;
-        public float range = 1f;
+
         public override void OnStart()
         {
         }
@@ -19,12 +19,11 @@ namespace BobJeltes.AI.BehaviorTree
         public override Result OnUpdate(BehaviorTreeExecutor behaviorTreeExecutor)
         {
             GameObject obj = behaviorTreeExecutor.blackboardInstanceCopy.GetGameObjectVariable(objectID);
-            float distance = Vector3.Distance(behaviorTreeExecutor.transform.position, obj.transform.position);
-            if (distance <= range)
+            if (Physics.Linecast(behaviorTreeExecutor.transform.position, obj.transform.position))
             {
-                return Result.Success;
+                return Result.Failure;
             }
-            return Result.Failure;
+            return Result.Success;
         }
     }
 }

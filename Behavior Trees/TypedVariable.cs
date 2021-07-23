@@ -16,5 +16,15 @@ namespace BobJeltes.AI.BehaviorTree
             name = "New " + typeof(T).Name;
             this.ID = id;
         }
+
+        public static TypedVariable<T> CopyData(TypedVariable<T> typedVariable)
+        {
+            TypedVariable<T> newVariable = new TypedVariable<T>(typedVariable.ID)
+            {
+                name = typedVariable.name,
+                value = typedVariable.value
+            };
+            return newVariable;
+        }
     }
 }

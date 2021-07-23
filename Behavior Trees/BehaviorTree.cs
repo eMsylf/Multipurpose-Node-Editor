@@ -19,12 +19,14 @@ namespace BobJeltes.AI.BehaviorTree
             Undo.RecordObject(this, "Add variable");
             blackboard.AddVariable(type);
             EditorUtility.SetDirty(this);
+            OnBehaviorTreeAltered?.Invoke();
         }
         public void RemoveVariable<T>(TypedVariable<T> variable)
         {
             Undo.RecordObject(this, "Remove variable");
             blackboard.RemoveVariable(variable);
             EditorUtility.SetDirty(this);
+            OnBehaviorTreeAltered?.Invoke();
         }
 
         private List<Node> deletedNodes = new List<Node>();
@@ -56,6 +58,7 @@ namespace BobJeltes.AI.BehaviorTree
             }
             EditorUtility.SetDirty(this);
             AssetDatabase.SaveAssets();
+            OnBehaviorTreeAltered?.Invoke();
 
             return node;
         }
@@ -64,6 +67,7 @@ namespace BobJeltes.AI.BehaviorTree
         {
             deletedNodes.Add(node);
             nodes.Remove(node);
+            OnBehaviorTreeAltered?.Invoke();
         }
 
         public BehaviorTree SaveToNew(string name)
@@ -206,8 +210,8 @@ namespace BobJeltes.AI.BehaviorTree
                     }
                 }
             }
-
             AssetDatabase.SaveAssets();
+            OnBehaviorTreeAltered?.Invoke();
         }
 
         public BehaviorTree Clone()
@@ -221,5 +225,7 @@ namespace BobJeltes.AI.BehaviorTree
             tree.root = (RootNode)tree.root.Clone();
             return tree;
         }
+
+        public Action OnBehaviorTreeAltered;
     }
 }

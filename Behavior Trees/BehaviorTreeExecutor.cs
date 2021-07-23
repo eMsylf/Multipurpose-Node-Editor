@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,13 +8,10 @@ namespace BobJeltes.AI.BehaviorTree
     public class BehaviorTreeExecutor : MonoBehaviour
     {
         public BehaviorTree tree;
-        //public Blackboard blackboard = new Blackboard();
+        public Blackboard blackboardInstanceCopy;
 
         private void OnValidate()
         {
-            //if (tree == null) blackboard = new Blackboard();
-            //if (blackboard != tree.blackboard)
-            //    blackboard = tree.blackboard;
         }
 
         void Start()
@@ -30,6 +28,20 @@ namespace BobJeltes.AI.BehaviorTree
         public void OpenBehaviorTreeEditor()
         {
             UnityEngine.Debug.Log("Open behavior tree editor");
+        }
+
+        public List<GameObject> sceneObjects = new List<GameObject>();
+        public void RebuildInstanceOverrideList()
+        {
+            UnityEngine.Debug.Log("Rebuild", this);
+            if (tree == null)
+            {
+                UnityEngine.Debug.Log("Tree is null");
+                blackboardInstanceCopy = new Blackboard();
+                return;
+            }
+
+            blackboardInstanceCopy = new Blackboard(tree.blackboard);
         }
     }
 }

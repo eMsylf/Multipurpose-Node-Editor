@@ -7,7 +7,7 @@ namespace BobJeltes.AI.BehaviorTree
     public class Variable
     {
         public string name = "New property";
-        private int id;
+        public int id;
         public int ID { get => id; set => id = value; }
         public Variable()
         {
