@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BobJeltes.AI.BehaviorTree
 {
@@ -11,6 +12,7 @@ namespace BobJeltes.AI.BehaviorTree
         public void AddChild(Node node)
         {
             children.Add(node);
+            children = children.OrderBy(x => x.positionOnView.x).ToList();
         }
 
         public override Node Clone()
@@ -32,7 +34,7 @@ namespace BobJeltes.AI.BehaviorTree
 
         public void SetChildren(List<Node> nodes)
         {
-            children = nodes;
+            children = nodes.OrderBy(x => x.positionOnView.x).ToList();
         }
 
         public override void CopyData(Node source)

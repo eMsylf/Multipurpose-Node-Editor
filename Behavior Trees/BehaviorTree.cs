@@ -100,34 +100,33 @@ namespace BobJeltes.AI.BehaviorTree
 
         public void SaveTo(ref BehaviorTree treeFile)
         {
-            // Clean deleted nodes list
-            for (int i = 0; i < treeFile.deletedNodes.Count; i++)
-            {
-                if (treeFile.deletedNodes[i] == null)
-                {
-                    UnityEngine.Debug.LogError("Delete null node at " + i);
-                    treeFile.deletedNodes.RemoveAt(i);
-                    i--;
-                }
-            }
 
-            // Delete node subassets that match deleted nodes
-            foreach (var node in deletedNodes)
+            UnityEngine.Object[] nodeAssets = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(treeFile));
+            for (int i = 0; i < nodeAssets.Length; i++)
             {
-                // Find the node's GUID among the tree file's nodes
-                Node nodeInFile = treeFile.nodes.Find(n => n.guid == node.guid);
-                if (nodeInFile != null)
+                UnityEngine.Debug.Log("File found: " + nodeAssets[i].name);
+                if (nodeAssets[i].GetType() == typeof(RootNode))
                 {
-                    treeFile.DeleteNode(nodeInFile);
-                    // If the tree file has the node object in its asset, remove it
-                    if (AssetDatabase.GetAssetPath(node).Contains(AssetDatabase.GetAssetPath(treeFile)))
-                    {
-                        AssetDatabase.RemoveObjectFromAsset(nodeInFile);
-                    }
+                    UnityEngine.Debug.Log("Skip root node");
+                    continue;
                 }
+                if (nodeAssets[i].GetType().BaseType.BaseType != typeof(Node))
+                {
+                    UnityEngine.Debug.Log("Object is not a node. Skip.");
+                    continue;
+                }
+                UnityEngine.Debug.Log(nodeAssets[i].name + " is a node.");
+
+                if (nodes.Exists(x => x.GetInstanceID() == nodeAssets[i].GetInstanceID()))
+                {
+                    UnityEngine.Debug.Log(nodeAssets[i].name + " still exists");
+                    continue;
+                }
+
+
+                UnityEngine.Debug.Log(nodeAssets[i].name + " no longer exists.");
+                AssetDatabase.RemoveObjectFromAsset(nodeAssets[i]);
             }
-            deletedNodes = new List<Node>();
-            treeFile.deletedNodes = new List<Node>();
 
             // Create a root node if not yet present. Update it if there is
             if (string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(treeFile.root)))
@@ -174,6 +173,7 @@ namespace BobJeltes.AI.BehaviorTree
                 if (multipleChildrenNode != null)
                 {
                     List<Node> childNodes = multipleChildrenNode.GetChildren();
+                    childNodes = childNodes.OrderBy(x => x.positionOnView.x).ToList();
                     for (int i = 0; i < childNodes.Count; i++)
                     {
                         Node childNode = childNodes[i];
