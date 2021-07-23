@@ -18,10 +18,13 @@ namespace BobJeltes.AI.BehaviorTree
 
         public override Result OnUpdate(BehaviorTreeExecutor behaviorTreeExecutor)
         {
-            GameObject obj = behaviorTreeExecutor.blackboardInstanceCopy.GetGameObjectVariable(objectID);
-            if (Physics.Linecast(behaviorTreeExecutor.transform.position, obj.transform.position))
+            GameObject obj = behaviorTreeExecutor.GetGameObjectVariable(objectID);
+            if (Physics.Linecast(behaviorTreeExecutor.transform.position, obj.transform.position, out RaycastHit hit))
             {
-                return Result.Failure;
+                if (hit.collider.gameObject != obj)
+                {
+                    return Result.Failure;
+                }
             }
             return Result.Success;
         }

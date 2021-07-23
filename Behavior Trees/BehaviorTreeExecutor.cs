@@ -30,7 +30,6 @@ namespace BobJeltes.AI.BehaviorTree
             UnityEngine.Debug.Log("Open behavior tree editor");
         }
 
-        public List<GameObject> sceneObjects = new List<GameObject>();
         public void RebuildInstanceOverrideList()
         {
             UnityEngine.Debug.Log("Rebuild", this);
@@ -42,6 +41,15 @@ namespace BobJeltes.AI.BehaviorTree
             }
 
             blackboardInstanceCopy = new Blackboard(tree.blackboard);
+        }
+
+        public GameObject GetGameObjectVariable(int id)
+        {
+            GameObject instanceOverride = blackboardInstanceCopy.GetGameObjectVariable(id);
+            if (instanceOverride != null)
+                return instanceOverride;
+            GameObject blackboardGameObject = tree.blackboard.GetGameObjectVariable(id);
+            return blackboardGameObject;
         }
     }
 }

@@ -127,7 +127,12 @@ namespace BobJeltes.AI.BehaviorTree
         public GameObject GetGameObjectVariable(int id)
         {
             var variable = GameObjects.Find(x => x.ID == id);
-            if (variable == null) return null;
+            if (variable == null)
+            {
+                UnityEngine.Debug.LogError("No game object found with id " + id);
+                return null;
+            }
+
             return variable.value;
         }
 
