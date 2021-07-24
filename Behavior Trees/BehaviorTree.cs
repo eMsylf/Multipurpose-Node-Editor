@@ -53,7 +53,7 @@ namespace BobJeltes.AI.BehaviorTree
             }
             else
             {
-                UnityEngine.Debug.Log("Create root node");
+                //UnityEngine.Debug.Log("Create root node");
                 root = node as RootNode;
             }
             EditorUtility.SetDirty(this);
@@ -100,47 +100,6 @@ namespace BobJeltes.AI.BehaviorTree
 
         public void SaveTo(ref BehaviorTree treeFile)
         {
-
-            UnityEngine.Object[] nodeAssets = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(treeFile));
-            for (int i = 0; i < nodeAssets.Length; i++)
-            {
-                UnityEngine.Debug.Log("File found: " + nodeAssets[i].name);
-                if (nodeAssets[i].GetType() == typeof(RootNode))
-                {
-                    UnityEngine.Debug.Log("Skip root node");
-                    continue;
-                }
-                if (nodeAssets[i].GetType().BaseType.BaseType != typeof(Node))
-                {
-                    UnityEngine.Debug.Log("Object is not a node. Skip.");
-                    continue;
-                }
-                UnityEngine.Debug.Log(nodeAssets[i].name + " is a node.");
-
-                if (nodes.Exists(x => x.GetInstanceID() == nodeAssets[i].GetInstanceID()))
-                {
-                    UnityEngine.Debug.Log(nodeAssets[i].name + " still exists");
-                    continue;
-                }
-
-
-                UnityEngine.Debug.Log(nodeAssets[i].name + " no longer exists.");
-                AssetDatabase.RemoveObjectFromAsset(nodeAssets[i]);
-            }
-
-            // Create a root node if not yet present. Update it if there is
-            if (string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(treeFile.root)))
-            {
-                if (treeFile.root != null)
-                {
-                    AssetDatabase.AddObjectToAsset(treeFile.root, treeFile);
-                }
-                else
-                {
-                    AssetDatabase.AddObjectToAsset(root, treeFile);
-                }
-            }
-
             treeFile.root.CopyData(root);
 
             // Go through all of the behavior tree's nodes and add them to the asset if they have not been added yet
@@ -160,6 +119,59 @@ namespace BobJeltes.AI.BehaviorTree
                     treeFile.nodes[nodeIndex].CopyData(node);
                 }
             }
+
+            UnityEngine.Object[] nodeAssets = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(treeFile));
+            for (int i = 0; i < nodeAssets.Length; i++)
+            {
+                UnityEngine.Debug.Log("File found: " + nodeAssets[i].name);
+                if (nodeAssets[i].GetType() == typeof(RootNode))
+                {
+                    UnityEngine.Debug.Log("Skip root node");
+                    continue;
+                }
+                if (nodeAssets[i].GetType().BaseType.BaseType != typeof(Node))
+                {
+                    UnityEngine.Debug.Log("Object is not a node. Skip.");
+                    continue;
+                }
+                UnityEngine.Debug.Log(nodeAssets[i].name + " is a node.");
+
+                Node nodeAsset = nodeAssets[i] as Node;
+
+                if (nodeAsset == null)
+                {
+                    UnityEngine.Debug.Log("Could not convert to node?");
+                    continue;
+                }
+                else
+                {
+                    UnityEngine.Debug.Log("IT IS A NODE! YAY!");
+                }
+
+                if (nodes.Exists(node => node.guid == nodeAsset.guid))
+                {
+                    UnityEngine.Debug.Log(nodeAssets[i] + " found in nodes list. Skipping...");
+                    continue;
+                }
+
+                UnityEngine.Debug.Log(nodeAssets[i].name + " no longer exists.");
+                AssetDatabase.RemoveObjectFromAsset(nodeAssets[i]);
+                treeFile.DeleteNode(nodeAsset);
+            }
+
+            // Create a root node if not yet present. Update it if there is
+            if (string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(treeFile.root)))
+            {
+                if (treeFile.root != null)
+                {
+                    AssetDatabase.AddObjectToAsset(treeFile.root, treeFile);
+                }
+                else
+                {
+                    AssetDatabase.AddObjectToAsset(root, treeFile);
+                }
+            }
+
 
             // Match all the nodes with children with the children in the file
             // First, the root node

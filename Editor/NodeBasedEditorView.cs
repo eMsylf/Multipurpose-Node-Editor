@@ -386,7 +386,7 @@ namespace BobJeltes.NodeEditor
             if (!hasUnsavedChanges) GUI.enabled = false;
             if (GUILayout.Button("Save", EditorStyles.toolbarButton, GUILayout.Width(toolbarButtonWidth)))
             {
-                Debug.Log("Save");
+                //Debug.Log("Save");
                 Save();
             }
             GUI.enabled = true;
@@ -526,7 +526,7 @@ namespace BobJeltes.NodeEditor
                         Tools.current = Tool.Rect;
                     if (e.keyCode == KeyCode.Delete || e.keyCode == KeyCode.Backspace)
                     {
-                        Debug.Log("Delete");
+                        //Debug.Log("Delete");
                         for (int i = 0; i < nodeViews.Count; i++)
                         {
                             NodeView node = nodeViews[i];
@@ -665,12 +665,12 @@ namespace BobJeltes.NodeEditor
             //Debug.Log("Add node view");
             if (selectedNodeIn != null &&selectedNodeOut == null)
             {
-                Debug.Log("Has node in selected");
+                //Debug.Log("Has node in selected");
                 CreateConnection(nodeView, selectedNodeIn);
             }
             if (selectedNodeIn == null && selectedNodeOut != null)
             {
-                Debug.Log("Has node out selected");
+                //Debug.Log("Has node out selected");
                 CreateConnection(selectedNodeOut, nodeView);
             }
             ClearConnectionSelection();
@@ -743,7 +743,7 @@ namespace BobJeltes.NodeEditor
 
         internal virtual void OnClickUpNode(NodeView node)
         {
-            Debug.Log("Click up on node " + node.rect.position);
+            //Debug.Log("Click up on node " + node.rect.position);
             if (!multiSelecting && !isDragging && SelectedNodes.Count > 1)
             {
                 DeselectAllNodes();
@@ -767,7 +767,7 @@ namespace BobJeltes.NodeEditor
 
         internal virtual void DeselectAllNodes()
         {
-            Debug.Log($"Deselect {SelectedNodes.Count} nodes");
+            //Debug.Log($"Deselect {SelectedNodes.Count} nodes");
             SelectedNodes.ForEach(node => node.IsSelected = false);
             GUI.changed = true;
         }
@@ -821,7 +821,7 @@ namespace BobJeltes.NodeEditor
         #region Connection Events
         internal virtual void OnClickConnectionPoint(NodeView node, ConnectionPointType type)
         {
-            Debug.Log("Click " + type + " connection point of node at index " + nodeViews.IndexOf(node));
+            //Debug.Log("Click " + type + " connection point of node at index " + nodeViews.IndexOf(node));
             switch (type)
             {
                 case ConnectionPointType.In:
@@ -894,7 +894,7 @@ namespace BobJeltes.NodeEditor
             }
 
             hasUnsavedChanges = true;
-            Debug.Log("Created connection between " + indexOfNodeOut + " and " + indexOfNodeIn);
+            //Debug.Log("Created connection between " + indexOfNodeOut + " and " + indexOfNodeIn);
         }
 
         // TODO: new method of handling connections where the parent node keeps track of what children are connected to it

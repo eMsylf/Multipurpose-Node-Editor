@@ -212,7 +212,7 @@ public class BehaviorTreeInspector : Editor
                 vectorInt3Var.value = EditorGUILayout.Vector3IntField(label, vectorInt3Var.value);
                 break;
             case TypedVariable<GameObject> gameObjectVar:
-                gameObjectVar.value = (GameObject)EditorGUILayout.ObjectField(label, gameObjectVar.value, typeof(GameObject), true);
+                gameObjectVar.value = (GameObject)EditorGUILayout.ObjectField(label, gameObjectVar.value, typeof(GameObject), false);
                 break;
         }
     }

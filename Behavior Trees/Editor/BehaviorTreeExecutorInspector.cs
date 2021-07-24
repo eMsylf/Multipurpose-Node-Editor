@@ -47,7 +47,7 @@ namespace BobJeltes.NodeEditor
                     }
                     else
                     {
-                        instanceOverrideMenu.AddItem(new GUIContent(typedVariableInstance.name), false, () => treeExecutor.blackboardInstanceCopy.GameObjects.Add(x));
+                        instanceOverrideMenu.AddItem(new GUIContent(typedVariableInstance.name), false, () => treeExecutor.blackboardInstanceCopy.GameObjects.Add(new TypedVariable<GameObject>(x.id) {name = x.name}));
                     }
                 });
                 instanceOverrideMenu.ShowAsContext();
