@@ -1,8 +1,10 @@
-using BobJeltes.AI.BehaviorTree.Nodes;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTree.Nodes
 {
-    public class Selector : CompositeNode
+    public class Synchronous : CompositeNode
     {
         public override void OnStart()
         {
@@ -21,19 +23,15 @@ namespace BobJeltes.AI.BehaviorTree
                 Result result = children[i].BTUpdate(behaviorTreeExecutor);
                 switch (result)
                 {
-                    case Result.Success:
+                    case Result.Failure:
                         i = 0;
                         return result;
-                    case Result.Failure:
-                        break;
                     case Result.Running:
                         return result;
-                    default:
-                        break;
                 }
             }
             i = 0;
-            return Result.Failure;
+            return Result.Success;
         }
     }
 }

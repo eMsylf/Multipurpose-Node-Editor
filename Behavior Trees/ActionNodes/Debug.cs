@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTree.Nodes
 {
     public class Debug : ActionNode
     {
@@ -24,10 +24,10 @@ namespace BobJeltes.AI.BehaviorTree
             return Result.Success;
         }
 
-        public override void CopyData(Node source)
+        public override void CopyData(Node dataSource)
         {
-            message = ((Debug)source).message;
-            base.CopyData(source);
+            message = ((Debug)dataSource).message;
+            base.CopyData(dataSource);
         }
     }
 }

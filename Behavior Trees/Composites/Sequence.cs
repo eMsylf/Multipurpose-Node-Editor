@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTree.Nodes
 {
-    public class Sequence : Composite
+    public class Sequence : CompositeNode
     {
         public override void OnStart()
         {
@@ -13,7 +13,7 @@ namespace BobJeltes.AI.BehaviorTree
 
         public override void OnStop()
         {
-            
+
         }
 
         public override Result OnUpdate(BehaviorTreeExecutor behaviorTreeExecutor)

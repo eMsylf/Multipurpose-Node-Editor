@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTree.Nodes
 {
-    public abstract class Composite : Node, NodeInterfaces.IHasInPort, NodeInterfaces.IHasOutPort, NodeInterfaces.IMultipleConnection, NodeInterfaces.IInteractable
+    public abstract class CompositeNode : Node, NodeInterfaces.IHasInPort, NodeInterfaces.IHasOutPort, NodeInterfaces.IMultipleConnection, NodeInterfaces.IInteractable
     {
         public List<Node> children = new List<Node>();
         public int i = 0;
@@ -17,7 +17,7 @@ namespace BobJeltes.AI.BehaviorTree
 
         public override Node Clone()
         {
-            Composite node = Instantiate(this);
+            CompositeNode node = Instantiate(this);
             node.children = children.ConvertAll(c => c.Clone());
             return node;
         }
@@ -39,7 +39,7 @@ namespace BobJeltes.AI.BehaviorTree
 
         public override void CopyData(Node source)
         {
-            children = ((Composite)source).children;
+            children = ((CompositeNode)source).children;
             base.CopyData(source);
         }
     }

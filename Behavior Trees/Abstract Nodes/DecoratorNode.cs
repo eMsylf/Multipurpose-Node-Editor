@@ -2,15 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTree.Nodes
 {
-    public abstract class Decorator : Node, NodeInterfaces.IHasInPort, NodeInterfaces.IHasOutPort, NodeInterfaces.ISingleConnection, NodeInterfaces.IInteractable
+    public abstract class DecoratorNode : Node, NodeInterfaces.IHasInPort, NodeInterfaces.IHasOutPort, NodeInterfaces.ISingleConnection, NodeInterfaces.IInteractable
     {
         public Node child;
 
         public override Node Clone()
         {
-            Decorator node = Instantiate(this);
+            DecoratorNode node = Instantiate(this);
             node.child = child?.Clone();
             return node;
         }
@@ -27,7 +27,7 @@ namespace BobJeltes.AI.BehaviorTree
 
         public override void CopyData(Node source)
         {
-            child = ((Decorator)source).child;
+            child = ((DecoratorNode)source).child;
             base.CopyData(source);
         }
     }

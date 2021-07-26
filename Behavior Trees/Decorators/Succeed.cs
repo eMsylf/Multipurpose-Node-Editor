@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTree.Nodes
 {
-    public class Succeed : Decorator
+    public class Succeed : DecoratorNode
     {
         public override void OnStart()
         {

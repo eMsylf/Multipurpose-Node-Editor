@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTree.Nodes
 {
     [System.Serializable]
     public abstract class Node : ScriptableObject
@@ -31,7 +31,7 @@ namespace BobJeltes.AI.BehaviorTree
             }
             return result;
         }
-        
+
         public virtual Node Clone()
         {
             return Instantiate(this);
@@ -42,7 +42,10 @@ namespace BobJeltes.AI.BehaviorTree
             positionOnView = source.positionOnView;
         }
     }
+}
 
+namespace BobJeltes.AI.BehaviorTree
+{
     public enum Result
     {
         Success,

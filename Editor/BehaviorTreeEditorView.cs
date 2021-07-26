@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using BobJeltes.AI.BehaviorTree.Nodes;
 
 namespace BobJeltes.NodeEditor
 {
@@ -44,13 +45,13 @@ namespace BobJeltes.NodeEditor
         internal override void ProcessContextMenu(Vector2 mousePosition)
         {
             GenericMenu genericMenu = new GenericMenu();
-            var composites = TypeCache.GetTypesDerivedFrom<Composite>();
+            var composites = TypeCache.GetTypesDerivedFrom<CompositeNode>();
             foreach (var nodeType in composites)
             {
                 //Debug.Log(node.Name);
                 genericMenu.AddItem(new GUIContent("Composite/" + nodeType.Name), false, () => CreateNodeView(CreateNode(nodeType), mousePosition));
             }
-            var decorators = TypeCache.GetTypesDerivedFrom<Decorator>();
+            var decorators = TypeCache.GetTypesDerivedFrom<DecoratorNode>();
             foreach (var nodeType in decorators)
             {
                 //Debug.Log(node.Name);

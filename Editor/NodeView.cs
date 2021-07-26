@@ -1,6 +1,6 @@
 /// Based on the tutorial by Oguzkonya at https://oguzkonya.com/creating-node-based-editor-unity/
 
-using BobJeltes.AI.BehaviorTree;
+using BobJeltes.AI.BehaviorTree.Nodes;
 using System;
 using System.Collections.Generic;
 using UnityEditor;

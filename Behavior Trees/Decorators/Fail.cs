@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace BobJeltes.AI.BehaviorTree.Nodes
 {
-    public class Repeat : DecoratorNode
+    public class Fail : DecoratorNode
     {
         public override void OnStart()
         {
@@ -18,8 +18,7 @@ namespace BobJeltes.AI.BehaviorTree.Nodes
 
         public override Result OnUpdate(BehaviorTreeExecutor behaviorTreeExecutor)
         {
-            child.BTUpdate(behaviorTreeExecutor);
-            return Result.Running;
+            return Result.Failure;
         }
     }
 }
