@@ -10,6 +10,8 @@ namespace BobJeltes.AI.BehaviorTree
     public class TypedVariable<T> : Variable
     {
         public T value;
+        [HideInInspector]
+        public bool isSceneReference;
 
         public TypedVariable(int id)
         {

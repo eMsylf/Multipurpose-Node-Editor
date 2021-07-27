@@ -18,7 +18,7 @@ namespace BobJeltes.AI.BehaviorTree.Nodes
 
         public override Result OnUpdate(BehaviorTreeExecutor behaviorTreeExecutor)
         {
-            GameObject obj = behaviorTreeExecutor.blackboardInstanceCopy.GetGameObjectVariable(objectID);
+            GameObject obj = behaviorTreeExecutor.variableOverrides.GetGameObjectVariable(objectID);
             float distance = Vector3.Distance(behaviorTreeExecutor.transform.position, obj.transform.position);
             if (distance <= range)
             {

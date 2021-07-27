@@ -216,7 +216,7 @@ Transform:
   m_LocalScale: {x: 4.0378, y: 5.1596, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &928857361
 GameObject:
@@ -232,7 +232,7 @@ GameObject:
   - component: {fileID: 928857364}
   - component: {fileID: 928857362}
   m_Layer: 0
-  m_Name: Target (1)
+  m_Name: Target 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -331,7 +331,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1090044518
 GameObject:
@@ -427,7 +427,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1142654032
 GameObject:
@@ -750,7 +750,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tree: {fileID: 11400000, guid: e1cf1e820b609b44d9bfe42bde063386, type: 2}
-  blackboardInstanceCopy:
+  variableOverrides:
     bools: []
     ints: []
     floats: []
@@ -761,10 +761,7 @@ MonoBehaviour:
     Vector4s: []
     Vector2Ints: []
     Vector3Ints: []
-    GameObjects:
-    - name: Target
-      id: -2147483648
-      value: {fileID: 1159255622}
+    GameObjects: []
     masterList: []
 --- !u!136 &1704831485
 CapsuleCollider:
@@ -841,5 +838,5 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

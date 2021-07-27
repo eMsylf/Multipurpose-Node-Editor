@@ -130,7 +130,9 @@ public class BehaviorTreeInspector : Editor
     {
         if (typedVariables.Count == 0) return;
         EditorGUILayout.BeginHorizontal(boldHeaderWithUnderline);
-        EditorGUILayout.LabelField(typeof(T).Name + "s");
+        string label2 = typeof(T) == typeof(GameObject) ? "Scene" : "";
+        EditorGUILayout.LabelField(typeof(T).Name + "s", label2);
+        EditorGUILayout.LabelField("Value", GUILayout.MaxWidth(50));
         GUILayout.FlexibleSpace();
         if (GUILayout.Button("+"))
         {
@@ -161,7 +163,7 @@ public class BehaviorTreeInspector : Editor
         string label = "";
         if (variable == null)
         {
-            UnityEngine.Debug.LogError("Variable is null");
+            Debug.LogError("Variable is null");
             return;
         }
         if (editNames)
@@ -178,7 +180,6 @@ public class BehaviorTreeInspector : Editor
             label = variable.name;
             if (string.IsNullOrEmpty(label)) label = " ";
         }
-        //EditorGUILayout.PrefixLabel(label);
         switch (variable)
         {
             case TypedVariable<int> intVar:
@@ -212,7 +213,15 @@ public class BehaviorTreeInspector : Editor
                 vectorInt3Var.value = EditorGUILayout.Vector3IntField(label, vectorInt3Var.value);
                 break;
             case TypedVariable<GameObject> gameObjectVar:
-                gameObjectVar.value = (GameObject)EditorGUILayout.ObjectField(label, gameObjectVar.value, typeof(GameObject), false);
+                EditorGUILayout.PrefixLabel(label);
+                gameObjectVar.isSceneReference = EditorGUILayout.Toggle(gameObjectVar.isSceneReference, GUILayout.MaxWidth(30f));
+                if (gameObjectVar.isSceneReference)
+                {
+                    EditorGUILayout.LabelField("Assign in Behavior Tree Executor component");
+                }
+                else 
+                    gameObjectVar.value = (GameObject)EditorGUILayout.ObjectField(gameObjectVar.value, typeof(GameObject), false);
+
                 break;
         }
     }

@@ -5,14 +5,11 @@ using UnityEngine;
 
 namespace BobJeltes.AI.BehaviorTree
 {
+    [AddComponentMenu("Bob Jeltes/AI/Behavior Trees/Behavior Tree Executor")]
     public class BehaviorTreeExecutor : MonoBehaviour
     {
         public BehaviorTree tree;
-        public Blackboard blackboardInstanceCopy;
-
-        private void OnValidate()
-        {
-        }
+        public Blackboard variableOverrides;
 
         void Start()
         {
@@ -27,25 +24,25 @@ namespace BobJeltes.AI.BehaviorTree
         [ContextMenu("Open behavior tree editor")]
         public void OpenBehaviorTreeEditor()
         {
-            UnityEngine.Debug.Log("Open behavior tree editor");
+            Debug.Log("Open behavior tree editor");
         }
 
         public void RebuildInstanceOverrideList()
         {
-            UnityEngine.Debug.Log("Rebuild", this);
+            Debug.Log("Rebuild", this);
             if (tree == null)
             {
-                UnityEngine.Debug.Log("Tree is null");
-                blackboardInstanceCopy = new Blackboard();
+                Debug.Log("Tree is null");
+                variableOverrides = new Blackboard();
                 return;
             }
 
-            blackboardInstanceCopy = new Blackboard(tree.blackboard);
+            variableOverrides = new Blackboard(tree.blackboard);
         }
 
         public GameObject GetGameObjectVariable(int id)
         {
-            GameObject instanceOverride = blackboardInstanceCopy.GetGameObjectVariable(id);
+            GameObject instanceOverride = variableOverrides.GetGameObjectVariable(id);
             if (instanceOverride != null)
                 return instanceOverride;
             GameObject blackboardGameObject = tree.blackboard.GetGameObjectVariable(id);
