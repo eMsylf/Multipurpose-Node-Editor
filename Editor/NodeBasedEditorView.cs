@@ -62,7 +62,7 @@ namespace BobJeltes.NodeEditor
         private bool multiSelecting;
         private bool isDragging;
 
-        [MenuItem("Window/Bob Jeltes/Node Editor")]
+        [MenuItem("Window/Bob Jeltes/Node Editor", priority = 1)]
         public static NodeBasedEditorView OpenWindow()
         {
             NodeBasedEditorView openedWindow = GetWindow<NodeBasedEditorView>("Node Structure");

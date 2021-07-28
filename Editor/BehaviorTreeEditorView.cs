@@ -14,7 +14,7 @@ namespace BobJeltes.NodeEditor
         BehaviorTree behaviorTree;
         public Vector2 GetDefaultRootPosition() => new Vector2(position.width * .5f, 100f);
         [MenuItem("Tools/Bob Jeltes/Behavior Tree editor")]
-        [MenuItem("Window/Bob Jeltes/Behavior Tree editor")]
+        [MenuItem("Window/Bob Jeltes/Behavior Tree editor", priority = 0)]
         public static BehaviorTreeEditorView OpenBehaviorTreeWindow()
         {
             BehaviorTreeEditorView openedWindow = CreateWindow<BehaviorTreeEditorView>("Behavior Tree editor");
