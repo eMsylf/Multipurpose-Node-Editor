@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection.Emit;
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTrees
 {
     [Serializable]
     public class Variable

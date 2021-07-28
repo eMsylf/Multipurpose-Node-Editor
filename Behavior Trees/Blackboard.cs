@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTrees
 {
     [Serializable]
     public class Blackboard

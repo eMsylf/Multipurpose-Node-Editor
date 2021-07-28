@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTrees
 {
     //[CustomPropertyDrawer(typeof(Blackboard))]
     public class BlackboardPropertyDrawer : PropertyDrawer

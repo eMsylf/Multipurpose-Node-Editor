@@ -1,4 +1,4 @@
-using BobJeltes.AI.BehaviorTree;
+using BobJeltes.AI.BehaviorTrees;
 using System;
 using System.Collections;
 using System.Collections.Generic;

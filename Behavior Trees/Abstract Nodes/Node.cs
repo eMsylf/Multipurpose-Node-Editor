@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace BobJeltes.AI.BehaviorTree.Nodes
+namespace BobJeltes.AI.BehaviorTrees.Nodes
 {
     [System.Serializable]
     public abstract class Node : ScriptableObject
@@ -44,7 +44,7 @@ namespace BobJeltes.AI.BehaviorTree.Nodes
     }
 }
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTrees
 {
     public enum Result
     {

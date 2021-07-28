@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BobJeltes.AI.BehaviorTree.Nodes
+namespace BobJeltes.AI.BehaviorTrees.Nodes
 {
     public abstract class CompositeNode : Node, NodeInterfaces.IHasInPort, NodeInterfaces.IHasOutPort, NodeInterfaces.IMultipleConnection, NodeInterfaces.IInteractable
     {

@@ -1,11 +1,11 @@
-using BobJeltes.AI.BehaviorTree;
+using BobJeltes.AI.BehaviorTrees;
 using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using BobJeltes.AI.BehaviorTree.Nodes;
+using BobJeltes.AI.BehaviorTrees.Nodes;
 
 namespace BobJeltes.NodeEditor
 {

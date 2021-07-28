@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using BobJeltes.AI.BehaviorTree;
+using BobJeltes.AI.BehaviorTrees;
 
 [CustomEditor(typeof(BehaviorTree))]
 public class BehaviorTreeInspector : Editor

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTrees
 {
     [Serializable]
     public class TypedVariable<T> : Variable

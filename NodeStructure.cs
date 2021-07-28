@@ -1,8 +1,8 @@
-using BobJeltes.AI.BehaviorTree.Nodes;
+using BobJeltes.AI.BehaviorTrees.Nodes;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTrees
 {
     public class NodeStructure : ScriptableObject
     {

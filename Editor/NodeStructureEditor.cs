@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using UnityEditor.Callbacks;
-using BobJeltes.AI.BehaviorTree;
+using BobJeltes.AI.BehaviorTrees;
 using BobJeltes.NodeEditor;
 
 [CustomEditor(typeof(NodeStructure))]

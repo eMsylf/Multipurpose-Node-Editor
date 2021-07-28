@@ -1,6 +1,6 @@
-using BobJeltes.AI.BehaviorTree.Nodes;
+using BobJeltes.AI.BehaviorTrees.Nodes;
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTrees
 {
     public class Selector : CompositeNode
     {

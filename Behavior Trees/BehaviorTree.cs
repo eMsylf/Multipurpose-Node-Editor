@@ -1,11 +1,11 @@
-using BobJeltes.AI.BehaviorTree.Nodes;
+using BobJeltes.AI.BehaviorTrees.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTrees
 {
     [CreateAssetMenu(fileName = "New behavior tree", menuName = "Bob Jeltes/AI/Behavior Trees/Behavior Tree", order = 82)]
     public class BehaviorTree : NodeStructure

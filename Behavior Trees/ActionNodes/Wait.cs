@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace BobJeltes.AI.BehaviorTree.Nodes
+namespace BobJeltes.AI.BehaviorTrees.Nodes
 {
     public class Wait : ActionNode
     {

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BobJeltes.AI.BehaviorTree.Nodes
+namespace BobJeltes.AI.BehaviorTrees.Nodes
 {
     public abstract class DecoratorNode : Node, NodeInterfaces.IHasInPort, NodeInterfaces.IHasOutPort, NodeInterfaces.ISingleConnection, NodeInterfaces.IInteractable
     {

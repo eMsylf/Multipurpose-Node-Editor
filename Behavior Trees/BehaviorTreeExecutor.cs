@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BobJeltes.AI.BehaviorTree
+namespace BobJeltes.AI.BehaviorTrees
 {
     [AddComponentMenu("Bob Jeltes/AI/Behavior Trees/Behavior Tree Executor")]
     public class BehaviorTreeExecutor : MonoBehaviour
