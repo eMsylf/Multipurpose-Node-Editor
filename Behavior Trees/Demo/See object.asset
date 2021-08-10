@@ -1,0 +1,160 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4631545825591106882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa4b927626f860449bff9c6c4e80dc9b, type: 3}
+  m_Name: Debug
+  m_EditorClassIdentifier: 
+  guid: 5b81d03093f29564d827efacd7e4e4b6
+  positionOnView: {x: 613, y: 365}
+  result: 0
+  message: Can't see :(
+--- !u!114 &-3863372004442161505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7cc34d98b8522640b01c171f3ecc901, type: 3}
+  m_Name: Repeat
+  m_EditorClassIdentifier: 
+  guid: 85cf78213fa95c94799fc4d071337cea
+  positionOnView: {x: 424, y: 148}
+  result: 0
+  child: {fileID: -885813379136505101}
+--- !u!114 &-1596418777011958001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ed3dd7539b7966438c31407d5bec39d, type: 3}
+  m_Name: RootNode
+  m_EditorClassIdentifier: 
+  guid: 35ebddcfc259498489a81fa46b3bd081
+  positionOnView: {x: 688, y: 67}
+  result: 0
+  child: {fileID: -3863372004442161505}
+--- !u!114 &-885813379136505101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dbdab700eb7dde4eb0d1ab8b3c9e827, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  guid: 77f96606d3ef064469cf2a8f037b4618
+  positionOnView: {x: 421, y: 268}
+  result: 0
+  children:
+  - {fileID: 0}
+  - {fileID: 0}
+  i: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bc838c1852643343bf5813299801da2, type: 3}
+  m_Name: See object
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: -3863372004442161505}
+  - {fileID: -885813379136505101}
+  - {fileID: 1466698093231566453}
+  - {fileID: 4147992219022502025}
+  - {fileID: 89339719847884437}
+  - {fileID: -4631545825591106882}
+  root: {fileID: -1596418777011958001}
+  result: 2
+  blackboard:
+    bools: []
+    ints: []
+    floats: []
+    strings: []
+    Colors: []
+    Vector2s: []
+    Vector3s: []
+    Vector4s: []
+    Vector2Ints: []
+    Vector3Ints: []
+    GameObjects:
+    - name: Target
+      id: -2147483648
+      value: {fileID: 0}
+      isSceneReference: 1
+    masterList:
+    - name: New GameObject
+      id: -2147483648
+--- !u!114 &89339719847884437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa4b927626f860449bff9c6c4e80dc9b, type: 3}
+  m_Name: Debug
+  m_EditorClassIdentifier: 
+  guid: 7bd31998188722d4797a9b10662764f3
+  positionOnView: {x: 473, y: 470}
+  result: 0
+  message: Target spotted!
+--- !u!114 &1466698093231566453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67718333f75bd5846a9592862f7eeac3, type: 3}
+  m_Name: Sequence
+  m_EditorClassIdentifier: 
+  guid: ba64ceca5d4e0684a999b1294569c027
+  positionOnView: {x: 332, y: 371}
+  result: 0
+  children:
+  - {fileID: 0}
+  - {fileID: 0}
+  i: 0
+--- !u!114 &4147992219022502025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6573074a07c576f4c96be86f7a22675f, type: 3}
+  m_Name: CanSeeObject
+  m_EditorClassIdentifier: 
+  guid: e908364da49cc8d479dd78cc529a2306
+  positionOnView: {x: 213, y: 467}
+  result: 0
+  objectID: -2147483648
