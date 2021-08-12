@@ -29,7 +29,7 @@ namespace BobJeltes.AI.BehaviorTrees
 
         public void RebuildInstanceOverrideList()
         {
-            Debug.Log("Rebuild", this);
+            //Debug.Log("Rebuild", this);
             if (tree == null)
             {
                 Debug.Log("Tree is null");

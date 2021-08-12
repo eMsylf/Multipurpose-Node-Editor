@@ -86,6 +86,7 @@ namespace BobJeltes.AI.BehaviorTrees
             if (root == null)
             {
                 UnityEngine.Debug.LogError("Root is null");
+                root = CreateInstance<RootNode>();
             }
             AssetDatabase.AddObjectToAsset(root, treeFile);
 
