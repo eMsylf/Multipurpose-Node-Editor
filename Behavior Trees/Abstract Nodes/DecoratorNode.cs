@@ -10,7 +10,7 @@ namespace BobJeltes.AI.BehaviorTrees.Nodes
 
         public override Node Clone()
         {
-            DecoratorNode node = Instantiate(this);
+            DecoratorNode node = (DecoratorNode)base.Clone();
             node.child = child?.Clone();
             return node;
         }

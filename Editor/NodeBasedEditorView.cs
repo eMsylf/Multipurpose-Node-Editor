@@ -256,17 +256,7 @@ namespace BobJeltes.NodeEditor
 
             nodeViews.Clear();
             connections.Clear();
-            //Debug.Log("Found " + structure.nodePositions.Count + " nodes");
-            //Debug.Log("Found " + structure.connectionIndices.Count + " connections");
 
-            //foreach (var nodePosition in structure.nodePositions)
-            //{
-            //    CreateNodeView(nodePosition, centered: false);
-            //}
-            //foreach (var connection in structure.connectionIndices)
-            //{
-            //    CreateConnection(nodeViews[connection.a], nodeViews[connection.b]);
-            //}
             file = structure;
             hasUnsavedChanges = false;
             ClearConnectionSelection();
