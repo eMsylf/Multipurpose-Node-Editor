@@ -21,6 +21,16 @@ namespace BobJeltes.AI.BehaviorTrees.Nodes
             node.children = new List<Node>();
             foreach (var child in children)
             {
+                if (child == null)
+                {
+                    UnityEngine.Debug.LogError("Child is null");
+                    continue;
+                }
+                if (child.name.Contains("Clone"))
+                {
+                    UnityEngine.Debug.LogError("Requested child is a clone");
+                    continue;
+                }
                 node.children.Add(child.Clone());
             }
             return node;
@@ -28,6 +38,16 @@ namespace BobJeltes.AI.BehaviorTrees.Nodes
 
         public List<Node> GetChildren()
         {
+            for (int i = 0; i < children.Count; i++)
+            {
+                Node item = children[i];
+                if (item == null)
+                {
+                    UnityEngine.Debug.LogError("Child node " + i + " of " + name + " is null");
+                    children.RemoveAt(i);
+                    i--;
+                }
+            }
             return children;
         }
 

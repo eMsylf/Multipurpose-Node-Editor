@@ -131,12 +131,6 @@ namespace BobJeltes.AI.BehaviorTrees
                     UnityEngine.Debug.Log("Skip root node");
                     continue;
                 }
-                if (nodeAssets[i].GetType().BaseType.BaseType != typeof(Node))
-                {
-                    UnityEngine.Debug.Log("Object is not a node. Skip.");
-                    continue;
-                }
-                UnityEngine.Debug.Log(nodeAssets[i].name + " is a node.");
 
                 Node nodeAsset = nodeAssets[i] as Node;
 

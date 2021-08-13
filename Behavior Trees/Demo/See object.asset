@@ -45,9 +45,9 @@ MonoBehaviour:
   m_Name: RootNode
   m_EditorClassIdentifier: 
   guid: 35ebddcfc259498489a81fa46b3bd081
-  positionOnView: {x: 148.5, y: 157}
+  positionOnView: {x: 340.5, y: 75}
   result: 0
-  child: {fileID: -3863372004442161505}
+  child: {fileID: 0}
 --- !u!114 &-885813379136505101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,9 +63,7 @@ MonoBehaviour:
   guid: 77f96606d3ef064469cf2a8f037b4618
   positionOnView: {x: 273, y: 323}
   result: 0
-  children:
-  - {fileID: 0}
-  - {fileID: 0}
+  children: []
   i: 0
 --- !u!114 &11400000
 MonoBehaviour:
@@ -138,9 +136,7 @@ MonoBehaviour:
   guid: ba64ceca5d4e0684a999b1294569c027
   positionOnView: {x: 180, y: 426}
   result: 0
-  children:
-  - {fileID: 0}
-  - {fileID: 0}
+  children: []
   i: 0
 --- !u!114 &4147992219022502025
 MonoBehaviour:
