@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4631545825591106882
+--- !u!114 &-7878875836234770894
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,46 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa4b927626f860449bff9c6c4e80dc9b, type: 3}
-  m_Name: Debug
+  m_Script: {fileID: 11500000, guid: 6573074a07c576f4c96be86f7a22675f, type: 3}
+  m_Name: CanSeeObject
   m_EditorClassIdentifier: 
-  guid: 5b81d03093f29564d827efacd7e4e4b6
-  positionOnView: {x: 465, y: 420}
+  guid: 2eb76bcf0611e8543b2f3d054e827dc7
+  positionOnView: {x: 7, y: 518}
   result: 0
-  message: Can't see :(
---- !u!114 &-3863372004442161505
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7cc34d98b8522640b01c171f3ecc901, type: 3}
-  m_Name: Repeat
-  m_EditorClassIdentifier: 
-  guid: 85cf78213fa95c94799fc4d071337cea
-  positionOnView: {x: 276, y: 204}
-  result: 0
-  child: {fileID: -885813379136505101}
---- !u!114 &-1596418777011958001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ed3dd7539b7966438c31407d5bec39d, type: 3}
-  m_Name: RootNode
-  m_EditorClassIdentifier: 
-  guid: 35ebddcfc259498489a81fa46b3bd081
-  positionOnView: {x: 340.5, y: 75}
-  result: 0
-  child: {fileID: 0}
---- !u!114 &-885813379136505101
+  objectID: 0
+--- !u!114 &-4532528626156283198
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -60,10 +28,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dbdab700eb7dde4eb0d1ab8b3c9e827, type: 3}
   m_Name: Selector
   m_EditorClassIdentifier: 
-  guid: 77f96606d3ef064469cf2a8f037b4618
-  positionOnView: {x: 273, y: 323}
+  guid: e3b951fd88b05c146991f8c6ad0516e8
+  positionOnView: {x: 287, y: 318}
   result: 0
-  children: []
+  children:
+  - {fileID: 9132666968772571175}
+  - {fileID: 801718974975908114}
   i: 0
 --- !u!114 &11400000
 MonoBehaviour:
@@ -75,16 +45,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9bc838c1852643343bf5813299801da2, type: 3}
-  m_Name: See object
+  m_Name: See Object
   m_EditorClassIdentifier: 
   nodes:
-  - {fileID: -3863372004442161505}
-  - {fileID: -885813379136505101}
-  - {fileID: 1466698093231566453}
-  - {fileID: 4147992219022502025}
-  - {fileID: 89339719847884437}
-  - {fileID: -4631545825591106882}
-  root: {fileID: -1596418777011958001}
+  - {fileID: 4462872560010334304}
+  - {fileID: 9132666968772571175}
+  - {fileID: -4532528626156283198}
+  - {fileID: -7878875836234770894}
+  - {fileID: 1534906101326541610}
+  - {fileID: 801718974975908114}
+  root: {fileID: 584784738029835643}
   result: 2
   blackboard:
     bools: []
@@ -97,15 +67,25 @@ MonoBehaviour:
     Vector4s: []
     Vector2Ints: []
     Vector3Ints: []
-    GameObjects:
-    - name: Target
-      id: -2147483648
-      value: {fileID: 0}
-      isSceneReference: 1
-    masterList:
-    - name: New GameObject
-      id: -2147483648
---- !u!114 &89339719847884437
+    GameObjects: []
+    masterList: []
+--- !u!114 &584784738029835643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ed3dd7539b7966438c31407d5bec39d, type: 3}
+  m_Name: RootNode
+  m_EditorClassIdentifier: 
+  guid: 2d54739774258c144b3a001f68eaba89
+  positionOnView: {x: 340.5, y: 75}
+  result: 0
+  child: {fileID: 4462872560010334304}
+--- !u!114 &801718974975908114
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -117,11 +97,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa4b927626f860449bff9c6c4e80dc9b, type: 3}
   m_Name: Debug
   m_EditorClassIdentifier: 
-  guid: 7bd31998188722d4797a9b10662764f3
-  positionOnView: {x: 320, y: 525}
+  guid: 9269af43de4418a49997a8131b8129a1
+  positionOnView: {x: 442, y: 398}
   result: 0
-  message: Target spotted!
---- !u!114 &1466698093231566453
+  message: Can't see :(
+--- !u!114 &1534906101326541610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa4b927626f860449bff9c6c4e80dc9b, type: 3}
+  m_Name: Debug
+  m_EditorClassIdentifier: 
+  guid: d22684021a38aaa4db76a007ec73a0d8
+  positionOnView: {x: 199, y: 517}
+  result: 0
+  message: I can see the target!
+--- !u!114 &4462872560010334304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7cc34d98b8522640b01c171f3ecc901, type: 3}
+  m_Name: Repeat
+  m_EditorClassIdentifier: 
+  guid: 2ad7c2c9bbb8b144b9ba723d6165bff4
+  positionOnView: {x: 282, y: 211}
+  result: 0
+  child: {fileID: -4532528626156283198}
+--- !u!114 &9132666968772571175
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -133,24 +145,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67718333f75bd5846a9592862f7eeac3, type: 3}
   m_Name: Sequence
   m_EditorClassIdentifier: 
-  guid: ba64ceca5d4e0684a999b1294569c027
-  positionOnView: {x: 180, y: 426}
+  guid: 6466f20a4f879d942859773d8215dd9d
+  positionOnView: {x: 100, y: 405}
   result: 0
-  children: []
+  children:
+  - {fileID: -7878875836234770894}
+  - {fileID: 1534906101326541610}
   i: 0
---- !u!114 &4147992219022502025
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6573074a07c576f4c96be86f7a22675f, type: 3}
-  m_Name: CanSeeObject
-  m_EditorClassIdentifier: 
-  guid: e908364da49cc8d479dd78cc529a2306
-  positionOnView: {x: 65, y: 522}
-  result: 0
-  objectID: -2147483648

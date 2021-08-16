@@ -26,11 +26,6 @@ namespace BobJeltes.AI.BehaviorTrees.Nodes
                     UnityEngine.Debug.LogError("Child is null");
                     continue;
                 }
-                if (child.name.Contains("Clone"))
-                {
-                    UnityEngine.Debug.LogError("Requested child is a clone");
-                    continue;
-                }
                 node.children.Add(child.Clone());
             }
             return node;

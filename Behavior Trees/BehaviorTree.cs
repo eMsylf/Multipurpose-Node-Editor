@@ -181,6 +181,7 @@ namespace BobJeltes.AI.BehaviorTrees
                 if (multipleChildrenNode != null)
                 {
                     List<Node> childNodes = multipleChildrenNode.GetChildren();
+                    List<Node> newChildList = new List<Node>();
                     childNodes = childNodes.OrderBy(x => x.positionOnView.x).ToList();
                     for (int i = 0; i < childNodes.Count; i++)
                     {
@@ -189,16 +190,14 @@ namespace BobJeltes.AI.BehaviorTrees
                         if (childNodeInFile != null)
                         {
                             // Override the node reference
-                            childNodes[i] = childNodeInFile;
+                            newChildList.Add(childNodeInFile);
                         }
                         else
                         {
                             AssetDatabase.AddObjectToAsset(childNode, treeFile);
                         }
                     }
-                    // Order the children by the position on the x axis to enforce left-to-right execution
-                    // TODO: Implement different ordering criterium for left-to-right-oriented trees?
-                    childNodes.OrderBy(n => n.positionOnView.x);
+                    multipleChildrenNode.SetChildren(newChildList);
                     continue;
                 }
                 var singleChildNode = nodeAsset as NodeInterfaces.ISingleConnection;
