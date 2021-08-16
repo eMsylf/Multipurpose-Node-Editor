@@ -190,12 +190,13 @@ namespace BobJeltes.AI.BehaviorTrees
                         if (childNodeInFile != null)
                         {
                             // Override the node reference
-                            newChildList.Add(childNodeInFile);
+                            childNode = childNodeInFile;
                         }
                         else
                         {
                             AssetDatabase.AddObjectToAsset(childNode, treeFile);
                         }
+                        newChildList.Add(childNode);
                     }
                     multipleChildrenNode.SetChildren(newChildList);
                     continue;
