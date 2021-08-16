@@ -1,0 +1,8 @@
+You can add the script templates to your project using the following steps:
+1. Open the BehaviorTreeToolScriptTemplates Unity Package file
+2. Click "Import" at the bottom of the dialog window
+3. Restart Unity
+
+After restarting Unity, you can find the scripts under
+a) Navigating to Assets at the top of the Unity window, to Create and then to "Bob Jeltes/AI/Behavior Trees"
+b) Right-clicking in the Project view, navigating to Create and then to "Bob Jeltes/AI/Behavior Trees"
