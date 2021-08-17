@@ -218,7 +218,12 @@ namespace BobJeltes.NodeEditor
         internal override void SelectNode(NodeView nodeView)
         {
             base.SelectNode(nodeView);
-            Selection.activeObject = nodeView.node;
+            //Selection.activeObject = nodeView.node;
+            Node nodeFile = file.nodes.Find(x => x.guid == nodeView.node.guid);
+            if (nodeFile != null)
+                Selection.activeObject = nodeFile;
+            else
+                Selection.activeObject = nodeView.node;
         }
     }
 
