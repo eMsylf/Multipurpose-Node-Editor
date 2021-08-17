@@ -14,13 +14,11 @@ namespace BobJeltes.NodeEditor
         {
             BehaviorTreeExecutor treeExecutor = (BehaviorTreeExecutor)target;
 
-            treeExecutor.tree = (BehaviorTree)EditorGUILayout.ObjectField("Tree", treeExecutor.tree, typeof(BehaviorTree), false);
-
-            SerializedProperty blackboard = serializedObject.FindProperty("variableOverrides");
             EditorGUI.BeginChangeCheck();
+            treeExecutor.tree = (BehaviorTree)EditorGUILayout.ObjectField("Tree", treeExecutor.tree, typeof(BehaviorTree), false);
             if (EditorGUI.EndChangeCheck())
             {
-                treeExecutor.variableOverrides = new Blackboard();
+                treeExecutor.RebuildInstanceOverrideList();
             }
             if (GUILayout.Button("Open editor"))
             {
@@ -32,6 +30,7 @@ namespace BobJeltes.NodeEditor
                 BehaviorTreeEditorView.OpenBehaviorTreeWindow().Load(treeExecutor.tree);
             }
 
+            SerializedProperty blackboard = serializedObject.FindProperty("variableOverrides");
             DrawBlackboard(treeExecutor, blackboard);
         }
 
