@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: CanSeeObject
   m_EditorClassIdentifier: 
   guid: 2eb76bcf0611e8543b2f3d054e827dc7
-  positionOnView: {x: 7, y: 518}
+  positionOnView: {x: 3, y: 517}
   result: 0
-  objectID: 0
+  objectID: -2147483648
 --- !u!114 &-4532528626156283198
 MonoBehaviour:
   m_ObjectHideFlags: 0

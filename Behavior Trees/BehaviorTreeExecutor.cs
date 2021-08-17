@@ -29,10 +29,9 @@ namespace BobJeltes.AI.BehaviorTrees
 
         public void RebuildInstanceOverrideList()
         {
-            //Debug.Log("Rebuild", this);
             if (tree == null)
             {
-                Debug.Log("Tree is null");
+                Debug.Log("Tree is null while trying to rebuild the instance override blackboard of " + name, this);
                 variableOverrides = new Blackboard();
                 return;
             }
