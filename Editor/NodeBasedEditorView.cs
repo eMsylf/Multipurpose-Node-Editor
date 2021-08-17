@@ -194,7 +194,7 @@ namespace BobJeltes.NodeEditor
         public static void SaveChanges_Shortcut()
         {
             // Kan zijn dat als de editor derivet en niet de directe type is, dat de if-statement false returnt
-            if (focusedWindow.GetType().BaseType == typeof(NodeBasedEditorView))
+            if (focusedWindow?.GetType().BaseType == typeof(NodeBasedEditorView))
                 (focusedWindow as NodeBasedEditorView).Save();
         }
 
