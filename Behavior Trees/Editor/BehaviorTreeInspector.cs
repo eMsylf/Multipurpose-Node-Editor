@@ -160,7 +160,7 @@ public class BehaviorTreeInspector : Editor
 
     private void Draw(Variable variable)
     {
-        string label = "";
+        GUIContent label = new GUIContent();
         if (variable == null)
         {
             Debug.LogError("Variable is null");
@@ -177,9 +177,10 @@ public class BehaviorTreeInspector : Editor
         else
         {
             // Show name
-            label = variable.name;
-            if (string.IsNullOrEmpty(label)) label = " ";
+            label.text = variable.name;
+            if (string.IsNullOrEmpty(label.text)) label.text = " ";
         }
+        EditorGUILayout.IntField(variable.id, GUILayout.Width(90));
         switch (variable)
         {
             case TypedVariable<int> intVar:
@@ -217,9 +218,11 @@ public class BehaviorTreeInspector : Editor
                 gameObjectVar.isSceneReference = EditorGUILayout.Toggle(gameObjectVar.isSceneReference, GUILayout.MaxWidth(30f));
                 if (gameObjectVar.isSceneReference)
                 {
-                    EditorGUILayout.LabelField("Assign in Behavior Tree Executor component");
+                    GUIContent message = new GUIContent("Assign in Behavior Tree Executor component");
+                    message.tooltip = message.text;
+                    EditorGUILayout.LabelField(message);
                 }
-                else 
+                else
                     gameObjectVar.value = (GameObject)EditorGUILayout.ObjectField(gameObjectVar.value, typeof(GameObject), false);
 
                 break;
