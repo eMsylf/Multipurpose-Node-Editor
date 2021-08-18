@@ -9,6 +9,8 @@ public class ApplyForceToObject : ActionNode
     public int objectID;
     public Vector3 force = Vector3.forward;
     public ForceMode forceMode = ForceMode.Impulse;
+    public bool relativeToObject;
+    public int relativeToObjectID;
 
     // This is called when the node is first updated
     public override void OnStart()
@@ -42,7 +44,14 @@ public class ApplyForceToObject : ActionNode
             UnityEngine.Debug.LogError("Provided prefab object of " + name + " in behavior tree of " + behaviorTreeExecutor.name + " has no rigidbody.");
             return Result.Failure;
         }
-        rigidbody.AddForce(force, forceMode);
+        if (relativeToObject)
+        {
+            rigidbody.AddForce(
+                behaviorTreeExecutor.GetGameObjectVariable(relativeToObjectID).transform.TransformVector(force),
+                forceMode);
+        }
+        else
+            rigidbody.AddForce(force, forceMode);
         return Result.Success;
     }
 

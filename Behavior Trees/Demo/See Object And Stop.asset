@@ -1,0 +1,124 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7878875836234770894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6573074a07c576f4c96be86f7a22675f, type: 3}
+  m_Name: CanSeeObject
+  m_EditorClassIdentifier: 
+  guid: 2eb76bcf0611e8543b2f3d054e827dc7
+  positionOnView: {x: 3, y: 517}
+  result: 0
+  objectID: -2147483648
+--- !u!114 &-5504365778477977951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 836483e00d788174c8bddcbbd8fe51da, type: 3}
+  m_Name: RepeatUntil
+  m_EditorClassIdentifier: 
+  guid: 92b31c9e4c394ca45958b363871a73be
+  positionOnView: {x: 301, y: 187}
+  result: 0
+  child: {fileID: 9132666968772571175}
+  repeatCondition: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bc838c1852643343bf5813299801da2, type: 3}
+  m_Name: See Object And Stop
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: 9132666968772571175}
+  - {fileID: -7878875836234770894}
+  - {fileID: 1534906101326541610}
+  - {fileID: -5504365778477977951}
+  root: {fileID: 584784738029835643}
+  result: 2
+  blackboard:
+    bools: []
+    ints: []
+    floats: []
+    strings: []
+    Colors: []
+    Vector2s: []
+    Vector3s: []
+    Vector4s: []
+    Vector2Ints: []
+    Vector3Ints: []
+    GameObjects:
+    - name: Target
+      id: -2147483648
+      value: {fileID: 0}
+      isSceneReference: 1
+    masterList:
+    - name: Target
+      id: -2147483648
+--- !u!114 &584784738029835643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ed3dd7539b7966438c31407d5bec39d, type: 3}
+  m_Name: RootNode
+  m_EditorClassIdentifier: 
+  guid: 2d54739774258c144b3a001f68eaba89
+  positionOnView: {x: 480, y: 75}
+  result: 0
+  child: {fileID: -5504365778477977951}
+--- !u!114 &1534906101326541610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa4b927626f860449bff9c6c4e80dc9b, type: 3}
+  m_Name: Debug
+  m_EditorClassIdentifier: 
+  guid: d22684021a38aaa4db76a007ec73a0d8
+  positionOnView: {x: 199, y: 517}
+  result: 0
+  message: I can see the target!
+--- !u!114 &9132666968772571175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67718333f75bd5846a9592862f7eeac3, type: 3}
+  m_Name: Sequence
+  m_EditorClassIdentifier: 
+  guid: 6466f20a4f879d942859773d8215dd9d
+  positionOnView: {x: 100, y: 405}
+  result: 0
+  children:
+  - {fileID: -7878875836234770894}
+  - {fileID: 1534906101326541610}
+  i: 0

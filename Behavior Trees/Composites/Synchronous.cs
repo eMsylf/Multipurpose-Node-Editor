@@ -8,7 +8,7 @@ namespace BobJeltes.AI.BehaviorTrees.Nodes
     {
         public override void OnStart()
         {
-            i = 0;
+
         }
 
         public override void OnStop()
@@ -18,20 +18,13 @@ namespace BobJeltes.AI.BehaviorTrees.Nodes
 
         public override Result OnUpdate(BehaviorTreeExecutor behaviorTreeExecutor)
         {
+            i = 0;
+            Result result = Result.Success;
             for (; i < children.Count; i++)
             {
-                Result result = children[i].BTUpdate(behaviorTreeExecutor);
-                switch (result)
-                {
-                    case Result.Failure:
-                        i = 0;
-                        return result;
-                    case Result.Running:
-                        return result;
-                }
+                result = children[i].BTUpdate(behaviorTreeExecutor);
             }
-            i = 0;
-            return Result.Success;
+            return result;
         }
     }
 }

@@ -180,7 +180,7 @@ public class BehaviorTreeInspector : Editor
             label.text = variable.name;
             if (string.IsNullOrEmpty(label.text)) label.text = " ";
         }
-        EditorGUILayout.IntField(variable.id, GUILayout.Width(90));
+        variable.id = EditorGUILayout.IntField(variable.id, GUILayout.Width(90));
         switch (variable)
         {
             case TypedVariable<int> intVar:

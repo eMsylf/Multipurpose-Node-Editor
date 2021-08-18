@@ -9,6 +9,7 @@ public class SpawnObject : ActionNode
 {
     public GameObject objectPrefab;
     public bool storeInVariable;
+    public bool spawnAsChild;
     [Tooltip("Object that is spawned that will be overridden in the behavior tree")]
     public int objectID;
     public UnityEvent<GameObject> onSpawnObject = new UnityEvent<GameObject>();
@@ -32,8 +33,11 @@ public class SpawnObject : ActionNode
         {
             return Result.Failure;
         }
-
-        GameObject spawnedObject = Instantiate(objectPrefab, behaviorTreeExecutor.transform);
+        GameObject spawnedObject;
+        if (spawnAsChild)
+            spawnedObject = Instantiate(objectPrefab, behaviorTreeExecutor.transform);
+        else
+            spawnedObject = Instantiate(objectPrefab, behaviorTreeExecutor.transform.TransformPoint(objectPrefab.transform.position), objectPrefab.transform.rotation);
 
         if (storeInVariable)
         {

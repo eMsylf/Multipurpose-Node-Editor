@@ -23,7 +23,7 @@ namespace BobJeltes.AI.BehaviorTrees
         //[Header("Use this to manually edit and reorder your variables")]
         public List<Variable> masterList;
 
-        public static int uniqueID = int.MinValue;
+        public static int uniqueID = 1;
         public int GetUniqueID()
         {
             int value = uniqueID;
