@@ -19,10 +19,55 @@ namespace BobJeltes.AI.BehaviorTrees
                 for (int i = 0; i < list.arraySize; i++)
                 {
                     SerializedProperty listItem = list.GetArrayElementAtIndex(i);
-                    //listItem.value
                 }
             }
             EditorGUI.EndProperty();
+        }
+
+        public class VariableTableSettings
+        {
+            public VariableTableSettings(params Column[] columns)
+            {
+
+            }
+
+            public class Column
+            {
+                public enum WidthCalculation
+                {
+                    Fixed,
+                    Flexible,
+                    Percentage
+                }
+                WidthCalculation widthType;
+                string title = "";
+                int minWidth = 0;
+                int maxWidth = 0;
+                float percentageWidth = 0;
+
+                public Column(string title, int width)
+                {
+                    widthType = WidthCalculation.Fixed;
+                    this.title = title;
+                    minWidth = width;
+                    maxWidth = width;
+                }
+
+                public Column(string title, int minWidth, int maxWidth)
+                {
+                    this.widthType = WidthCalculation.Flexible;
+                    this.title = title;
+                    this.minWidth = minWidth;
+                    this.maxWidth = maxWidth;
+                }
+
+                public Column(string title, float percentage)
+                {
+                    widthType = WidthCalculation.Percentage;
+                    this.title = title;
+                    this.percentageWidth = percentage;
+                }
+            }
         }
     }
 }

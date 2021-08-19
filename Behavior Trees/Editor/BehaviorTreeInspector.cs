@@ -8,27 +8,67 @@ public class BehaviorTreeInspector : Editor
 {
     bool showVariables;
     bool editNames;
+    GUIStyle tableHeader;
     GUIStyle boldHeaderWithUnderline;
     int tableRowVerticalPadding = 4;
     GUIStyle tableRowBrightStyle;
     GUIStyle tableRowDarkStyle;
+    float inspectorWidth = 0f;
+
+    public struct Column
+    {
+        public string title;
+        public int minWidth;
+        public int maxWidth;
+        public float percentileWidth;
+
+        public Column(string title, int minWidth, int maxWidth, float percentileWidth)
+        {
+            this.title = title;
+            this.minWidth = minWidth;
+            this.percentileWidth = percentileWidth;
+            this.maxWidth = maxWidth;
+        }
+
+        public GUILayoutOption[] GetOptions(float totalWidth)
+        {
+            return new GUILayoutOption[]
+            {
+                GUILayout.Width(totalWidth * percentileWidth * .01f),
+                GUILayout.MinWidth(minWidth),
+                GUILayout.MaxWidth(maxWidth),
+            };
+        }
+    }
+
+    public Column leftPaddingColumn = new Column("", 17, 17, 10f);
+    public Column nameValueCombinationColumn = new Column("", 100, 999, 40f);
+    public Column nameColumn = new Column("Name", 50, 999, 20f);
+    public Column valueColumn = new Column("Value", 50, 999, 20f);
+    public Column idColumn = new Column("ID", 20, 100, 10f);
+    public Column rightPaddingColumn = new Column("", 30, 20, 10f);
+    public Column idRightPaddingColumn = new Column("ID", 50, 120, 20f);
 
     private void OnEnable()
     {
-        boldHeaderWithUnderline = new GUIStyle() { fontStyle = FontStyle.Bold };
+        boldHeaderWithUnderline = new GUIStyle();
         boldHeaderWithUnderline.normal.textColor = Color.white;
         boldHeaderWithUnderline.border.left = -5;
         boldHeaderWithUnderline.padding.left = 2;
         boldHeaderWithUnderline.padding.right = 2;
         boldHeaderWithUnderline.padding.bottom = 2;
         boldHeaderWithUnderline.border.bottom = -2;
-        boldHeaderWithUnderline.margin.top = 5;
         boldHeaderWithUnderline.margin.bottom = 2;
 
         Texture2D typeHeaderTexture = new Texture2D(1, 1);
         typeHeaderTexture.SetPixel(0, 0, new Color(0, 0, 0, .25f));
         typeHeaderTexture.Apply();
         boldHeaderWithUnderline.normal.background = typeHeaderTexture;
+
+        tableHeader = new GUIStyle(boldHeaderWithUnderline);
+        tableHeader.margin.top = 5;
+        tableHeader.margin.bottom = 0;
+        tableHeader.padding.bottom = 0;
 
         tableRowBrightStyle = new GUIStyle();
         Texture2D brightTexture = new Texture2D(1, 1);
@@ -129,21 +169,26 @@ public class BehaviorTreeInspector : Editor
     public void DrawPropertiesForEach<T>(List<TypedVariable<T>> typedVariables)
     {
         if (typedVariables.Count == 0) return;
-        EditorGUILayout.BeginHorizontal(boldHeaderWithUnderline);
-        string label2 = typeof(T) == typeof(GameObject) ? "Scene" : "";
-        EditorGUILayout.LabelField(typeof(T).Name + "s", label2);
-        EditorGUILayout.LabelField("Value", GUILayout.MaxWidth(50));
-        GUILayout.FlexibleSpace();
-        if (GUILayout.Button("+"))
+        EditorGUILayout.BeginHorizontal(tableHeader);
+        EditorGUILayout.LabelField(typeof(T).Name + "s");
+        if (GUILayout.Button("+", rightPaddingColumn.GetOptions(inspectorWidth)))
         {
             (target as BehaviorTree).AddVariable(typeof(T));
         }
+        EditorGUILayout.EndHorizontal();
+        Rect tableRect = EditorGUILayout.BeginHorizontal(boldHeaderWithUnderline);
+        inspectorWidth = tableRect.width;
+        EditorGUILayout.Space(leftPaddingColumn.minWidth);
+        EditorGUILayout.LabelField(nameColumn.title, nameColumn.GetOptions(inspectorWidth));
+        EditorGUILayout.LabelField(valueColumn.title, valueColumn.GetOptions(inspectorWidth));
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.LabelField(idColumn.title, idColumn.GetOptions(inspectorWidth));
         EditorGUILayout.EndHorizontal();
         for (int i = 0; i < typedVariables.Count; i++)
         {
             GUIStyle currentStyle = i % 2 == 0 ? tableRowBrightStyle : tableRowDarkStyle;
             GUILayout.BeginHorizontal(currentStyle);
-            if (GUILayout.Button("-", GUILayout.Width(17f)))
+            if (GUILayout.Button("-", leftPaddingColumn.GetOptions(inspectorWidth)))
             {
                 Undo.RecordObject(target, "Remove variable");
                 (target as BehaviorTree).RemoveVariable(typedVariables[i]);
@@ -153,7 +198,6 @@ public class BehaviorTreeInspector : Editor
             {
                 Draw(typedVariables[i]);
             }
-
             GUILayout.EndHorizontal();
         }
     }
@@ -171,7 +215,7 @@ public class BehaviorTreeInspector : Editor
             // Show edit field
             Color originalGUIColor = GUI.backgroundColor;
             GUI.backgroundColor = new Color(0, 1, 1);
-            variable.name = EditorGUILayout.TextField(variable.name);
+            variable.name = EditorGUILayout.TextField(variable.name, nameValueCombinationColumn.GetOptions(inspectorWidth));
             GUI.backgroundColor = originalGUIColor;
         }
         else
@@ -180,52 +224,44 @@ public class BehaviorTreeInspector : Editor
             label.text = variable.name;
             if (string.IsNullOrEmpty(label.text)) label.text = " ";
         }
-        variable.id = EditorGUILayout.IntField(variable.id, GUILayout.Width(90));
         switch (variable)
         {
             case TypedVariable<int> intVar:
-                intVar.value = EditorGUILayout.IntField(label, intVar.value);
+                intVar.value = EditorGUILayout.IntField(label, intVar.value, nameValueCombinationColumn.GetOptions(inspectorWidth));
                 break;
             case TypedVariable<bool> boolVar:
-                boolVar.value = EditorGUILayout.Toggle(label, boolVar.value);
+                boolVar.value = EditorGUILayout.Toggle(label, boolVar.value, nameValueCombinationColumn.GetOptions(inspectorWidth));
                 break;
             case TypedVariable<float> floatVar:
-                floatVar.value = EditorGUILayout.FloatField(label, floatVar.value);
+                floatVar.value = EditorGUILayout.FloatField(label, floatVar.value, nameValueCombinationColumn.GetOptions(inspectorWidth));
                 break;
             case TypedVariable<string> stringVar:
-                stringVar.value = EditorGUILayout.TextField(label, stringVar.value);
+                stringVar.value = EditorGUILayout.TextField(label, stringVar.value, nameValueCombinationColumn.GetOptions(inspectorWidth));
                 break;
             case TypedVariable<Color> colorVar:
-                colorVar.value = EditorGUILayout.ColorField(label, colorVar.value);
+                colorVar.value = EditorGUILayout.ColorField(label, colorVar.value, nameValueCombinationColumn.GetOptions(inspectorWidth));
                 break;
             case TypedVariable<Vector2> vector2Var:
-                vector2Var.value = EditorGUILayout.Vector2Field(label, vector2Var.value);
+                vector2Var.value = EditorGUILayout.Vector2Field(label, vector2Var.value, nameValueCombinationColumn.GetOptions(inspectorWidth));
                 break;
             case TypedVariable<Vector3> vector3Var:
-                vector3Var.value = EditorGUILayout.Vector3Field(label, vector3Var.value);
+                vector3Var.value = EditorGUILayout.Vector3Field(label, vector3Var.value, nameValueCombinationColumn.GetOptions(inspectorWidth));
                 break;
             case TypedVariable<Vector4> vector4Var:
-                vector4Var.value = EditorGUILayout.Vector4Field(label, vector4Var.value);
+                vector4Var.value = EditorGUILayout.Vector4Field(label, vector4Var.value, nameValueCombinationColumn.GetOptions(inspectorWidth));
                 break;
             case TypedVariable<Vector2Int> vectorInt2Var:
-                vectorInt2Var.value = EditorGUILayout.Vector2IntField(label, vectorInt2Var.value);
+                vectorInt2Var.value = EditorGUILayout.Vector2IntField(label, vectorInt2Var.value, nameValueCombinationColumn.GetOptions(inspectorWidth));
                 break;
             case TypedVariable<Vector3Int> vectorInt3Var:
-                vectorInt3Var.value = EditorGUILayout.Vector3IntField(label, vectorInt3Var.value);
+                vectorInt3Var.value = EditorGUILayout.Vector3IntField(label, vectorInt3Var.value, nameValueCombinationColumn.GetOptions(inspectorWidth));
                 break;
             case TypedVariable<GameObject> gameObjectVar:
-                EditorGUILayout.PrefixLabel(label);
-                gameObjectVar.isSceneReference = EditorGUILayout.Toggle(gameObjectVar.isSceneReference, GUILayout.MaxWidth(30f));
-                if (gameObjectVar.isSceneReference)
-                {
-                    GUIContent message = new GUIContent("Assign in Behavior Tree Executor component");
-                    message.tooltip = message.text;
-                    EditorGUILayout.LabelField(message);
-                }
-                else
-                    gameObjectVar.value = (GameObject)EditorGUILayout.ObjectField(gameObjectVar.value, typeof(GameObject), false);
-
+                gameObjectVar.value = (GameObject)EditorGUILayout.ObjectField(label, gameObjectVar.value, typeof(GameObject), false, nameValueCombinationColumn.GetOptions(inspectorWidth));
+                
                 break;
         }
+        variable.id = EditorGUILayout.IntField(variable.id, idColumn.GetOptions(inspectorWidth));
+        //EditorGUILayout.Space(rightPaddingColumn.minWidth);
     }
 }
