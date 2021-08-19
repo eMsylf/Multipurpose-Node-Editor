@@ -13,9 +13,46 @@ MonoBehaviour:
   m_Name: Repeat
   m_EditorClassIdentifier: 
   guid: 39ad3652948ee9a46b69df368bd19a2d
-  positionOnView: {x: 289, y: 179}
+  positionOnView: {x: 365, y: 151}
   result: 0
   child: {fileID: 6907576475566892147}
+--- !u!114 &-5520953670150577918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d894d96c1d9cfe40906094c20f20558, type: 3}
+  m_Name: DestroyObject
+  m_EditorClassIdentifier: 
+  guid: c5a889be6522f4d42bbb6fecf69288ea
+  positionOnView: {x: 515, y: 420}
+  result: 0
+  objectID: 1
+  delay: 5
+--- !u!114 &-3841663368516124198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5329e21dc6a310745b850ba4432d7622, type: 3}
+  m_Name: ApplyForceToObject
+  m_EditorClassIdentifier: 
+  guid: 450def7e0f58ee54f8ab74815f81b82a
+  positionOnView: {x: 679, y: 458}
+  result: 0
+  objectID: 1
+  force: {x: 0, y: 0, z: 15}
+  forceMode: 1
+  relativeToObject: 1
+  relativeToObjectID: 2
 --- !u!114 &-3606884500782864700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29,7 +66,7 @@ MonoBehaviour:
   m_Name: Debug
   m_EditorClassIdentifier: 
   guid: 29b76c2fbf3f9a348bfada25b1c006ce
-  positionOnView: {x: 106, y: 492}
+  positionOnView: {x: 182, y: 464}
   result: 0
   message: Fire!
 --- !u!114 &11400000
@@ -49,10 +86,11 @@ MonoBehaviour:
   - {fileID: 8520475290408392303}
   - {fileID: 3624870162175952706}
   - {fileID: 6907576475566892147}
-  - {fileID: 4427670198577503328}
   - {fileID: -3606884500782864700}
   - {fileID: 5457812074873989012}
   - {fileID: 6284373418606010620}
+  - {fileID: -3841663368516124198}
+  - {fileID: -5520953670150577918}
   root: {fileID: 824152994945103878}
   result: 2
   blackboard:
@@ -68,20 +106,17 @@ MonoBehaviour:
     Vector3Ints: []
     GameObjects:
     - name: Projectile
-      id: -2147483647
+      id: 0
       value: {fileID: 7148961911498603408, guid: 8707c0e6f965d3a4e9d5a23b44e02629, type: 3}
       isSceneReference: 0
     - name: Latest spawned object
-      id: -2147483646
+      id: 1
       value: {fileID: 0}
       isSceneReference: 1
-    masterList:
-    - name: Target
-      id: -2147483648
-    - name: Projectile
-      id: -2147483647
-    - name: Latest spawned object
-      id: -2147483646
+    - name: Relative to
+      id: 2
+      value: {fileID: 0}
+      isSceneReference: 0
 --- !u!114 &824152994945103878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -95,7 +130,7 @@ MonoBehaviour:
   m_Name: RootNode
   m_EditorClassIdentifier: 
   guid: 1f40a8fe83c2bd446806190d843abbda
-  positionOnView: {x: 480, y: 75}
+  positionOnView: {x: 1669, y: 375}
   result: 0
   child: {fileID: -8601610202832898222}
 --- !u!114 &3624870162175952706
@@ -111,32 +146,15 @@ MonoBehaviour:
   m_Name: SpawnObject
   m_EditorClassIdentifier: 
   guid: 3b0a82faa3c4f08428e9d4983642c5c2
-  positionOnView: {x: 306, y: 488}
+  positionOnView: {x: 382, y: 460}
   result: 0
-  objectPrefab: {fileID: 7148961911498603408, guid: 8707c0e6f965d3a4e9d5a23b44e02629, type: 3}
+  prefabID: 0
+  spawnAsChild: 0
   storeInVariable: 1
-  objectID: -2147483648
+  spawnedObjectID: 1
   onSpawnObject:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &4427670198577503328
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5329e21dc6a310745b850ba4432d7622, type: 3}
-  m_Name: ApplyForceToObject
-  m_EditorClassIdentifier: 
-  guid: eeb50b0a6906d1a4ebc5c186c88c835a
-  positionOnView: {x: 609, y: 481}
-  result: 0
-  objectID: -2147483648
-  force: {x: 0, y: 0, z: 2}
-  forceMode: 1
 --- !u!114 &5457812074873989012
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,7 +168,7 @@ MonoBehaviour:
   m_Name: Debug
   m_EditorClassIdentifier: 
   guid: e771936c00e42b143833ae9833a171d4
-  positionOnView: {x: 461, y: 533}
+  positionOnView: {x: 537, y: 505}
   result: 0
   message: Object spawned
 --- !u!114 &6284373418606010620
@@ -166,7 +184,7 @@ MonoBehaviour:
   m_Name: Debug
   m_EditorClassIdentifier: 
   guid: 0ed70deab7985484fafd13cb1a866d6f
-  positionOnView: {x: 782, y: 530}
+  positionOnView: {x: 858, y: 502}
   result: 0
   message: Force applied
 --- !u!114 &6907576475566892147
@@ -182,14 +200,15 @@ MonoBehaviour:
   m_Name: Sequence
   m_EditorClassIdentifier: 
   guid: 9bfa247b79928a7419f82e5fcc3ea2a6
-  positionOnView: {x: 290, y: 280}
+  positionOnView: {x: 366, y: 252}
   result: 0
   children:
   - {fileID: 8520475290408392303}
   - {fileID: -3606884500782864700}
   - {fileID: 3624870162175952706}
+  - {fileID: -5520953670150577918}
   - {fileID: 5457812074873989012}
-  - {fileID: 4427670198577503328}
+  - {fileID: -3841663368516124198}
   - {fileID: 6284373418606010620}
   i: 0
 --- !u!114 &8520475290408392303
@@ -205,6 +224,6 @@ MonoBehaviour:
   m_Name: Wait
   m_EditorClassIdentifier: 
   guid: 85d6d3987af3b044586c68161d8d22ae
-  positionOnView: {x: 54, y: 401}
+  positionOnView: {x: 130, y: 373}
   result: 0
   duration: 0.3

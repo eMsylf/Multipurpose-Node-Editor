@@ -35,7 +35,7 @@ public class ApplyForceToObject : ActionNode
         GameObject objectToApplyForceTo = objectVariable.value;
         if (objectToApplyForceTo == null)
         {
-            UnityEngine.Debug.LogError("");
+            UnityEngine.Debug.LogError("No object to apply a force to", behaviorTreeExecutor);
             return Result.Failure;
         }
         Rigidbody rigidbody = objectToApplyForceTo.GetComponent<Rigidbody>();

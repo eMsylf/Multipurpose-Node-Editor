@@ -7,11 +7,11 @@ using UnityEngine.Events;
 
 public class SpawnObject : ActionNode
 {
-    public GameObject objectPrefab;
-    public bool storeInVariable;
+    public int prefabID;
     public bool spawnAsChild;
+    public bool storeInVariable;
     [Tooltip("Object that is spawned that will be overridden in the behavior tree")]
-    public int objectID;
+    public int spawnedObjectID;
     public UnityEvent<GameObject> onSpawnObject = new UnityEvent<GameObject>();
 
     // This is called when the node is first updated
@@ -29,22 +29,23 @@ public class SpawnObject : ActionNode
     // This is called when the node is updated
     public override Result OnUpdate(BehaviorTreeExecutor behaviorTreeExecutor)
     {
-        if (objectPrefab == null)
+        GameObject prefab = behaviorTreeExecutor.GetGameObjectVariable(prefabID);
+        if (prefab == null)
         {
             return Result.Failure;
         }
         GameObject spawnedObject;
         if (spawnAsChild)
-            spawnedObject = Instantiate(objectPrefab, behaviorTreeExecutor.transform);
+            spawnedObject = Instantiate(prefab, behaviorTreeExecutor.transform);
         else
-            spawnedObject = Instantiate(objectPrefab, behaviorTreeExecutor.transform.TransformPoint(objectPrefab.transform.position), objectPrefab.transform.rotation);
+            spawnedObject = Instantiate(prefab, behaviorTreeExecutor.transform.TransformPoint(prefab.transform.position), prefab.transform.rotation);
 
         if (storeInVariable)
         {
-            TypedVariable<GameObject> gameObjectVariableOverride = behaviorTreeExecutor.variableOverrides.GameObjects.Find(x => x.id == objectID);
+            TypedVariable<GameObject> gameObjectVariableOverride = behaviorTreeExecutor.variableOverrides.GameObjects.Find(x => x.id == spawnedObjectID);
             if (gameObjectVariableOverride == null)
             {
-                UnityEngine.Debug.LogWarning("Object ID " + objectID + " not found in variable overrides of " + objectID);
+                UnityEngine.Debug.LogWarning("Object ID " + spawnedObjectID + " not found in variable overrides of " + spawnedObjectID);
             }
             else
             {
@@ -61,9 +62,9 @@ public class SpawnObject : ActionNode
         // variableName = ((SpawnObject)source).variableName;
         base.CopyData(source);
         SpawnObject typedSource = ((SpawnObject)source);
-        objectPrefab = typedSource.objectPrefab;
+        prefabID = typedSource.prefabID;
         storeInVariable = typedSource.storeInVariable;
-        objectID = typedSource.objectID;
+        spawnedObjectID = typedSource.spawnedObjectID;
         onSpawnObject = typedSource.onSpawnObject;
     }
 }

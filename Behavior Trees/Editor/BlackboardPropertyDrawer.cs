@@ -19,6 +19,15 @@ namespace BobJeltes.AI.BehaviorTrees
                 for (int i = 0; i < list.arraySize; i++)
                 {
                     SerializedProperty listItem = list.GetArrayElementAtIndex(i);
+                    //Variable objectListItem = (Variable)listItem.serializedObject.targetObject;
+                    //switch (objectListItem)
+                    //{
+                    //    case objectListItem as TypedVariable<GameObject>:
+
+                    //        break;
+                    //    default:
+                    //        break;
+                    //}
                 }
             }
             EditorGUI.EndProperty();

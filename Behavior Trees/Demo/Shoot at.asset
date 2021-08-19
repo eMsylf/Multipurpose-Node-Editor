@@ -16,6 +16,23 @@ MonoBehaviour:
   positionOnView: {x: 347, y: 129}
   result: 0
   child: {fileID: 4855068903885684406}
+--- !u!114 &-4580906548993144532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d894d96c1d9cfe40906094c20f20558, type: 3}
+  m_Name: DestroyObject
+  m_EditorClassIdentifier: 
+  guid: beb71d6d5640c3b4aafe6d897425f694
+  positionOnView: {x: 399, y: 440}
+  result: 0
+  objectID: -2147483646
+  delay: 5
 --- !u!114 &-3606884500782864700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,6 +89,7 @@ MonoBehaviour:
   - {fileID: 6284373418606010620}
   - {fileID: 4855068903885684406}
   - {fileID: -1868084113094242848}
+  - {fileID: -4580906548993144532}
   root: {fileID: 824152994945103878}
   result: 2
   blackboard:
@@ -102,15 +120,6 @@ MonoBehaviour:
       id: -2147483645
       value: {fileID: 0}
       isSceneReference: 0
-    masterList:
-    - name: Target
-      id: -2147483648
-    - name: Projectile
-      id: -2147483647
-    - name: Latest spawned object
-      id: -2147483646
-    - name: Relative to
-      id: -2147483648
 --- !u!114 &824152994945103878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,10 +151,10 @@ MonoBehaviour:
   guid: 3b0a82faa3c4f08428e9d4983642c5c2
   positionOnView: {x: 306, y: 488}
   result: 0
-  objectPrefab: {fileID: 7148961911498603408, guid: 8707c0e6f965d3a4e9d5a23b44e02629, type: 3}
-  storeInVariable: 1
+  prefabID: -2147483647
   spawnAsChild: 0
-  objectID: -2147483646
+  storeInVariable: 1
+  spawnedObjectID: -2147483646
   onSpawnObject:
     m_PersistentCalls:
       m_Calls: []
@@ -239,6 +248,7 @@ MonoBehaviour:
   - {fileID: 8520475290408392303}
   - {fileID: -3606884500782864700}
   - {fileID: 3624870162175952706}
+  - {fileID: -4580906548993144532}
   - {fileID: 5457812074873989012}
   - {fileID: 4427670198577503328}
   - {fileID: 6284373418606010620}

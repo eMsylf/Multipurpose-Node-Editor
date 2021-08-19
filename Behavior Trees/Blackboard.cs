@@ -20,8 +20,7 @@ namespace BobJeltes.AI.BehaviorTrees
         public List<TypedVariable<Vector3Int>> Vector3Ints = new List<TypedVariable<Vector3Int>>();
         public List<TypedVariable<GameObject>> GameObjects = new List<TypedVariable<GameObject>>();
 
-        //[Header("Use this to manually edit and reorder your variables")]
-        public List<Variable> masterList;
+        private List<Variable> masterList;
 
         public static int uniqueID = 1;
         public int GetUniqueID()
@@ -129,7 +128,7 @@ namespace BobJeltes.AI.BehaviorTrees
             var variable = GameObjects.Find(x => x.ID == id);
             if (variable == null)
             {
-                UnityEngine.Debug.LogError("No game object found with id " + id);
+                Debug.LogError("No game object found with id " + id);
                 return null;
             }
 

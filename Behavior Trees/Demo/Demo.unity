@@ -232,7 +232,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 138174208}
   m_LocalRotation: {x: -0, y: -0, z: 0.38268343, w: 0.92387956}
-  m_LocalPosition: {x: -2.8500004, y: -4.25, z: -6.68}
+  m_LocalPosition: {x: -5, y: -4.25, z: -6.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1393636016}
@@ -538,7 +538,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 305442515}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.34000015, y: -4, z: -6.68}
+  m_LocalPosition: {x: -5, y: -4, z: -6.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1113782602}
@@ -788,11 +788,8 @@ MonoBehaviour:
     GameObjects:
     - name: Target
       id: -2147483648
-      value: {fileID: 1301137863}
+      value: {fileID: 1462003500}
       isSceneReference: 1
-    masterList:
-    - name: Target
-      id: -2147483648
 --- !u!136 &505659679
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1106,7 +1103,7 @@ GameObject:
   - component: {fileID: 805784857}
   - component: {fileID: 805784856}
   m_Layer: 0
-  m_Name: Agent (1)
+  m_Name: Agent (Shoot Straight)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1138,20 +1135,17 @@ MonoBehaviour:
     Vector3Ints: []
     GameObjects:
     - name: Projectile
-      id: -2147483647
+      id: 0
       value: {fileID: 7148961911498603408, guid: 8707c0e6f965d3a4e9d5a23b44e02629, type: 3}
       isSceneReference: 0
     - name: Latest spawned object
-      id: -2147483646
+      id: 1
       value: {fileID: 0}
       isSceneReference: 1
-    masterList:
-    - name: Target
-      id: -2147483648
-    - name: Projectile
-      id: -2147483647
-    - name: Latest spawned object
-      id: -2147483646
+    - name: Relative to
+      id: 2
+      value: {fileID: 805784855}
+      isSceneReference: 0
 --- !u!136 &805784857
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1472,7 +1466,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 928857361}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.1600001, y: -1.5797999, z: -1.68}
+  m_LocalPosition: {x: -2.5, y: -1.5797999, z: -1.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2124490046}
@@ -1704,7 +1698,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1113782602
 Transform:
   m_ObjectHideFlags: 0
@@ -2161,7 +2155,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1229606729
 Transform:
   m_ObjectHideFlags: 0
@@ -2363,7 +2357,6 @@ MonoBehaviour:
       id: -2147483648
       value: {fileID: 138174208}
       isSceneReference: 1
-    masterList: []
 --- !u!136 &1301137865
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2556,7 +2549,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1393636016
 Transform:
   m_ObjectHideFlags: 0
@@ -2650,15 +2643,6 @@ MonoBehaviour:
       id: -2147483645
       value: {fileID: 1449458217}
       isSceneReference: 0
-    masterList:
-    - name: Target
-      id: -2147483648
-    - name: Projectile
-      id: -2147483647
-    - name: Latest spawned object
-      id: -2147483646
-    - name: Relative to
-      id: -2147483648
 --- !u!136 &1449458220
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2831,7 +2815,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1462003500}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.6599998, y: -4, z: -6.68}
+  m_LocalPosition: {x: -5, y: -4, z: -6.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1229606729}
@@ -2861,7 +2845,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1508531619}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 47.5, y: 5, z: 5}
+  m_LocalPosition: {x: 50, y: 5, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1157024633}
@@ -2869,7 +2853,7 @@ Transform:
   - {fileID: 1449458218}
   - {fileID: 773649168}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1584201666
 GameObject:
@@ -2947,13 +2931,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1584201666}
-  m_LocalRotation: {x: 0.70710665, y: -0, z: -0, w: 0.70710695}
-  m_LocalPosition: {x: 0, y: 14.142138, z: 0.0000016858739}
+  m_LocalRotation: {x: 0.15298584, y: 0, z: 0, w: 0.9882284}
+  m_LocalPosition: {x: 25, y: 15.37229, z: -39.13}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 17.6, y: 0, z: 0}
 --- !u!1 &1704831483
 GameObject:
   m_ObjectHideFlags: 0
@@ -3003,9 +2987,6 @@ MonoBehaviour:
       id: -2147483648
       value: {fileID: 928857361}
       isSceneReference: 1
-    masterList:
-    - name: New GameObject
-      id: -2147483648
 --- !u!136 &1704831485
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3301,7 +3282,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 3.7
+  m_fontSize: 3.8
   m_fontSizeBase: 4.31
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3415,7 +3396,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2098564365
 GameObject:
@@ -3528,7 +3509,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2124490046
 Transform:
   m_ObjectHideFlags: 0
