@@ -40,28 +40,28 @@ namespace BobJeltes.NodeEditor
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("Blackboard");
             EditorGUILayout.PropertyField(blackboard);
-            if (GUILayout.Button("Create variable override"))
-            {
-                treeExecutor.RebuildInstanceOverrideList();
-                GenericMenu instanceOverrideMenu = new GenericMenu();
-                CreateListMenuItems(treeExecutor.tree.blackboard.bools, treeExecutor.variableOverrides.bools, instanceOverrideMenu);
-                CreateListMenuItems(treeExecutor.tree.blackboard.ints, treeExecutor.variableOverrides.ints, instanceOverrideMenu);
-                CreateListMenuItems(treeExecutor.tree.blackboard.floats, treeExecutor.variableOverrides.floats, instanceOverrideMenu);
-                CreateListMenuItems(treeExecutor.tree.blackboard.strings, treeExecutor.variableOverrides.strings, instanceOverrideMenu);
-                CreateListMenuItems(treeExecutor.tree.blackboard.Colors, treeExecutor.variableOverrides.Colors, instanceOverrideMenu);
-                CreateListMenuItems(treeExecutor.tree.blackboard.Vector2s, treeExecutor.variableOverrides.Vector2s, instanceOverrideMenu);
-                CreateListMenuItems(treeExecutor.tree.blackboard.Vector3s, treeExecutor.variableOverrides.Vector3s, instanceOverrideMenu);
-                CreateListMenuItems(treeExecutor.tree.blackboard.Vector4s, treeExecutor.variableOverrides.Vector4s, instanceOverrideMenu);
-                CreateListMenuItems(treeExecutor.tree.blackboard.Vector2Ints, treeExecutor.variableOverrides.Vector2Ints, instanceOverrideMenu);
-                CreateListMenuItems(treeExecutor.tree.blackboard.Vector3Ints, treeExecutor.variableOverrides.Vector3Ints, instanceOverrideMenu);
-                CreateListMenuItems(treeExecutor.tree.blackboard.GameObjects, treeExecutor.variableOverrides.GameObjects, instanceOverrideMenu);
-                if (instanceOverrideMenu.GetItemCount() == 0)
-                {
-                    Debug.Log("You have not added any variables to the behavior tree's blackboard that can be overriden. Please do that first.", treeExecutor.tree);
-                    instanceOverrideMenu.AddDisabledItem(new GUIContent("No variables to override"));
-                }
-                instanceOverrideMenu.ShowAsContext();
-            }
+            //if (GUILayout.Button("Create variable override"))
+            //{
+            //    treeExecutor.RebuildInstanceOverrideList();
+            //    GenericMenu instanceOverrideMenu = new GenericMenu();
+            //    CreateListMenuItems(treeExecutor.tree.blackboard.bools, treeExecutor.variableOverrides.bools, instanceOverrideMenu);
+            //    CreateListMenuItems(treeExecutor.tree.blackboard.ints, treeExecutor.variableOverrides.ints, instanceOverrideMenu);
+            //    CreateListMenuItems(treeExecutor.tree.blackboard.floats, treeExecutor.variableOverrides.floats, instanceOverrideMenu);
+            //    CreateListMenuItems(treeExecutor.tree.blackboard.strings, treeExecutor.variableOverrides.strings, instanceOverrideMenu);
+            //    CreateListMenuItems(treeExecutor.tree.blackboard.Colors, treeExecutor.variableOverrides.Colors, instanceOverrideMenu);
+            //    CreateListMenuItems(treeExecutor.tree.blackboard.Vector2s, treeExecutor.variableOverrides.Vector2s, instanceOverrideMenu);
+            //    CreateListMenuItems(treeExecutor.tree.blackboard.Vector3s, treeExecutor.variableOverrides.Vector3s, instanceOverrideMenu);
+            //    CreateListMenuItems(treeExecutor.tree.blackboard.Vector4s, treeExecutor.variableOverrides.Vector4s, instanceOverrideMenu);
+            //    CreateListMenuItems(treeExecutor.tree.blackboard.Vector2Ints, treeExecutor.variableOverrides.Vector2Ints, instanceOverrideMenu);
+            //    CreateListMenuItems(treeExecutor.tree.blackboard.Vector3Ints, treeExecutor.variableOverrides.Vector3Ints, instanceOverrideMenu);
+            //    CreateListMenuItems(treeExecutor.tree.blackboard.GameObjects, treeExecutor.variableOverrides.GameObjects, instanceOverrideMenu);
+            //    if (instanceOverrideMenu.GetItemCount() == 0)
+            //    {
+            //        Debug.Log("You have not added any variables to the behavior tree's blackboard that can be overriden. Please do that first.", treeExecutor.tree);
+            //        instanceOverrideMenu.AddDisabledItem(new GUIContent("No variables to override"));
+            //    }
+            //    instanceOverrideMenu.ShowAsContext();
+            //}
         }
 
         private static void CreateListMenuItems<T>(List<TypedVariable<T>> originalList, List<TypedVariable<T>> targetList, GenericMenu instanceOverrideMenu)
