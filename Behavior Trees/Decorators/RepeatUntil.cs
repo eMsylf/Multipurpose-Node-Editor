@@ -41,12 +41,4 @@ public class RepeatUntil : DecoratorNode
         }
         return childResult;
     }
-
-    // This is used to copy data when creating/saving/loading nodes. Be sure to add every variable you add to this class.
-    public override void CopyData(Node source)
-    {
-        // Example:
-        // variableName = ((RepeatUntil)source).variableName;
-        base.CopyData(source);
-    }
 }

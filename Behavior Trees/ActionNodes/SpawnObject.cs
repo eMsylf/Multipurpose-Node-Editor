@@ -54,17 +54,4 @@ public class SpawnObject : ActionNode
         }
         return Result.Success;
     }
-
-    // This is used to copy data when creating/saving/loading nodes. Be sure to add every variable you add to this class.
-    public override void CopyData(Node source)
-    {
-        // Example:
-        // variableName = ((SpawnObject)source).variableName;
-        base.CopyData(source);
-        SpawnObject typedSource = ((SpawnObject)source);
-        prefabID = typedSource.prefabID;
-        storeInVariable = typedSource.storeInVariable;
-        spawnedObjectID = typedSource.spawnedObjectID;
-        onSpawnObject = typedSource.onSpawnObject;
-    }
 }

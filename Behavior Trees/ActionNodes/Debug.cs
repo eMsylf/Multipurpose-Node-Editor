@@ -24,11 +24,5 @@ namespace BobJeltes.AI.BehaviorTrees.Nodes
             UnityEngine.Debug.Log("Update: " + message);
             return Result.Success;
         }
-
-        public override void CopyData(Node dataSource)
-        {
-            message = ((Debug)dataSource).message;
-            base.CopyData(dataSource);
-        }
     }
 }

@@ -38,12 +38,4 @@ public class LookAt : ActionNode
         behaviorTreeExecutor.transform.LookAt(lookTarget);
         return Result.Success;
     }
-
-    // This is used to copy data when creating/saving/loading nodes. Be sure to add every variable you add to this class.
-    public override void CopyData(Node source)
-    {
-        // Example:
-        // variableName = ((LookAt)source).variableName;
-        base.CopyData(source);
-    }
 }

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8601610202832898222
+--- !u!114 &-4873848439066136831
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,63 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7cc34d98b8522640b01c171f3ecc901, type: 3}
-  m_Name: Repeat
+  m_Script: {fileID: 11500000, guid: 67718333f75bd5846a9592862f7eeac3, type: 3}
+  m_Name: Sequence
   m_EditorClassIdentifier: 
-  guid: 39ad3652948ee9a46b69df368bd19a2d
-  positionOnView: {x: 347, y: 129}
+  guid: 0564f7aa3c8950d46808c34c9ffcfd1e
+  positionOnView: {x: 233, y: 355}
   result: 0
-  child: {fileID: 4855068903885684406}
---- !u!114 &-4580906548993144532
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d894d96c1d9cfe40906094c20f20558, type: 3}
-  m_Name: DestroyObject
-  m_EditorClassIdentifier: 
-  guid: beb71d6d5640c3b4aafe6d897425f694
-  positionOnView: {x: 399, y: 440}
-  result: 0
-  objectID: -2147483646
-  delay: 5
---- !u!114 &-3606884500782864700
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa4b927626f860449bff9c6c4e80dc9b, type: 3}
-  m_Name: Debug
-  m_EditorClassIdentifier: 
-  guid: 29b76c2fbf3f9a348bfada25b1c006ce
-  positionOnView: {x: 106, y: 492}
-  result: 0
-  message: Fire!
---- !u!114 &-1868084113094242848
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66cd8b9ea9c1a464fad46e6a41cf186f, type: 3}
-  m_Name: LookAt
-  m_EditorClassIdentifier: 
-  guid: a5fbacfa4f894fb459741ac21abd019e
-  positionOnView: {x: 30, y: 279}
-  result: 0
-  objectID: -2147483648
-  stayUpright: 0
+  children:
+  - {fileID: 5724832894858202282}
+  - {fileID: 5818534257471835814}
+  - {fileID: 3728155477295907681}
+  i: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,18 +33,12 @@ MonoBehaviour:
   m_Name: Shoot at
   m_EditorClassIdentifier: 
   nodes:
-  - {fileID: -8601610202832898222}
-  - {fileID: 8520475290408392303}
-  - {fileID: 3624870162175952706}
-  - {fileID: 6907576475566892147}
-  - {fileID: 4427670198577503328}
-  - {fileID: -3606884500782864700}
-  - {fileID: 5457812074873989012}
-  - {fileID: 6284373418606010620}
-  - {fileID: 4855068903885684406}
-  - {fileID: -1868084113094242848}
-  - {fileID: -4580906548993144532}
-  root: {fileID: 824152994945103878}
+  - {fileID: 3388554811866093363}
+  - {fileID: -4873848439066136831}
+  - {fileID: 5724832894858202282}
+  - {fileID: 3728155477295907681}
+  - {fileID: 5818534257471835814}
+  root: {fileID: 6861934326195006139}
   result: 2
   blackboard:
     bools: []
@@ -104,23 +52,19 @@ MonoBehaviour:
     Vector2Ints: []
     Vector3Ints: []
     GameObjects:
-    - name: Target
-      id: -2147483648
-      value: {fileID: 0}
-      isSceneReference: 1
-    - name: Projectile
-      id: -2147483647
+    - name: Prefab
+      id: 1
       value: {fileID: 7148961911498603408, guid: 8707c0e6f965d3a4e9d5a23b44e02629, type: 3}
       isSceneReference: 0
-    - name: Latest spawned object
-      id: -2147483646
-      value: {fileID: 0}
-      isSceneReference: 1
-    - name: Relative to
-      id: -2147483645
+    - name: Spawned object
+      id: 2
       value: {fileID: 0}
       isSceneReference: 0
---- !u!114 &824152994945103878
+    - name: Force orientation
+      id: 3
+      value: {fileID: 0}
+      isSceneReference: 0
+--- !u!114 &3388554811866093363
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -129,14 +73,31 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ed3dd7539b7966438c31407d5bec39d, type: 3}
-  m_Name: RootNode
+  m_Script: {fileID: 11500000, guid: d7cc34d98b8522640b01c171f3ecc901, type: 3}
+  m_Name: Repeat
   m_EditorClassIdentifier: 
-  guid: 1f40a8fe83c2bd446806190d843abbda
-  positionOnView: {x: 480, y: 75}
+  guid: 634b56d1a02aee2448e1daea25e88caa
+  positionOnView: {x: 431, y: 238}
   result: 0
-  child: {fileID: -8601610202832898222}
---- !u!114 &3624870162175952706
+  child: {fileID: -4873848439066136831}
+--- !u!114 &3728155477295907681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d894d96c1d9cfe40906094c20f20558, type: 3}
+  m_Name: DestroyObject
+  m_EditorClassIdentifier: 
+  guid: c5515348aac0a1942a148cdcd915a76d
+  positionOnView: {x: 627, y: 485}
+  result: 0
+  objectID: 2
+  delay: 5
+--- !u!114 &5724832894858202282
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,17 +109,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79c2f44f01f8ab54cae18fb713ea2b72, type: 3}
   m_Name: SpawnObject
   m_EditorClassIdentifier: 
-  guid: 3b0a82faa3c4f08428e9d4983642c5c2
-  positionOnView: {x: 306, y: 488}
+  guid: 90d76cd330b941c4ca195e8dd17a9e79
+  positionOnView: {x: 44, y: 503}
   result: 0
-  prefabID: -2147483647
+  prefabID: 1
   spawnAsChild: 0
-  storeInVariable: 1
-  spawnedObjectID: -2147483646
+  storeInVariable: 0
+  spawnedObjectID: 2
   onSpawnObject:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &4427670198577503328
+--- !u!114 &5818534257471835814
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -170,15 +131,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5329e21dc6a310745b850ba4432d7622, type: 3}
   m_Name: ApplyForceToObject
   m_EditorClassIdentifier: 
-  guid: eeb50b0a6906d1a4ebc5c186c88c835a
-  positionOnView: {x: 609, y: 481}
+  guid: f07bc40b665c3cf4993911892b4846e4
+  positionOnView: {x: 335, y: 486}
   result: 0
-  objectID: -2147483646
-  force: {x: 0, y: 0, z: 15}
+  objectID: 2
+  force: {x: 0, y: 0, z: 1}
   forceMode: 1
-  relativeToObject: 1
-  relativeToObjectID: -2147483645
---- !u!114 &4855068903885684406
+  relativeToObject: 0
+  relativeToObjectID: 3
+--- !u!114 &6861934326195006139
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -187,85 +148,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f5e5a483645b7247a8195b603745254, type: 3}
-  m_Name: Synchronous
+  m_Script: {fileID: 11500000, guid: 9ed3dd7539b7966438c31407d5bec39d, type: 3}
+  m_Name: RootNode
   m_EditorClassIdentifier: 
-  guid: 40f1d3e8acd35814ca6e3f8c62016f31
-  positionOnView: {x: 265, y: 201}
+  guid: a20e628121400a64b892f3569cb784c4
+  positionOnView: {x: 480, y: 75}
   result: 0
-  children:
-  - {fileID: -1868084113094242848}
-  - {fileID: 6907576475566892147}
-  i: 0
---- !u!114 &5457812074873989012
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa4b927626f860449bff9c6c4e80dc9b, type: 3}
-  m_Name: Debug
-  m_EditorClassIdentifier: 
-  guid: e771936c00e42b143833ae9833a171d4
-  positionOnView: {x: 461, y: 533}
-  result: 0
-  message: Object spawned
---- !u!114 &6284373418606010620
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa4b927626f860449bff9c6c4e80dc9b, type: 3}
-  m_Name: Debug
-  m_EditorClassIdentifier: 
-  guid: 0ed70deab7985484fafd13cb1a866d6f
-  positionOnView: {x: 782, y: 530}
-  result: 0
-  message: Force applied
---- !u!114 &6907576475566892147
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67718333f75bd5846a9592862f7eeac3, type: 3}
-  m_Name: Sequence
-  m_EditorClassIdentifier: 
-  guid: 9bfa247b79928a7419f82e5fcc3ea2a6
-  positionOnView: {x: 290, y: 280}
-  result: 0
-  children:
-  - {fileID: 8520475290408392303}
-  - {fileID: -3606884500782864700}
-  - {fileID: 3624870162175952706}
-  - {fileID: -4580906548993144532}
-  - {fileID: 5457812074873989012}
-  - {fileID: 4427670198577503328}
-  - {fileID: 6284373418606010620}
-  i: 0
---- !u!114 &8520475290408392303
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81e3b6307b45f3044a9921606a5ad64e, type: 3}
-  m_Name: Wait
-  m_EditorClassIdentifier: 
-  guid: 85d6d3987af3b044586c68161d8d22ae
-  positionOnView: {x: 54, y: 401}
-  result: 0
-  duration: 0.3
+  child: {fileID: 3388554811866093363}

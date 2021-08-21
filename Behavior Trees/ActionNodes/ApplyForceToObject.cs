@@ -54,16 +54,4 @@ public class ApplyForceToObject : ActionNode
             rigidbody.AddForce(force, forceMode);
         return Result.Success;
     }
-
-    // This is used to copy data when creating/saving/loading nodes. Be sure to add every variable you add to this class.
-    public override void CopyData(Node source)
-    {
-        // Example:
-        // variableName = ((ApplyForceToObject)source).variableName;
-        base.CopyData(source);
-        ApplyForceToObject typedSource = ((ApplyForceToObject)source);
-        force = typedSource.force;
-        forceMode = typedSource.forceMode;
-        objectID = typedSource.objectID;
-    }
 }

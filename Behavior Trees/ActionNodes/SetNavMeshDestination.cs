@@ -47,13 +47,4 @@ public class SetNavMeshDestination : ActionNode
 
         return Result.Success;
     }
-
-    // This is used to copy data when creating/saving/loading nodes. Be sure to add every variable you add to this class.
-    public override void CopyData(Node source)
-    {
-        // Example:
-        // variableName = ((SetNavMeshDestination)source).variableName;
-        base.CopyData(source);
-        targetID = ((SetNavMeshDestination)source).targetID;
-    }
 }

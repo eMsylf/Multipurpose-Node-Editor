@@ -40,14 +40,4 @@ public class DestroyObject : ActionNode
         }
         return Result.Success;
     }
-
-    // This is used to copy data when creating/saving/loading nodes. Be sure to add every variable you add to this class.
-    public override void CopyData(Node source)
-    {
-        // Example:
-        // variableName = ((DestroyObject)source).variableName;
-        base.CopyData(source);
-        objectID = ((DestroyObject)source).objectID;
-        delay = ((DestroyObject)source).delay;
-    }
 }
