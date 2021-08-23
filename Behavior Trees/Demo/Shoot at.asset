@@ -40,8 +40,8 @@ MonoBehaviour:
   - {fileID: 3728155477295907681}
   - {fileID: 5818534257471835814}
   - {fileID: 6091724713455319270}
-  - {fileID: 335861108861778555}
   - {fileID: 2876575929187992761}
+  - {fileID: 7648729913691127670}
   root: {fileID: 6861934326195006139}
   result: 2
   blackboard:
@@ -72,25 +72,6 @@ MonoBehaviour:
       id: 4
       value: {fileID: 0}
       isSceneReference: 0
---- !u!114 &335861108861778555
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67718333f75bd5846a9592862f7eeac3, type: 3}
-  m_Name: Sequence
-  m_EditorClassIdentifier: 
-  guid: 2304fc94bf2b2094f8be5325864c995a
-  positionOnView: {x: 427, y: 240}
-  result: 0
-  children:
-  - {fileID: 2876575929187992761}
-  - {fileID: -4873848439066136831}
-  i: 0
 --- !u!114 &2876575929187992761
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,7 +104,7 @@ MonoBehaviour:
   guid: 634b56d1a02aee2448e1daea25e88caa
   positionOnView: {x: 428, y: 163}
   result: 0
-  child: {fileID: 335861108861778555}
+  child: {fileID: 7648729913691127670}
 --- !u!114 &3728155477295907681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,7 +139,7 @@ MonoBehaviour:
   result: 0
   prefabID: 1
   spawnAsChild: 0
-  storeInVariable: 0
+  storeInVariable: 1
   spawnedObjectID: 2
   onSpawnObject:
     m_PersistentCalls:
@@ -215,3 +196,22 @@ MonoBehaviour:
   positionOnView: {x: 480, y: 75}
   result: 0
   child: {fileID: 3388554811866093363}
+--- !u!114 &7648729913691127670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f5e5a483645b7247a8195b603745254, type: 3}
+  m_Name: Synchronous
+  m_EditorClassIdentifier: 
+  guid: bd106c3fb92017d439f69f2f737d87dc
+  positionOnView: {x: 429, y: 268}
+  result: 0
+  children:
+  - {fileID: 2876575929187992761}
+  - {fileID: -4873848439066136831}
+  i: 0
