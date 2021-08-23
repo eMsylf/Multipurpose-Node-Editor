@@ -53,22 +53,6 @@ MonoBehaviour:
   forceMode: 1
   relativeToObject: 1
   relativeToObjectID: 2
---- !u!114 &-3606884500782864700
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa4b927626f860449bff9c6c4e80dc9b, type: 3}
-  m_Name: Debug
-  m_EditorClassIdentifier: 
-  guid: 29b76c2fbf3f9a348bfada25b1c006ce
-  positionOnView: {x: 182, y: 464}
-  result: 0
-  message: Fire!
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,9 +70,6 @@ MonoBehaviour:
   - {fileID: 8520475290408392303}
   - {fileID: 3624870162175952706}
   - {fileID: 6907576475566892147}
-  - {fileID: -3606884500782864700}
-  - {fileID: 5457812074873989012}
-  - {fileID: 6284373418606010620}
   - {fileID: -3841663368516124198}
   - {fileID: -5520953670150577918}
   root: {fileID: 824152994945103878}
@@ -130,7 +111,7 @@ MonoBehaviour:
   m_Name: RootNode
   m_EditorClassIdentifier: 
   guid: 1f40a8fe83c2bd446806190d843abbda
-  positionOnView: {x: 1669, y: 375}
+  positionOnView: {x: 480, y: 75}
   result: 0
   child: {fileID: -8601610202832898222}
 --- !u!114 &3624870162175952706
@@ -155,38 +136,6 @@ MonoBehaviour:
   onSpawnObject:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &5457812074873989012
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa4b927626f860449bff9c6c4e80dc9b, type: 3}
-  m_Name: Debug
-  m_EditorClassIdentifier: 
-  guid: e771936c00e42b143833ae9833a171d4
-  positionOnView: {x: 537, y: 505}
-  result: 0
-  message: Object spawned
---- !u!114 &6284373418606010620
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa4b927626f860449bff9c6c4e80dc9b, type: 3}
-  m_Name: Debug
-  m_EditorClassIdentifier: 
-  guid: 0ed70deab7985484fafd13cb1a866d6f
-  positionOnView: {x: 858, y: 502}
-  result: 0
-  message: Force applied
 --- !u!114 &6907576475566892147
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -204,12 +153,9 @@ MonoBehaviour:
   result: 0
   children:
   - {fileID: 8520475290408392303}
-  - {fileID: -3606884500782864700}
   - {fileID: 3624870162175952706}
   - {fileID: -5520953670150577918}
-  - {fileID: 5457812074873989012}
   - {fileID: -3841663368516124198}
-  - {fileID: 6284373418606010620}
   i: 0
 --- !u!114 &8520475290408392303
 MonoBehaviour:

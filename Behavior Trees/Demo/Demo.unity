@@ -2627,21 +2627,21 @@ MonoBehaviour:
     Vector2Ints: []
     Vector3Ints: []
     GameObjects:
-    - name: Target
-      id: -2147483648
-      value: {fileID: 1068709400}
-      isSceneReference: 1
-    - name: Projectile
-      id: -2147483647
+    - name: Prefab
+      id: 1
       value: {fileID: 7148961911498603408, guid: 8707c0e6f965d3a4e9d5a23b44e02629, type: 3}
       isSceneReference: 0
-    - name: Latest spawned object
-      id: -2147483646
+    - name: Spawned object
+      id: 2
       value: {fileID: 0}
-      isSceneReference: 1
-    - name: Relative to
-      id: -2147483645
+      isSceneReference: 0
+    - name: Force orientation
+      id: 3
       value: {fileID: 1449458217}
+      isSceneReference: 0
+    - name: Target
+      id: 4
+      value: {fileID: 1068709400}
       isSceneReference: 0
 --- !u!136 &1449458220
 CapsuleCollider:
