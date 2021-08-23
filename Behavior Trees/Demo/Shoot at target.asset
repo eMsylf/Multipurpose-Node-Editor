@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Sequence
   m_EditorClassIdentifier: 
   guid: 0564f7aa3c8950d46808c34c9ffcfd1e
-  positionOnView: {x: 572, y: 367}
+  positionOnView: {x: 577, y: 368}
   result: 0
   children:
   - {fileID: 6091724713455319270}
@@ -31,7 +31,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9bc838c1852643343bf5813299801da2, type: 3}
-  m_Name: Shoot at
+  m_Name: Shoot at target
   m_EditorClassIdentifier: 
   nodes:
   - {fileID: 3388554811866093363}
@@ -85,7 +85,7 @@ MonoBehaviour:
   m_Name: LookAt
   m_EditorClassIdentifier: 
   guid: 6dc08fd2db971304490f768bc846cf45
-  positionOnView: {x: 294, y: 366}
+  positionOnView: {x: 299, y: 367}
   result: 0
   objectID: 4
   stayUpright: 0
@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Name: Repeat
   m_EditorClassIdentifier: 
   guid: 634b56d1a02aee2448e1daea25e88caa
-  positionOnView: {x: 428, y: 163}
+  positionOnView: {x: 433, y: 164}
   result: 0
   child: {fileID: 7648729913691127670}
 --- !u!114 &3728155477295907681
@@ -118,7 +118,7 @@ MonoBehaviour:
   m_Name: DestroyObject
   m_EditorClassIdentifier: 
   guid: c5515348aac0a1942a148cdcd915a76d
-  positionOnView: {x: 746, y: 493}
+  positionOnView: {x: 680, y: 491}
   result: 0
   objectID: 2
   delay: 5
@@ -135,7 +135,7 @@ MonoBehaviour:
   m_Name: SpawnObject
   m_EditorClassIdentifier: 
   guid: 90d76cd330b941c4ca195e8dd17a9e79
-  positionOnView: {x: 252, y: 490}
+  positionOnView: {x: 257, y: 491}
   result: 0
   prefabID: 1
   spawnAsChild: 0
@@ -157,7 +157,7 @@ MonoBehaviour:
   m_Name: ApplyForceToObject
   m_EditorClassIdentifier: 
   guid: f07bc40b665c3cf4993911892b4846e4
-  positionOnView: {x: 493, y: 505}
+  positionOnView: {x: 473, y: 490}
   result: 0
   objectID: 2
   force: {x: 0, y: 0, z: 15}
@@ -177,7 +177,7 @@ MonoBehaviour:
   m_Name: Wait
   m_EditorClassIdentifier: 
   guid: f8e9d1c788cb0b3488e53fb6ed6fb77c
-  positionOnView: {x: 43, y: 488}
+  positionOnView: {x: 48, y: 489}
   result: 0
   duration: 0.5
 --- !u!114 &6861934326195006139
@@ -193,7 +193,7 @@ MonoBehaviour:
   m_Name: RootNode
   m_EditorClassIdentifier: 
   guid: a20e628121400a64b892f3569cb784c4
-  positionOnView: {x: 480, y: 75}
+  positionOnView: {x: 484.5, y: 52}
   result: 0
   child: {fileID: 3388554811866093363}
 --- !u!114 &7648729913691127670
@@ -209,7 +209,7 @@ MonoBehaviour:
   m_Name: Synchronous
   m_EditorClassIdentifier: 
   guid: bd106c3fb92017d439f69f2f737d87dc
-  positionOnView: {x: 429, y: 268}
+  positionOnView: {x: 434, y: 269}
   result: 0
   children:
   - {fileID: 2876575929187992761}

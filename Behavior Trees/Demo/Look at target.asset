@@ -26,7 +26,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9bc838c1852643343bf5813299801da2, type: 3}
-  m_Name: LookAtObject
+  m_Name: Look at target
   m_EditorClassIdentifier: 
   nodes:
   - {fileID: 6772612692740994896}
