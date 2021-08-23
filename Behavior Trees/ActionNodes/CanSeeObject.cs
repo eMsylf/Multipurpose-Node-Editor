@@ -24,9 +24,11 @@ namespace BobJeltes.AI.BehaviorTrees
             {
                 if (hit.collider.gameObject != obj)
                 {
+                    UnityEngine.Debug.DrawLine(behaviorTreeExecutor.transform.position, hit.point, Color.red);
                     return Result.Failure;
                 }
             }
+            UnityEngine.Debug.DrawLine(behaviorTreeExecutor.transform.position, obj.transform.position, Color.green);
             return Result.Success;
         }
     }

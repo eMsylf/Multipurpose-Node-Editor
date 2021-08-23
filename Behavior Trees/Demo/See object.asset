@@ -13,28 +13,9 @@ MonoBehaviour:
   m_Name: CanSeeObject
   m_EditorClassIdentifier: 
   guid: 2eb76bcf0611e8543b2f3d054e827dc7
-  positionOnView: {x: 3, y: 517}
+  positionOnView: {x: 373, y: 262}
   result: 0
   objectID: -2147483648
---- !u!114 &-4532528626156283198
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3dbdab700eb7dde4eb0d1ab8b3c9e827, type: 3}
-  m_Name: Selector
-  m_EditorClassIdentifier: 
-  guid: e3b951fd88b05c146991f8c6ad0516e8
-  positionOnView: {x: 287, y: 318}
-  result: 0
-  children:
-  - {fileID: 9132666968772571175}
-  - {fileID: 801718974975908114}
-  i: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49,11 +30,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodes:
   - {fileID: 4462872560010334304}
-  - {fileID: 9132666968772571175}
-  - {fileID: -4532528626156283198}
   - {fileID: -7878875836234770894}
-  - {fileID: 1534906101326541610}
-  - {fileID: 801718974975908114}
   root: {fileID: 584784738029835643}
   result: 2
   blackboard:
@@ -68,7 +45,6 @@ MonoBehaviour:
     Vector2Ints: []
     Vector3Ints: []
     GameObjects: []
-    masterList: []
 --- !u!114 &584784738029835643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,41 +58,9 @@ MonoBehaviour:
   m_Name: RootNode
   m_EditorClassIdentifier: 
   guid: 2d54739774258c144b3a001f68eaba89
-  positionOnView: {x: 340.5, y: 75}
+  positionOnView: {x: 235.5, y: 14}
   result: 0
   child: {fileID: 4462872560010334304}
---- !u!114 &801718974975908114
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa4b927626f860449bff9c6c4e80dc9b, type: 3}
-  m_Name: Debug
-  m_EditorClassIdentifier: 
-  guid: 9269af43de4418a49997a8131b8129a1
-  positionOnView: {x: 442, y: 398}
-  result: 0
-  message: Can't see :(
---- !u!114 &1534906101326541610
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa4b927626f860449bff9c6c4e80dc9b, type: 3}
-  m_Name: Debug
-  m_EditorClassIdentifier: 
-  guid: d22684021a38aaa4db76a007ec73a0d8
-  positionOnView: {x: 199, y: 517}
-  result: 0
-  message: I can see the target!
 --- !u!114 &4462872560010334304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -130,25 +74,6 @@ MonoBehaviour:
   m_Name: Repeat
   m_EditorClassIdentifier: 
   guid: 2ad7c2c9bbb8b144b9ba723d6165bff4
-  positionOnView: {x: 282, y: 211}
+  positionOnView: {x: 372, y: 146}
   result: 0
-  child: {fileID: -4532528626156283198}
---- !u!114 &9132666968772571175
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67718333f75bd5846a9592862f7eeac3, type: 3}
-  m_Name: Sequence
-  m_EditorClassIdentifier: 
-  guid: 6466f20a4f879d942859773d8215dd9d
-  positionOnView: {x: 100, y: 405}
-  result: 0
-  children:
-  - {fileID: -7878875836234770894}
-  - {fileID: 1534906101326541610}
-  i: 0
+  child: {fileID: -7878875836234770894}
