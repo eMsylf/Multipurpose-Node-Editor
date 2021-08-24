@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: CanSeeObject
   m_EditorClassIdentifier: 
   guid: 2eb76bcf0611e8543b2f3d054e827dc7
-  positionOnView: {x: 373, y: 262}
+  positionOnView: {x: 219, y: 342}
   result: 0
   objectID: -2147483648
+  viewObstructingLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,7 +61,7 @@ MonoBehaviour:
   m_Name: RootNode
   m_EditorClassIdentifier: 
   guid: 2d54739774258c144b3a001f68eaba89
-  positionOnView: {x: 235.5, y: 14}
+  positionOnView: {x: 269.5, y: 75}
   result: 0
   child: {fileID: 4462872560010334304}
 --- !u!114 &4462872560010334304
@@ -74,6 +77,6 @@ MonoBehaviour:
   m_Name: Repeat
   m_EditorClassIdentifier: 
   guid: 2ad7c2c9bbb8b144b9ba723d6165bff4
-  positionOnView: {x: 372, y: 146}
+  positionOnView: {x: 219, y: 208}
   result: 0
   child: {fileID: -7878875836234770894}

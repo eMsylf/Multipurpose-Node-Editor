@@ -45,7 +45,7 @@ public class SpawnObject : ActionNode
             TypedVariable<GameObject> gameObjectVariableOverride = behaviorTreeExecutor.variableOverrides.GameObjects.Find(x => x.id == spawnedObjectID);
             if (gameObjectVariableOverride == null)
             {
-                UnityEngine.Debug.LogWarning("Object ID " + spawnedObjectID + " not found in variable overrides of " + spawnedObjectID);
+                UnityEngine.Debug.LogWarning("Object ID " + spawnedObjectID + " not found in variable overrides of " + behaviorTreeExecutor.name);
             }
             else
             {

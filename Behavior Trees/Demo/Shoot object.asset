@@ -51,8 +51,8 @@ MonoBehaviour:
   objectID: 1
   force: {x: 0, y: 0, z: 15}
   forceMode: 1
-  relativeToObject: 1
-  relativeToObjectID: 2
+  relativeObject: 1
+  otherObjectID: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111,7 +111,7 @@ MonoBehaviour:
   m_Name: RootNode
   m_EditorClassIdentifier: 
   guid: 1f40a8fe83c2bd446806190d843abbda
-  positionOnView: {x: 480, y: 75}
+  positionOnView: {x: 910, y: 75}
   result: 0
   child: {fileID: -8601610202832898222}
 --- !u!114 &3624870162175952706

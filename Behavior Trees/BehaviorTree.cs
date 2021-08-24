@@ -139,10 +139,6 @@ namespace BobJeltes.AI.BehaviorTrees
                     UnityEngine.Debug.Log("Could not convert to node?");
                     continue;
                 }
-                else
-                {
-                    UnityEngine.Debug.Log("IT IS A NODE! YAY!");
-                }
 
                 if (nodes.Exists(node => node.guid == nodeAsset.guid))
                 {
@@ -227,6 +223,10 @@ namespace BobJeltes.AI.BehaviorTrees
             BehaviorTree tree = Instantiate(this);
             for (int i = 0; i < tree.nodes.Count; i++)
             {
+                if (tree.nodes[i] == null)
+                {
+                    UnityEngine.Debug.LogError("Node at position " + i + " of " + name + " is missing. Removing...", this);
+                }
                 tree.nodes[i] = tree.nodes[i].Clone();
             }
             if (tree.root == null) tree.root = (RootNode)CreateNode(typeof(RootNode));

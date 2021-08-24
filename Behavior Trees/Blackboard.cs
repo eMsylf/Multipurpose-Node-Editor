@@ -128,7 +128,7 @@ namespace BobJeltes.AI.BehaviorTrees
             var variable = GameObjects.Find(x => x.ID == id);
             if (variable == null)
             {
-                Debug.LogError("No game object found with id " + id);
+                //Debug.LogError("No game object found with id " + id);
                 return null;
             }
 

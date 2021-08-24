@@ -9,8 +9,15 @@ public class ApplyForceToObject : ActionNode
     public int objectID;
     public Vector3 force = Vector3.forward;
     public ForceMode forceMode = ForceMode.Impulse;
-    public bool relativeToObject;
-    public int relativeToObjectID;
+    public enum RelativeObjectOption
+    {
+        None,
+        Self,
+        Other
+    }
+    public RelativeObjectOption relativeObject = RelativeObjectOption.None;
+    [Tooltip("Only assign when Relative Object is set to Other")]
+    public int otherObjectID;
 
     // This is called when the node is first updated
     public override void OnStart()
@@ -44,14 +51,24 @@ public class ApplyForceToObject : ActionNode
             UnityEngine.Debug.LogError("Provided prefab object of " + name + " in behavior tree of " + behaviorTreeExecutor.name + " has no rigidbody.");
             return Result.Failure;
         }
-        if (relativeToObject)
+        
+        switch (relativeObject)
         {
-            rigidbody.AddForce(
-                behaviorTreeExecutor.GetGameObjectVariable(relativeToObjectID).transform.TransformVector(force),
+            default:
+            case RelativeObjectOption.None:
+                rigidbody.AddForce(force, forceMode);
+                break;
+            case RelativeObjectOption.Self:
+                rigidbody.AddForce(
+                behaviorTreeExecutor.transform.TransformVector(force),
                 forceMode);
+                break;
+            case RelativeObjectOption.Other:
+                rigidbody.AddForce(
+                behaviorTreeExecutor.GetGameObjectVariable(otherObjectID).transform.TransformVector(force),
+                forceMode);
+                break;
         }
-        else
-            rigidbody.AddForce(force, forceMode);
         return Result.Success;
     }
 }

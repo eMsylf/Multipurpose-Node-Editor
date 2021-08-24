@@ -8,6 +8,7 @@ namespace BobJeltes.AI.BehaviorTrees
     public class CanSeeObject : ActionNode
     {
         public int objectID;
+        public LayerMask viewObstructingLayers;
 
         public override void OnStart()
         {
@@ -20,7 +21,7 @@ namespace BobJeltes.AI.BehaviorTrees
         public override Result OnUpdate(BehaviorTreeExecutor behaviorTreeExecutor)
         {
             GameObject obj = behaviorTreeExecutor.GetGameObjectVariable(objectID);
-            if (Physics.Linecast(behaviorTreeExecutor.transform.position, obj.transform.position, out RaycastHit hit))
+            if (Physics.Linecast(behaviorTreeExecutor.transform.position, obj.transform.position, out RaycastHit hit, viewObstructingLayers))
             {
                 if (hit.collider.gameObject != obj)
                 {

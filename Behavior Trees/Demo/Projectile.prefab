@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 7148961911498603410}
   - component: {fileID: 7148961911498603409}
   - component: {fileID: 8649881936328289317}
+  - component: {fileID: 2602282551570924831}
+  - component: {fileID: 5895388311385420834}
   m_Layer: 0
   m_Name: Projectile
   m_TagString: Untagged
@@ -28,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7148961911498603408}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.7}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children: []
   m_Father: {fileID: 0}
@@ -112,3 +114,64 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2602282551570924831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7148961911498603408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1038e7781ffb6b64ead30b8aa8a6ed26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onCollisionEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5895388311385420834}
+        m_TargetAssemblyTypeName: InstantiateObject, Assembly-CSharp
+        m_MethodName: Instantiate
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 7148961911498603408}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onCollisionEnterSelf:
+    m_PersistentCalls:
+      m_Calls: []
+  onCollisionEnterOther:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &5895388311385420834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7148961911498603408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe2eee46c3e52fa48a288d39d5db0cb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 6261360737180124197, guid: a4e9248f3a569e745a4ad5df207e5dce, type: 3}
+  asChild: 0
+  atSelf: 1
+  inheritRotation: 1
