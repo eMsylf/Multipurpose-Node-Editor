@@ -34,7 +34,8 @@ namespace BobJeltes.NodeEditor
             nodeViews = new List<NodeView>();
 
             if (behaviorTree.root == null) behaviorTree.root = (RootNode)behaviorTree.CreateNode(typeof(RootNode));
-            CreateNodeView(behaviorTree.root, GetDefaultRootPosition());
+            Vector2 rootPos = behaviorTree.root.child == null ? GetDefaultRootPosition() : behaviorTree.root.child.positionOnView + new Vector2(0, -50f);
+            CreateNodeView(behaviorTree.root, rootPos);
 
             for (int i = 0; i < behaviorTree.nodes.Count; i++)
             {
@@ -66,6 +67,51 @@ namespace BobJeltes.NodeEditor
             genericMenu.ShowAsContext();
         }
 
+        public NodeView CreateNodeView(Node node)
+        {
+            return CreateNodeView(node, node.positionOnView, false);
+        }
+
+        /// <summary>
+        /// Creates a node view and adds it to the nodeViews list
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public NodeView CreateNodeView(Node node, Vector2 position, bool centered = true)
+        {
+            GUIStyle normalStyle;
+            GUIStyle selectedStyle;
+            Vector2 size;
+            Type nodeType = node.GetType();
+            if (nodeType == typeof(RootNode))
+            {
+                NodeStyles.blue.Load(out normalStyle, out selectedStyle, out size);
+            }
+            else if (typeof(CompositeNode).IsAssignableFrom(nodeType))
+            {
+                NodeStyles.orange.Load(out normalStyle, out selectedStyle, out size);
+            }
+            else if (typeof(DecoratorNode).IsAssignableFrom(nodeType))
+            {
+                NodeStyles.yellow.Load(out normalStyle, out selectedStyle, out size);
+            }
+            else if (typeof(ActionNode).IsAssignableFrom(nodeType))
+            {
+                NodeStyles.green.Load(out normalStyle, out selectedStyle, out size);
+            }
+            else
+            {
+                NodeStyles.lightGreen.Load(out normalStyle, out selectedStyle, out size);
+            }
+            if (centered)
+            {
+                position -= size * .5f;
+            }
+            NodeView nodeView = new NodeView(new Rect(position, size), normalStyle, selectedStyle, inPointStyle, outPointStyle, orientation, OnClickConnectionPoint, OnClickNode, OnClickRemoveNode, OnDragNode, OnClickUpNode, node);
+            AddNodeView(nodeView);
+            return nodeView;
+        }
+
         Node CreateNode(Type type)
         {
             return behaviorTree.CreateNode(type);
@@ -75,6 +121,10 @@ namespace BobJeltes.NodeEditor
         {
             behaviorTree.DeleteNode(nodeView.node);
             base.OnClickRemoveNode(nodeView);
+            if (Selection.activeObject == nodeView.node)
+            {
+                Selection.activeObject = null;
+            }
         }
 
         protected override void OnClickBackgroundWithConnection()
@@ -218,12 +268,24 @@ namespace BobJeltes.NodeEditor
         internal override void SelectNode(NodeView nodeView)
         {
             base.SelectNode(nodeView);
-            //Selection.activeObject = nodeView.node;
-            Node nodeFile = file.nodes.Find(x => x.guid == nodeView.node.guid);
+            Node nodeFile = (file as BehaviorTree)?.nodes.Find(x => x.guid == nodeView.node.guid);
             if (nodeFile != null)
                 Selection.activeObject = nodeFile;
             else
                 Selection.activeObject = nodeView.node;
+        }
+
+        protected override void OnClickBackground()
+        {
+            base.OnClickBackground();
+            if (file == null)
+            {
+                Selection.activeObject = behaviorTree;
+            }
+            else
+            {
+                Selection.activeObject = file;
+            }
         }
     }
 
@@ -259,37 +321,37 @@ namespace BobJeltes.NodeEditor
 
     public static class NodeStyles
     {
-        public static NodeViewStyle rootStyle = new NodeViewStyle(
+        public static NodeViewStyle blue = new NodeViewStyle(
             "builtin skins/darkskin/images/node1.png",
             "builtin skins/darkskin/images/node1 on.png",
             12,
             new Vector2(100, 50));
 
-        public static NodeViewStyle standard1 = new NodeViewStyle(
+        public static NodeViewStyle lightGreen = new NodeViewStyle(
             "builtin skins/darkskin/images/node2.png",
             "builtin skins/darkskin/images/node2 on.png",
             12,
             new Vector2(200, 50));
 
-        public static NodeViewStyle standard2 = new NodeViewStyle(
+        public static NodeViewStyle green = new NodeViewStyle(
             "builtin skins/darkskin/images/node3.png",
             "builtin skins/darkskin/images/node3 on.png",
             12,
             new Vector2(200, 50));
 
-        public static NodeViewStyle standard3 = new NodeViewStyle(
+        public static NodeViewStyle yellow = new NodeViewStyle(
             "builtin skins/darkskin/images/node4.png",
             "builtin skins/darkskin/images/node4 on.png",
             12,
             new Vector2(200, 50));
 
-        public static NodeViewStyle standard4 = new NodeViewStyle(
+        public static NodeViewStyle orange = new NodeViewStyle(
             "builtin skins/darkskin/images/node5.png",
             "builtin skins/darkskin/images/node5 on.png",
             12,
             new Vector2(200, 50));
 
-        public static NodeViewStyle redPreset = new NodeViewStyle(
+        public static NodeViewStyle red = new NodeViewStyle(
             "builtin skins/darkskin/images/node6.png",
             "builtin skins/darkskin/images/node6 on.png",
             12,

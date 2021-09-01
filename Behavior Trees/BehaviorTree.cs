@@ -12,6 +12,7 @@ namespace BobJeltes.AI.BehaviorTrees
     {
         public static readonly string baseFolder = "Assets/Resources/Behavior Trees";
         public RootNode root;
+        public List<Node> nodes = new List<Node>();
         public Result result = Result.Running;
         [Tooltip("Use this to manually edit your blackboard variables")]
         public Blackboard blackboard = new Blackboard();

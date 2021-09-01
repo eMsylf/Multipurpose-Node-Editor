@@ -3387,7 +3387,7 @@ MonoBehaviour:
     Vector3Ints: []
     GameObjects:
     - name: Target
-      id: -2147483648
+      id: 1
       value: {fileID: 138174208}
       isSceneReference: 1
 --- !u!136 &1301137865
@@ -3983,7 +3983,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1508531620
 Transform:
   m_ObjectHideFlags: 0

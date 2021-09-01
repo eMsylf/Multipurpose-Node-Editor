@@ -108,7 +108,7 @@ namespace BobJeltes.NodeEditor
                         }
                     }
 
-                    if (e.button == 1 && IsSelected && rect.Contains(e.mousePosition))
+                    if (e.button == 1 && rect.Contains(e.mousePosition))
                     {
                         ProcessContextMenu();
                         e.Use();

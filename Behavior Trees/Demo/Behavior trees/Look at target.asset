@@ -46,12 +46,9 @@ MonoBehaviour:
     Vector3Ints: []
     GameObjects:
     - name: Target
-      id: -2147483648
+      id: 1
       value: {fileID: 0}
       isSceneReference: 1
-    masterList:
-    - name: Target
-      id: -2147483648
 --- !u!114 &3084121116369043870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67,7 +64,7 @@ MonoBehaviour:
   guid: fb1f95c344f8c27499b7dd211cb97129
   positionOnView: {x: 431, y: 399}
   result: 0
-  objectID: -2147483648
+  objectID: 1
   stayUpright: 0
 --- !u!114 &6772612692740994896
 MonoBehaviour:
