@@ -677,6 +677,10 @@ namespace BobJeltes.NodeEditor
             }
 
             nodeViews.Remove(nodeView);
+            if (nodeView == selectedNodeIn)
+                selectedNodeIn = null;
+            if (nodeView == selectedNodeOut) 
+                selectedNodeOut = null;
             hasUnsavedChanges = true;
         }
 
