@@ -321,37 +321,37 @@ namespace BobJeltes.NodeEditor
 
     public static class NodeStyles
     {
-        public static NodeViewStyle blue = new NodeViewStyle(
+        public static readonly NodeViewStyle blue = new NodeViewStyle(
             "builtin skins/darkskin/images/node1.png",
             "builtin skins/darkskin/images/node1 on.png",
             12,
             new Vector2(100, 50));
 
-        public static NodeViewStyle lightGreen = new NodeViewStyle(
+        public static readonly NodeViewStyle lightGreen = new NodeViewStyle(
             "builtin skins/darkskin/images/node2.png",
             "builtin skins/darkskin/images/node2 on.png",
             12,
             new Vector2(200, 50));
 
-        public static NodeViewStyle green = new NodeViewStyle(
+        public static readonly NodeViewStyle green = new NodeViewStyle(
             "builtin skins/darkskin/images/node3.png",
             "builtin skins/darkskin/images/node3 on.png",
             12,
             new Vector2(200, 50));
 
-        public static NodeViewStyle yellow = new NodeViewStyle(
+        public static readonly NodeViewStyle yellow = new NodeViewStyle(
             "builtin skins/darkskin/images/node4.png",
             "builtin skins/darkskin/images/node4 on.png",
             12,
             new Vector2(200, 50));
 
-        public static NodeViewStyle orange = new NodeViewStyle(
+        public static readonly NodeViewStyle orange = new NodeViewStyle(
             "builtin skins/darkskin/images/node5.png",
             "builtin skins/darkskin/images/node5 on.png",
             12,
             new Vector2(200, 50));
 
-        public static NodeViewStyle red = new NodeViewStyle(
+        public static readonly NodeViewStyle red = new NodeViewStyle(
             "builtin skins/darkskin/images/node6.png",
             "builtin skins/darkskin/images/node6 on.png",
             12,
