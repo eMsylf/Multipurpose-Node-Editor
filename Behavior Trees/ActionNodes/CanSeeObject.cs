@@ -8,7 +8,7 @@ namespace BobJeltes.AI.BehaviorTrees
     public class CanSeeObject : ActionNode
     {
         public int objectID;
-        public LayerMask viewObstructingLayers;
+        public LayerMask viewObstructingLayers = ~0;
 
         public override void OnStart()
         {
