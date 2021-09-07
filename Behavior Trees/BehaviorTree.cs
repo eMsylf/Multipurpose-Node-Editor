@@ -165,7 +165,6 @@ namespace BobJeltes.AI.BehaviorTrees
                 }
             }
 
-
             // Match all the nodes with children with the children in the file
             // First, the root node
             if (root.GetChild() == null) treeFile.root.SetChild(null);

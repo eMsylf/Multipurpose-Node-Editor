@@ -15,7 +15,7 @@ MonoBehaviour:
   guid: 2eb76bcf0611e8543b2f3d054e827dc7
   positionOnView: {x: 219, y: 342}
   result: 0
-  objectID: -2147483648
+  objectID: 1
   viewObstructingLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -31,10 +31,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bc838c1852643343bf5813299801da2, type: 3}
   m_Name: See Object
   m_EditorClassIdentifier: 
+  root: {fileID: 584784738029835643}
   nodes:
   - {fileID: 4462872560010334304}
   - {fileID: -7878875836234770894}
-  root: {fileID: 584784738029835643}
   result: 2
   blackboard:
     bools: []
@@ -47,7 +47,11 @@ MonoBehaviour:
     Vector4s: []
     Vector2Ints: []
     Vector3Ints: []
-    GameObjects: []
+    GameObjects:
+    - name: Target
+      id: 1
+      value: {fileID: 0}
+      isSceneReference: 0
 --- !u!114 &584784738029835643
 MonoBehaviour:
   m_ObjectHideFlags: 0

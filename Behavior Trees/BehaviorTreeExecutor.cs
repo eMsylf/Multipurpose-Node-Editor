@@ -39,6 +39,16 @@ namespace BobJeltes.AI.BehaviorTrees
             variableOverrides = new Blackboard(tree.blackboard);
         }
 
+        public TypedVariable<Color> GetColor(int id)
+        {
+            TypedVariable<Color> colorVariable = variableOverrides.Colors.Find(x => x.id == id);
+            if (colorVariable == null)
+            {
+                colorVariable = tree.blackboard.Colors.Find(x => x.id == id);
+            }
+            return colorVariable;
+        }
+
         public GameObject GetGameObjectVariable(int id)
         {
             GameObject instanceOverride = variableOverrides.GetGameObjectVariable(id);

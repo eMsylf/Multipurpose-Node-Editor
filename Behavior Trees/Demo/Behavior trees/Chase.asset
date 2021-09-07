@@ -44,10 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bc838c1852643343bf5813299801da2, type: 3}
   m_Name: Chase
   m_EditorClassIdentifier: 
+  root: {fileID: -8538954760616523341}
   nodes:
   - {fileID: -5928866708000162519}
   - {fileID: 1840328585568894626}
-  root: {fileID: -8538954760616523341}
   result: 2
   blackboard:
     bools: []
@@ -62,12 +62,9 @@ MonoBehaviour:
     Vector3Ints: []
     GameObjects:
     - name: Target
-      id: -2147483648
+      id: 1
       value: {fileID: 0}
       isSceneReference: 1
-    masterList:
-    - name: Target
-      id: -2147483648
 --- !u!114 &1840328585568894626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83,4 +80,4 @@ MonoBehaviour:
   guid: 72d12693f75047a489d8a52e3fbf4664
   positionOnView: {x: 429, y: 345}
   result: 0
-  targetID: -2147483648
+  targetID: 1
