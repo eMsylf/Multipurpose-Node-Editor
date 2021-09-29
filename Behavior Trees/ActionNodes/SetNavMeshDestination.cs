@@ -36,10 +36,10 @@ public class SetNavMeshDestination : ActionNode
             }
         }
 
-        GameObject target = behaviorTreeExecutor.variableOverrides.GetGameObjectVariable(targetID);
+        GameObject target = behaviorTreeExecutor.GetGameObjectVariable(targetID);
         if (target == null)
         {
-            UnityEngine.Debug.LogError("Did not find target object with id " + targetID);
+            UnityEngine.Debug.LogError("Did not find target object with id " + targetID + " for " + GetType(), behaviorTreeExecutor);
             return Result.Failure;
         }
 
